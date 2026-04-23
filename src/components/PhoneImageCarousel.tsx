@@ -2,18 +2,11 @@ import { useState } from 'react'
 import { publicUrl } from '../publicUrl'
 
 /**
- * PhoneImageCarousel — pixel-accurate reproduction of Figma `PhoneImageToggle`
- * (179:58). Three pages backed by the actual Figma images (oceans, instruments,
- * flowers).
+ * PhoneImageCarousel — Figma `PhoneImageToggle`（179:19）
  *
- * Figma geometry (559 × 980 component):
- *   oceans fill (Group 11 bg):  451 × 980 at (54, 0)
- *   soft inner slot rect:       451 × 430 at (54, 125) fill #eff4f5
- *   active card:                451 × 425 at (54, 131)
- *   arrow_left:                 44  × 44  at (5, 468)
- *   arrow_right:                44  × 44  at (510, 468)
+ * - instruments（179:23）：object-cover，与画板一致
+ * - oceans_card（179:24）、flowers（179:25）：Figma 为放大位图 + 负 top，不用 object-cover
  */
-
 const imgOceans = publicUrl('figma/oceans.png')
 const imgInstruments = publicUrl('figma/instruments.png')
 const imgFlowers = publicUrl('figma/flowers.png')
@@ -30,6 +23,12 @@ const PAGE_IMG: Record<Page, string> = {
   flowers: imgFlowers,
 }
 
+/** 与 Figma get_design_context（179:24 / 179:25）数值一致 */
+const CARD_CROP: Partial<Record<Page, { heightPct: number; topPct: number }>> = {
+  oceans: { heightPct: 230.59, topPct: -30.82 },
+  flowers: { heightPct: 230.71, topPct: -110.8 },
+}
+
 export default function PhoneImageCarousel() {
   const [idx, setIdx] = useState<number>(0)
   const move = (d: number) =>
@@ -37,7 +36,6 @@ export default function PhoneImageCarousel() {
 
   return (
     <div style={{ position: 'relative', width: 559, height: 980 }}>
-      {/* Phone 'Group 11' base fill (oceans image) 451×980 at (54, 0) */}
       <div
         style={{
           position: 'absolute',
@@ -66,7 +64,6 @@ export default function PhoneImageCarousel() {
         />
       </div>
 
-      {/* Soft slot rect #eff4f5 — 451 × 430 at (54, 125) */}
       <div
         aria-hidden
         style={{
@@ -80,9 +77,6 @@ export default function PhoneImageCarousel() {
         }}
       />
 
-      {/* Cards: render the active one at (54,131) and slide the prev/next cards
-          off-screen to left/right using the same offsets seen in Figma
-          (next=579, prev=-471). */}
       {PAGES.map((p, i) => {
         const offset = (i - idx + PAGES.length) % PAGES.length
         const state = offset === 0 ? 'active' : offset === 1 ? 'next' : 'prev'
@@ -107,24 +101,51 @@ export default function PhoneImageCarousel() {
               willChange: 'left, opacity',
             }}
           >
-            <img
-              src={PAGE_IMG[p]}
-              alt={p}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                pointerEvents: 'none',
-                userSelect: 'none',
-                display: 'block',
-              }}
-              draggable={false}
-            />
+            {CARD_CROP[p] ? (
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  overflow: 'hidden',
+                  pointerEvents: 'none',
+                }}
+              >
+                <img
+                  src={PAGE_IMG[p]}
+                  alt={p}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    width: '100%',
+                    height: `${CARD_CROP[p]!.heightPct}%`,
+                    top: `${CARD_CROP[p]!.topPct}%`,
+                    maxWidth: 'none',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                    display: 'block',
+                  }}
+                  draggable={false}
+                />
+              </div>
+            ) : (
+              <img
+                src={PAGE_IMG[p]}
+                alt={p}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  pointerEvents: 'none',
+                  userSelect: 'none',
+                  display: 'block',
+                }}
+                draggable={false}
+              />
+            )}
           </div>
         )
       })}
 
-      {/* Arrow buttons — 44×44, rounded, white w/ shadow, 50% opacity */}
       <button
         type="button"
         onClick={() => move(-1)}
