@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   PLAN A — image-backed portfolio.
+   Each sub-frame is rendered as a PNG exported from Figma at @2x. Two
+   interactive React components overlay on top of case01c/case01d. Visually,
+   the page is a 1:1 raster of the Figma design file at 1440px native width.
+============================================================================= */
+
+:root {
+  --canvas-w: 1440px;
+  --canvas-bg: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  /* Clip horizontal overflow at the ROOT. Putting `overflow-x: hidden` on a
+     descendant turns that descendant into a separate scroll container, which
+     competes with the html scroll container on the first scroll tick — the
+     exact "first scroll blocks" symptom on PC. */
+  overflow-x: hidden;
+  /* Explicit scroll root for scroll anchoring + smooth behavior. */
+  scroll-behavior: auto;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--canvas-bg);
+  color: #000;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.portfolio {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--canvas-bg);
+}
+
+/* The Figma canvas: native 1440 × 16063.
+ *
+ * Replaced `zoom: <ratio>` with a sized wrapper + `transform: scale()` on
+ * the inner canvas. Rationale:
+ * - `zoom` forces Chrome to paint scaled pixels (non-composited path). When
+ *   scrolling reverses, the newly-exposed area must be re-painted at the
+ *   zoom factor on the main thread → the visible "first scroll blocks" hitch.
+ * - `transform: scale()` is a compositor-only operation: the layer is
+ *   rasterized once at 1× and the GPU scales it. Scrolling is a pure
+ *   translate on the same GPU texture, so direction changes are free.
+ *
+ * `.frame8-wrap` reserves the correct document height so scroll geometry is
+ * right; `.frame8` is absolutely positioned inside it and scaled. Because
+ * both live in the normal html scroll container (no `overflow-*` on
+ * ancestors), the page has exactly ONE scroll root.
+ */
+.frame8-wrap {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  height: 16063px; /* default: viewport >= 1440, no scaling */
+}
+
+.frame8 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1440px;
+  height: 16063px;
+  background: var(--canvas-bg);
+  transform-origin: top left;
+}
+
+/* Viewport ≥ 1440 → no scaling, horizontally centered via left offset */
+@media (min-width: 1440px) {
+  .frame8 {
+    left: calc((100vw - 1440px) / 2);
+  }
+}
+
+/* Viewport < 1440 → scale down, wrap height shrinks proportionally */
+@media (max-width: 1439.98px) {
+  .frame8-wrap {
+    height: calc(16063px * (100vw / 1440px));
+  }
+  .frame8 {
+    transform: scale(calc(100vw / 1440px));
+  }
+}
+
+/* Each exported PNG strip sits at its native Figma Y coordinate.
+ *
+ * Performance model:
+ * - `contain: paint` isolates paint so a strip re-paint never invalidates its
+ *   neighbours (much milder than `content-visibility: auto`, which discards
+ *   the bitmap cache on scroll-out and forces a re-rasterize on scroll-back —
+ *   that was the visible jank when reversing scroll direction).
+ * - Each inner <img> is forced onto its own GPU layer via `translateZ(0)`, so
+ *   scrolling in either direction is a pure compositor transform on a bitmap
+ *   that stays resident, not a main-thread re-paint.
+ * - `will-change` is applied only while a strip is running its reveal
+ *   transition, so we don't permanently promote 14 large layers for an
+ *   animation that only happens once.
+ */
+.strip {
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  contain: paint;
+}
+
+.strip.is-revealing {
+  will-change: opacity;
+}
+
+.strip.is-active {
+  opacity: 1;
+}
+
+.strip > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* Keep the decoded bitmap on its own compositor layer so scrolling (in
+     either direction) never triggers a main-thread re-rasterize. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Interactive overlays (DayCycleToggle, PhoneImageCarousel) positioned above
+   their corresponding static PNG using absolute Frame-8 coordinates. */
+.overlay {
+  position: absolute;
+  z-index: 2;
+}

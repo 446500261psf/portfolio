@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon_morning">
+<path id="Vector" d="M5 11C5 9.4087 5.63214 7.88258 6.75736 6.75736C7.88258 5.63214 9.4087 5 11 5C12.5913 5 14.1174 5.63214 15.2426 6.75736C16.3679 7.88258 17 9.4087 17 11" stroke="var(--stroke-0, #F0A564)" stroke-width="1.5" stroke-linecap="round"/>
+<path id="Vector_2" d="M2.5 14H19.5" stroke="var(--stroke-0, #F0A564)" stroke-width="1.5" stroke-linecap="round"/>
+<path id="Vector_3" d="M11 2V4" stroke="var(--stroke-0, #F0A564)" stroke-width="1.5" stroke-linecap="round"/>
+<path id="Vector_4" d="M3 7.5L4.5 8.5" stroke="var(--stroke-0, #F0A564)" stroke-width="1.5" stroke-linecap="round"/>
+<path id="Vector_5" d="M19 7.5L17.5 8.5" stroke="var(--stroke-0, #F0A564)" stroke-width="1.5" stroke-linecap="round"/>
+</g>
+</svg>
