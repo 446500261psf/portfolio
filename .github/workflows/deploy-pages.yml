@@ -1,4 +1,4 @@
-# 构建并部署到 GitHub Pages（在仓库 Settings → Pages 中选择 GitHub Actions 作为源）
+# 部署到 GitHub Pages（Settings → Pages → Source: GitHub Actions）
 name: Deploy to GitHub Pages
 
 on:
@@ -12,8 +12,9 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: "pages"
+  # 避免连续 push 时正在跑的部署被 cancel，导致“永远红”
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -39,6 +40,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -49,8 +53,8 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      # 不在此处引用 steps.*，避免部分运行器在 job 级解析 environment 时失败
     steps:
-      - name: Deploy
-        id: deploy
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
