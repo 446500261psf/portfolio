@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { publicUrl } from '../publicUrl'
 
 /**
  * ToggleDayCycle — 与 Figma `ToggleDayCycle`（150:32）一致。
@@ -9,15 +10,15 @@ type Phase = 'night' | 'noon' | 'morning'
 const PHASES: Phase[] = ['night', 'noon', 'morning']
 
 const PHONE: Record<Phase, string> = {
-  night: '/figma/phone-night.png',
-  noon: '/figma/phone-noon.png',
-  morning: '/figma/phone-morning.png',
+  night: publicUrl('figma/phone-night.png'),
+  noon: publicUrl('figma/phone-noon.png'),
+  morning: publicUrl('figma/phone-morning.png'),
 }
 
 const ICON_SRC: Record<Phase, string> = {
-  night: '/figma/icon-night.svg',
-  noon: '/figma/icon-noon.svg',
-  morning: '/figma/icon-morning.svg',
+  night: publicUrl('figma/icon-night.svg'),
+  noon: publicUrl('figma/icon-noon.svg'),
+  morning: publicUrl('figma/icon-morning.svg'),
 }
 
 const PILL_BG: Record<Phase, string> = {

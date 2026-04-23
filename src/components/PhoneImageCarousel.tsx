@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { publicUrl } from '../publicUrl'
 
 /**
  * PhoneImageCarousel — pixel-accurate reproduction of Figma `PhoneImageToggle`
@@ -13,11 +14,11 @@ import { useState } from 'react'
  *   arrow_right:                44  × 44  at (510, 468)
  */
 
-const imgOceans = '/figma/oceans.png'
-const imgInstruments = '/figma/instruments.png'
-const imgFlowers = '/figma/flowers.png'
-const imgArrowLeft = '/figma/arrow-left.svg'
-const imgArrowRight = '/figma/arrow-right.svg'
+const imgOceans = publicUrl('figma/oceans.png')
+const imgInstruments = publicUrl('figma/instruments.png')
+const imgFlowers = publicUrl('figma/flowers.png')
+const imgArrowLeft = publicUrl('figma/arrow-left.svg')
+const imgArrowRight = publicUrl('figma/arrow-right.svg')
 
 type Page = 'instruments' | 'oceans' | 'flowers'
 

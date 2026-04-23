@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import BlackFridayStack from './components/BlackFridayStack'
 import DayCycleToggle from './components/DayCycleToggle'
 import PhoneImageCarousel from './components/PhoneImageCarousel'
+import { publicUrl } from './publicUrl'
 
 /* ============================================================================
  * PLAN A — Image-backed portfolio
@@ -19,7 +20,7 @@ import PhoneImageCarousel from './components/PhoneImageCarousel'
  * its sub-canvas enters the screen).
  * ========================================================================== */
 
-const E = '/figma/exports/'
+const E = publicUrl('figma/exports/')
 const SUBFRAMES = [
   { name: 'cover',        y: 0,     h: 922,  src: E + 'cover.png' },
   { name: 'projects',     y: 922,   h: 1024, src: E + 'projects.png' },

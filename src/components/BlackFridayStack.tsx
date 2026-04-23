@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { publicUrl } from '../publicUrl'
 
 /**
  * Figma 节点 `120:448` / `120:447` / `120:449` 的位图是 **整屏手机成图**，
@@ -11,7 +12,7 @@ import { useEffect, useRef, useState } from 'react'
 const LAYERS = [
   {
     name: 'stack1',
-    src: '/figma/black_friday_stack_1.png',
+    src: publicUrl('figma/black_friday_stack_1.png'),
     left: 648,
     top: 12_224,
     w: 474,
@@ -20,7 +21,7 @@ const LAYERS = [
   },
   {
     name: 'stack2',
-    src: '/figma/black_friday_stack_2.png',
+    src: publicUrl('figma/black_friday_stack_2.png'),
     left: 648,
     top: 12_526,
     w: 474,
@@ -29,7 +30,7 @@ const LAYERS = [
   },
   {
     name: 'stack3',
-    src: '/figma/black_friday_stack_3.png',
+    src: publicUrl('figma/black_friday_stack_3.png'),
     left: 648,
     top: 12_898,
     w: 474,
