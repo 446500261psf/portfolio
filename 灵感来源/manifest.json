@@ -1,4 +1,12 @@
 {
-  "description": "Motion design 与 UX 灵感截图库。上传截图后在此记录来源、要点与复刻目标。",
+  "description": "Motion design 与 UX 灵感截图库。每条灵感对应一张截图 + 一份 analysis/ 下的 Markdown 分析文档。",
+  "workflow": {
+    "screenshots": {
+      "motion-design": "motion-design/",
+      "ux": "ux/"
+    },
+    "analysisDocs": "analysis/",
+    "naming": "analysis/NNN-简短英文-slug.md"
+  },
   "items": []
 }
