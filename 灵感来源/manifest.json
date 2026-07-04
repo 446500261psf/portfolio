@@ -10,5 +10,15 @@
     "analysisDocs": "analysis/",
     "naming": "analysis/NNN-简短英文-slug.md"
   },
-  "items": []
+  "items": [
+    {
+      "id": "001",
+      "title": "SwiftUI 3D Card Flip",
+      "source": "SUCODEE / 社交媒体",
+      "category": "motion-design",
+      "analysis": "analysis/001-swiftui-3d-card-flip.md",
+      "implementation": "src/components/FlipCard.tsx",
+      "status": "implemented"
+    }
+  ]
 }
