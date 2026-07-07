@@ -150,3 +150,128 @@ body {
   position: absolute;
   z-index: 2;
 }
+
+/* =============================================================================
+   Design Perspectives — scroll-driven arch grid reveal
+============================================================================= */
+
+.dp-reveal {
+  --dp-yellow: #e4ff3d;
+  --dp-ink: #0d1f19;
+  position: relative;
+  width: 100%;
+  background: var(--dp-ink);
+  color: #fff;
+}
+
+.dp-reveal__driver {
+  position: relative;
+}
+
+.dp-reveal__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.dp-reveal__portrait {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  will-change: transform;
+  background: radial-gradient(120% 90% at 50% 30%, #4a4a4a 0%, #232323 55%, #101010 100%);
+}
+
+.dp-reveal__portrait-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 42%;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform: translateZ(0);
+}
+
+.dp-reveal__portrait-placeholder {
+  position: absolute;
+  inset: 0;
+  background: inherit;
+}
+
+.dp-reveal__name {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(40px, 9vw, 88px);
+  color: var(--dp-yellow);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dp-reveal__eyebrow {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  z-index: 4;
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(24px, 5vw, 40px);
+  line-height: 1.05;
+  color: var(--dp-ink);
+  pointer-events: none;
+}
+
+.dp-reveal__grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  z-index: 3;
+  will-change: transform;
+}
+
+.dp-reveal__cell {
+  background-color: var(--dp-yellow);
+  transition:
+    opacity 0.05s linear,
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  contain: strict;
+}
+
+.dp-reveal__cell--hidden {
+  opacity: 0;
+  transform: scale(0.4) rotate(6deg);
+  pointer-events: none;
+}
+
+.dp-reveal__hint {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .dp-reveal__hint {
+    font-size: 10px;
+    bottom: 12px;
+  }
+}

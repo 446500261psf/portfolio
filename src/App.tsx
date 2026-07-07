@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import BlackFridayStack from './components/BlackFridayStack'
+import DesignPerspectivesReveal from './components/DesignPerspectivesReveal'
 import DayCycleToggle from './components/DayCycleToggle'
 import PhoneImageCarousel from './components/PhoneImageCarousel'
 import { publicUrl } from './publicUrl'
@@ -101,6 +102,8 @@ function RevealImg({ y, h, src, name }: RevealImgProps) {
 
 export default function App() {
   return (
+    <>
+      <DesignPerspectivesReveal />
     <main className="portfolio">
       <div className="frame8-wrap">
         <div className="frame8">
@@ -129,5 +132,6 @@ export default function App() {
         </div>
       </div>
     </main>
+    </>
   )
 }
