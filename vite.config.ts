@@ -8,6 +8,14 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: process.env.BASE_PATH ?? '/',
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        demo: 'demo.html',
+      },
+    },
+  },
   server: {
     // 避免浏览器或中间层缓存 @vite/client 与模块，导致一直看到旧界面
     headers: {
