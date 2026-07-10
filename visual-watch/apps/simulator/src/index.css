@@ -93,11 +93,18 @@ body {
   border: 1px solid #c4c4cc;
   border-radius: 8px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.view-frame canvas {
+  flex: 1;
+  min-height: 0;
 }
 
 .view-frame--main {
   flex: 1;
-  min-height: 320px;
+  min-height: 360px;
 }
 
 .triple-row {
@@ -121,19 +128,9 @@ body {
   text-transform: uppercase;
   color: #666;
   pointer-events: none;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.75);
   padding: 2px 6px;
   border-radius: 4px;
-}
-
-.shape-canvas {
-  position: absolute !important;
-  inset: 0;
-  pointer-events: none;
-}
-
-.shape-canvas canvas {
-  pointer-events: auto;
 }
 
 .shape-controls {

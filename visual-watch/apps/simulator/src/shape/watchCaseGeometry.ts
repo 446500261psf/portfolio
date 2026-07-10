@@ -7,7 +7,6 @@ export function createWatchCaseGeometry(
 ): THREE.BufferGeometry {
   const { a, b, c, n } = params
   const verts: number[] = []
-  const norms: number[] = []
   const idx: number[] = []
 
   const cosN = (t: number) => Math.sign(t) * Math.pow(Math.abs(t), 2 / n)
@@ -21,22 +20,6 @@ export function createWatchCaseGeometry(
       const y = b * cosN(nu) * sinN(omega)
       const z = c * sinN(nu)
       verts.push(x, y, z)
-
-      const eps = 0.002
-      const x1 = a * cosN(nu + eps) * cosN(omega)
-      const y1 = b * cosN(nu + eps) * sinN(omega)
-      const z1 = c * sinN(nu + eps)
-      const tx = x1 - x
-      const ty = y1 - y
-      const tz = z1 - z
-      const x2 = a * cosN(nu) * cosN(omega + eps)
-      const ty2 = b * cosN(nu) * sinN(omega + eps) - y
-      const tz2 = c * sinN(nu) - z
-      const nx = ty * tz2 - tz * ty2
-      const ny = tz * (x2 - x) - tx * tz2
-      const nz = tx * ty2 - ty * (x2 - x)
-      const len = Math.hypot(nx, ny, nz) || 1
-      norms.push(nx / len, ny / len, nz / len)
     }
   }
 
@@ -53,8 +36,8 @@ export function createWatchCaseGeometry(
 
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3))
-  geo.setAttribute('normal', new THREE.Float32BufferAttribute(norms, 3))
   geo.setIndex(idx)
+  geo.computeVertexNormals()
   return geo
 }
 
