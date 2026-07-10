@@ -28,10 +28,21 @@
 ```
 visual-watch/
 ├── docs/              # PRD + 场系统规格
-├── apps/              # App + Web 潭面模拟器（待建）
+├── apps/
+│   └── simulator/     # Web 潭面模拟器 ✅
 ├── packages/
-│   └── cove-field/    # 共享渲染内核（待建）
+│   └── cove-field/    # 共享渲染内核（待提取）
 ├── firmware/
 └── hardware/
-    └── pebble-enclosure/
 ```
+
+## 快速体验 · 潭面模拟器
+
+```bash
+cd visual-watch/apps/simulator
+npm install
+npm run dev
+```
+
+- 超椭圆 n=4.5 鹅软石 2.5D 表体（SVG 精确路径）
+- 六舒适区粒子场 + 四时相 + CZM 滑杆
