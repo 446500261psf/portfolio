@@ -19,9 +19,9 @@ export function ShapeControls({ sliders, params, onChange }: ShapeControlsProps)
   return (
     <aside className="shape-controls">
       <header>
-        <p className="eyebrow">Cove Watch · 外形工作室</p>
-        <h1>超椭圆表盘轮廓</h1>
-        <p className="subtitle">2D 三视图 · 滑杆编辑 · 实时同步轮廓</p>
+        <p className="eyebrow">Technische Zeichnung</p>
+        <h1>表盘轮廓</h1>
+        <p className="subtitle">三视图 · 参数编辑 · 1:1 mm</p>
       </header>
 
       <section className="control-block">
