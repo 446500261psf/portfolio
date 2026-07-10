@@ -74,10 +74,24 @@ body {
   min-height: 0;
 }
 
-.shape-studio {
-  position: relative;
-  height: 100%;
-  min-height: 520px;
+.shape-studio--2d {
+  min-height: auto;
+}
+
+.three-view-sheet-wrap {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  background: #e8e8ec;
+  border: 1px solid #c8c8d0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.three-view-sheet {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .shape-viewports {

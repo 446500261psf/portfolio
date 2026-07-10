@@ -20,8 +20,8 @@ export function ShapeControls({ sliders, params, onChange }: ShapeControlsProps)
     <aside className="shape-controls">
       <header>
         <p className="eyebrow">Cove Watch · 外形工作室</p>
-        <h1>超椭球表壳</h1>
-        <p className="subtitle">调整参数 · 三视图实时同步 · 拖拽主视图旋转</p>
+        <h1>超椭圆表盘轮廓</h1>
+        <p className="subtitle">2D 三视图 · 滑杆编辑 · 实时同步轮廓</p>
       </header>
 
       <section className="control-block">
@@ -98,9 +98,10 @@ export function ShapeControls({ sliders, params, onChange }: ShapeControlsProps)
 
       <section className="control-block hint-block">
         <p>
-          <strong>正视图</strong>：X–Y 超椭圆（接近圆角方/近圆）<br />
-          <strong>侧视图</strong>：Y–Z 扁薄剖面<br />
-          <strong>俯视图</strong>：X–Z 厚度轮廓
+          <strong>正视图</strong>：表盘正面超椭圆（近圆）<br />
+          <strong>侧视图</strong>：扁薄侧面圆润剖面<br />
+          <strong>俯视图</strong>：宽度 × 厚度轮廓<br />
+          虚线为投影对齐关系
         </p>
       </section>
     </aside>
