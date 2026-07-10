@@ -1,6 +1,6 @@
 # Cove 潭面模拟器
 
-Web 端 Phase 0 原型：超椭圆鹅软石 2.5D 表体 + 舒适区动态场渲染。
+Web 端 Phase 0 原型：**3D 超椭球鹅软石表壳** + **曲面凹潭动态场**（Three.js）。
 
 ## 运行
 
@@ -10,20 +10,16 @@ npm install
 npm run dev
 ```
 
-浏览器打开终端提示的本地地址（通常 `http://localhost:5173`）。
+## 3D 实现
+
+- **超椭球表壳**（n=4.5，长宽比 1.156:1）：`createSuperellipsoidGeometry` + 前盖开窗
+- **凹面潭网格**：`basinZ(x,y)` 在 3D 表壳上内凹，非平面 Canvas
+- **曲面粒子**：在 (x,y) 参数域模拟，映射到 `basinZ` 曲面高度
+- **潭面 Shader**：色场随 `vRho` 在曲面上变化 + Fresnel 边缘光
+- **2.5D 唇边**：`createLipRing` 沿超椭圆岸隆起
+- **交互**：OrbitControls 拖拽旋转、滚轮缩放
 
 ## 功能
 
-- **超椭圆表体**：n=4.5，长宽比 1.156:1，SVG 精确路径裁剪
-- **2.5D 鹅软石外壳**：渐变中框、唇边高光、侧键、潭口岸线
-- **六舒适区原型**：深潭 / 暖流 / 跃泉 / 静岸 / 紊流 / 空潭
-- **四时相**：Dwelling / Approach / Crossing / Drift
-- **CZM 滑杆**：激活度 / 开放度 / 稳定度实时 morph
-- **cove-field 引擎**：粒子 + 色场 + 边缘光 + 呼吸调制
-
-## 构建
-
-```bash
-npm run build
-npm run preview
-```
+- 六舒适区原型 + 四时相 + CZM 滑杆
+- 抬腕亮潭（边缘光 boost）

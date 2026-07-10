@@ -6,11 +6,8 @@ import {
   paramsFromCzm,
 } from './cove-field/presets'
 import { behaviorLabel } from './cove-field/particles'
-import { PebbleShell } from './components/PebbleShell'
-import { CoveCanvas } from './components/CoveCanvas'
 import { Controls } from './components/Controls'
-
-const DISPLAY_W = 280
+import { PebbleScene3D } from './three/PebbleScene3D'
 
 export default function App() {
   const [preset, setPreset] = useState<PresetId>('deep_pool')
@@ -18,7 +15,7 @@ export default function App() {
   const [nextPreset, setNextPreset] = useState<PresetId>('warm_current')
   const [crossingProgress, setCrossingProgress] = useState(0.45)
   const [customCzm, setCustomCzm] = useState<CZM | null>(null)
-  const [wakeBoost, setWakeBoost] = useState(false)
+  const [wakeTick, setWakeTick] = useState(0)
 
   const activePreset = PRESETS[preset]
   const nextParams = PRESETS[nextPreset].params
@@ -28,28 +25,12 @@ export default function App() {
       ? paramsFromCzm(customCzm)
       : { ...activePreset.params }
     return applyPhaseModifiers(base, phase, nextParams, crossingProgress)
-  }, [
-    activePreset,
-    customCzm,
-    phase,
-    nextParams,
-    crossingProgress,
-  ])
-
-  const displayH = Math.round(DISPLAY_W * 1.156)
+  }, [activePreset, customCzm, phase, nextParams, crossingProgress])
 
   return (
     <div className="app">
       <main className="stage-panel">
-        <PebbleShell displayWidth={DISPLAY_W}>
-          <CoveCanvas
-            width={DISPLAY_W}
-            height={displayH}
-            params={fieldParams}
-            edgeGather={0}
-            wakeBoost={wakeBoost}
-          />
-        </PebbleShell>
+        <PebbleScene3D params={fieldParams} wakeBoost={wakeTick} />
       </main>
 
       <Controls
@@ -65,7 +46,7 @@ export default function App() {
         onNextPresetChange={setNextPreset}
         onCrossingProgressChange={setCrossingProgress}
         onCzmChange={setCustomCzm}
-        onWake={() => setWakeBoost(true)}
+        onWake={() => setWakeTick((t) => t + 1)}
       />
     </div>
   )
