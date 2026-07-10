@@ -260,9 +260,9 @@ export function ThreeViewSheet({ params }: ThreeViewSheetProps) {
   const { a, b, c, n } = params
   const views = useMemo(() => buildOutlineViews(a, b, c, n), [a, b, c, n])
 
-  const frontPath = pointsToSvgPath(views.front)
-  const sidePath = pointsToSvgPath(views.side)
-  const topPath = pointsToSvgPath(views.top)
+  const frontPath = pointsToSvgPath(views.front, SCALE)
+  const sidePath = pointsToSvgPath(views.side, SCALE)
+  const topPath = pointsToSvgPath(views.top, SCALE)
 
   const frontCx = 240
   const frontCy = 340

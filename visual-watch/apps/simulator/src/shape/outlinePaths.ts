@@ -24,12 +24,15 @@ export function superellipsePoints(
   return pts
 }
 
-/** SVG path，Y 轴翻转以匹配屏幕 */
-export function pointsToSvgPath(points: Point2[]): string {
+/** SVG path，Y 轴翻转以匹配屏幕；scale 为 mm → SVG 像素比例（须与尺寸线一致） */
+export function pointsToSvgPath(points: Point2[], scale = 1): string {
   if (points.length === 0) return ''
   return (
     points
-      .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(3)} ${(-p.y).toFixed(3)}`)
+      .map(
+        (p, i) =>
+          `${i === 0 ? 'M' : 'L'} ${(p.x * scale).toFixed(3)} ${(-p.y * scale).toFixed(3)}`,
+      )
       .join(' ') + ' Z'
   )
 }
