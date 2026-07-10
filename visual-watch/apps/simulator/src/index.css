@@ -7,12 +7,12 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.5;
-  background: #0c0c0f;
-  color: #e8e6e3;
+  background: #e8e8ec;
+  color: #2a2a30;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -26,9 +26,234 @@ body {
 
 .app {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app--shape {
   display: grid;
-  grid-template-columns: 1fr min(400px, 38vw);
-  gap: 0;
+  grid-template-columns: 1fr min(360px, 34vw);
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.mode-tabs {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: #dcdce2;
+  border-bottom: 1px solid #c8c8d0;
+}
+
+.mode-tabs button {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid #b8b8c0;
+  border-radius: 8px;
+  background: #ececf0;
+  color: #444;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.mode-tabs button.active {
+  background: #fff;
+  border-color: #888;
+  color: #111;
+}
+
+.mode-tabs button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.shape-panel {
+  padding: 1rem 1.25rem 1.25rem;
+  background: #e8e8ec;
+  min-height: 0;
+}
+
+.shape-studio {
+  position: relative;
+  height: 100%;
+  min-height: 520px;
+}
+
+.shape-viewports {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+}
+
+.view-frame {
+  position: relative;
+  background: #e0e0e6;
+  border: 1px solid #c4c4cc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-frame--main {
+  flex: 1;
+  min-height: 320px;
+}
+
+.triple-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  height: 180px;
+}
+
+.view-frame--ortho {
+  min-height: 160px;
+}
+
+.view-label {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  z-index: 2;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #666;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.65);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.shape-canvas {
+  position: absolute !important;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shape-canvas canvas {
+  pointer-events: auto;
+}
+
+.shape-controls {
+  padding: 1.25rem 1.25rem 2rem;
+  background: #f2f2f6;
+  border-left: 1px solid #d0d0d8;
+  overflow-y: auto;
+}
+
+.shape-controls header {
+  margin-bottom: 1.5rem;
+}
+
+.shape-controls h1 {
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.shape-controls .subtitle {
+  font-size: 0.82rem;
+  color: #666;
+}
+
+.shape-controls .eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: #555;
+  margin-top: 0.35rem;
+}
+
+.value-readout {
+  display: block;
+  font-size: 0.72rem;
+  color: #3d6a8c;
+  margin-top: 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.shape-controls .control-block {
+  margin-bottom: 1.5rem;
+}
+
+.shape-controls .control-block h2 {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 0.65rem;
+  font-weight: 500;
+}
+
+.shape-controls .slider-row {
+  margin-bottom: 0.85rem;
+}
+
+.shape-controls .slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  margin-bottom: 0.3rem;
+}
+
+.shape-controls .slider-labels .hint {
+  color: #888;
+  font-size: 0.68rem;
+}
+
+.shape-controls input[type='range'] {
+  width: 100%;
+  accent-color: #3d6a8c;
+}
+
+.shape-controls .stats {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.shape-controls .stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #666;
+}
+
+.shape-controls .stat strong {
+  color: #333;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.hint-block p {
+  font-size: 0.75rem;
+  color: #666;
+  line-height: 1.55;
+}
+
+@media (max-width: 960px) {
+  .app--shape {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+
+  .shape-controls {
+    border-left: none;
+    border-top: 1px solid #d0d0d8;
+  }
+
+  .triple-row {
+    height: 140px;
+  }
 }
 
 @media (max-width: 900px) {

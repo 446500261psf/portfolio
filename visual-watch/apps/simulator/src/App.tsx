@@ -1,53 +1,57 @@
 import { useMemo, useState } from 'react'
-import type { CZM, PhaseId, PresetId } from './cove-field/types'
+import { caseFromSliders } from './shape/CaseParams'
 import {
-  PRESETS,
-  applyPhaseModifiers,
-  paramsFromCzm,
-} from './cove-field/presets'
-import { behaviorLabel } from './cove-field/particles'
-import { Controls } from './components/Controls'
-import { PebbleScene3D } from './three/PebbleScene3D'
+  DEFAULT_SLIDERS,
+  ShapeControls,
+  type ShapeSliderState,
+} from './shape/ShapeControls'
+import { ShapeStudio } from './shape/ShapeStudio'
+
+type AppMode = 'shape' | 'field'
 
 export default function App() {
-  const [preset, setPreset] = useState<PresetId>('deep_pool')
-  const [phase, setPhase] = useState<PhaseId>('dwelling')
-  const [nextPreset, setNextPreset] = useState<PresetId>('warm_current')
-  const [crossingProgress, setCrossingProgress] = useState(0.45)
-  const [customCzm, setCustomCzm] = useState<CZM | null>(null)
-  const [wakeTick, setWakeTick] = useState(0)
+  const [mode, setMode] = useState<AppMode>('shape')
+  const [sliders, setSliders] = useState<ShapeSliderState>(DEFAULT_SLIDERS)
 
-  const activePreset = PRESETS[preset]
-  const nextParams = PRESETS[nextPreset].params
+  const caseParams = useMemo(() => caseFromSliders(sliders), [sliders])
 
-  const fieldParams = useMemo(() => {
-    const base = customCzm
-      ? paramsFromCzm(customCzm)
-      : { ...activePreset.params }
-    return applyPhaseModifiers(base, phase, nextParams, crossingProgress)
-  }, [activePreset, customCzm, phase, nextParams, crossingProgress])
+  const handleSliderChange = (next: Partial<ShapeSliderState>) => {
+    setSliders((s) => ({ ...s, ...next }))
+  }
 
   return (
-    <div className="app">
-      <main className="stage-panel">
-        <PebbleScene3D params={fieldParams} wakeBoost={wakeTick} />
-      </main>
+    <div id="shape-root" className="app app--shape">
+      <nav className="mode-tabs">
+        <button
+          type="button"
+          className={mode === 'shape' ? 'active' : ''}
+          onClick={() => setMode('shape')}
+        >
+          外形工作室
+        </button>
+        <button
+          type="button"
+          className={mode === 'field' ? 'active' : ''}
+          onClick={() => setMode('field')}
+          disabled
+          title="潭面场后续接入此外形"
+        >
+          潭面场（待接入）
+        </button>
+      </nav>
 
-      <Controls
-        preset={preset}
-        phase={phase}
-        nextPreset={nextPreset}
-        crossingProgress={crossingProgress}
-        customCzm={customCzm}
-        feeling={activePreset.feeling}
-        behavior={behaviorLabel(fieldParams.behavior)}
-        onPresetChange={setPreset}
-        onPhaseChange={setPhase}
-        onNextPresetChange={setNextPreset}
-        onCrossingProgressChange={setCrossingProgress}
-        onCzmChange={setCustomCzm}
-        onWake={() => setWakeTick((t) => t + 1)}
-      />
+      {mode === 'shape' && (
+        <>
+          <main className="shape-panel">
+            <ShapeStudio params={caseParams} />
+          </main>
+          <ShapeControls
+            sliders={sliders}
+            params={caseParams}
+            onChange={handleSliderChange}
+          />
+        </>
+      )}
     </div>
   )
 }
