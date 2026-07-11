@@ -16,7 +16,7 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
       <header>
         <p className="eyebrow">Studio Lighting</p>
         <h1>光源</h1>
-        <p className="subtitle">主光 + 反射光 · 面光源</p>
+        <p className="subtitle">主光 + 反射光 · 柔光板反射</p>
       </header>
 
       <LightSection
@@ -25,8 +25,8 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
         light={lights.key}
         onPatch={patchKey}
         posRange={80}
-        intensityMax={120}
-        sizeMax={90}
+        intensityMax={100}
+        sizeMax={120}
       />
 
       <LightSection
@@ -34,15 +34,15 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
         light={lights.fill}
         onPatch={patchFill}
         posRange={80}
-        intensityMax={60}
-        sizeMax={100}
+        intensityMax={80}
+        sizeMax={140}
       />
 
       <section className="control-block hint-block">
         <p>
-          <strong>大小</strong>：控制光锥张角与柔边<br />
-          <strong>强度</strong>：镜面高光亮度<br />
-          <strong>位置</strong>：XYZ 世界坐标，自动朝向表壳中心<br />
+          <strong>大小</strong>：柔光板宽 × 高 → 表盘反射面积<br />
+          <strong>强度</strong>：反射亮度<br />
+          <strong>位置</strong>：柔光板 XYZ，决定反射落在表盘何处<br />
           外形参数请在外形工作室调节
         </p>
       </section>

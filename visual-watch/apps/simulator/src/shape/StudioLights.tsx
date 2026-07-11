@@ -1,53 +1,86 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { AreaLightSettings } from './studioLighting'
 
-const TARGET = new THREE.Vector3(0, 0, 0)
+function addReflectionCard(studio: THREE.Scene, cfg: AreaLightSettings) {
+  const card = new THREE.Group()
+  card.position.set(cfg.position.x, cfg.position.y, cfg.position.z)
+  card.lookAt(0, 0, 0)
 
-/** width/height → 聚光角 + 半影 */
-export function spotFromConfig(config: AreaLightSettings) {
-  const dist = Math.hypot(config.position.x, config.position.y, config.position.z) || 1
-  const half = Math.max(config.width, config.height) / 2
-  const angle = THREE.MathUtils.clamp(Math.atan(half / dist) * 2, 0.06, Math.PI / 2.4)
-  const penumbra = THREE.MathUtils.clamp(config.height / Math.max(config.width, 1), 0.15, 1)
-  return { angle, penumbra, distance: dist * 4.5 }
+  const color = new THREE.Color(cfg.color)
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(cfg.width, cfg.height),
+    new THREE.MeshStandardMaterial({
+      color: '#000000',
+      emissive: color,
+      emissiveIntensity: cfg.intensity / 35,
+      side: THREE.DoubleSide,
+      toneMapped: false,
+    }),
+  )
+  card.add(mesh)
+  studio.add(card)
 }
 
-function StudioSpot({ config }: { config: AreaLightSettings }) {
-  const groupRef = useRef<THREE.Group>(null)
-  const lightRef = useRef<THREE.SpotLight>(null)
+function buildReflectionStudio(key: AreaLightSettings, fill: AreaLightSettings): THREE.Scene {
+  const studio = new THREE.Scene()
+  studio.background = new THREE.Color(0x000000)
+  addReflectionCard(studio, key)
+  addReflectionCard(studio, fill)
+  return studio
+}
+
+/** 由主光/反射光尺寸与强度烘焙环境贴图 → 表盘大面积柔反射 */
+export function ReflectionStudioEnv({
+  keyLight,
+  fillLight,
+}: {
+  keyLight: AreaLightSettings
+  fillLight: AreaLightSettings
+}) {
+  const { gl, scene } = useThree()
 
   useLayoutEffect(() => {
-    const group = groupRef.current
-    const light = lightRef.current
-    if (!group || !light) return
+    const pmrem = new THREE.PMREMGenerator(gl)
+    pmrem.compileEquirectangularShader()
+    const studio = buildReflectionStudio(keyLight, fillLight)
+    const env = pmrem.fromScene(studio, 0.08).texture
+    scene.environment = env
 
-    group.position.set(config.position.x, config.position.y, config.position.z)
-    group.lookAt(TARGET)
+    studio.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        obj.geometry.dispose()
+        const mat = obj.material
+        if (mat instanceof THREE.Material) mat.dispose()
+      }
+    })
 
-    const spot = spotFromConfig(config)
-    light.intensity = config.intensity
-    light.color.set(config.color)
-    light.angle = spot.angle
-    light.penumbra = spot.penumbra
-    light.distance = spot.distance
-    light.decay = 2
+    return () => {
+      scene.environment = null
+      env.dispose()
+      pmrem.dispose()
+    }
   }, [
-    config.intensity,
-    config.color,
-    config.width,
-    config.height,
-    config.position.x,
-    config.position.y,
-    config.position.z,
+    gl,
+    scene,
+    keyLight.intensity,
+    keyLight.width,
+    keyLight.height,
+    keyLight.color,
+    keyLight.position.x,
+    keyLight.position.y,
+    keyLight.position.z,
+    fillLight.intensity,
+    fillLight.width,
+    fillLight.height,
+    fillLight.color,
+    fillLight.position.x,
+    fillLight.position.y,
+    fillLight.position.z,
   ])
 
-  return (
-    <group ref={groupRef}>
-      <spotLight ref={lightRef} castShadow={false} />
-    </group>
-  )
+  return null
 }
 
 interface StudioLightsProps {
@@ -56,21 +89,37 @@ interface StudioLightsProps {
   glassMode?: boolean
 }
 
-/** 主光 + 反射光；反射完全由聚光驱动，无环境贴图 */
 export function StudioLights({ keyLight, fillLight, glassMode = true }: StudioLightsProps) {
   const { gl } = useThree()
 
   useLayoutEffect(() => {
     gl.toneMapping = THREE.ACESFilmicToneMapping
-    gl.toneMappingExposure = glassMode ? 0.78 : 1.0
+    gl.toneMappingExposure = glassMode ? 0.82 : 1.0
     gl.outputColorSpace = THREE.SRGBColorSpace
   }, [gl, glassMode])
 
+  if (glassMode) {
+    return (
+      <>
+        <ambientLight intensity={0.03} />
+        <ReflectionStudioEnv keyLight={keyLight} fillLight={fillLight} />
+      </>
+    )
+  }
+
   return (
     <>
-      <ambientLight intensity={glassMode ? 0.04 : 0.3} />
-      <StudioSpot key={`key-${keyLight.intensity}-${keyLight.position.x}-${keyLight.width}`} config={keyLight} />
-      <StudioSpot key={`fill-${fillLight.intensity}-${fillLight.position.x}-${fillLight.width}`} config={fillLight} />
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[60, 70, 50]} intensity={0.9} />
+      <directionalLight position={[-40, 30, -30]} intensity={0.25} />
     </>
   )
 }
+
+/** 环境反射总强度 — 由两盏灯强度共同决定 */
+export function reflectionEnvStrength(key: AreaLightSettings, fill: AreaLightSettings): number {
+  const blend = key.intensity * 0.65 + fill.intensity * 0.35
+  return THREE.MathUtils.clamp(blend / 55, 0.05, 1.35)
+}
+
+export { buildReflectionStudio }

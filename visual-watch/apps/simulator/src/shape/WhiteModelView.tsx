@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
 import type { StudioLightingState } from './studioLighting'
-import { StudioLights } from './StudioLights'
+import { StudioLights, reflectionEnvStrength } from './StudioLights'
 
 interface WhiteModelViewProps {
   params: CaseParams
@@ -22,13 +22,20 @@ function cameraDistance(params: CaseParams): number {
 function CaseMesh({
   params,
   material,
+  lights,
 }: {
   params: CaseParams
   material: SurfaceMaterial
+  lights: StudioLightingState
 }) {
   const geometry = useMemo(
     () => createWatchCaseGeometry(params, 80),
     [params.a, params.b, params.c, params.n],
+  )
+
+  const envStrength = useMemo(
+    () => reflectionEnvStrength(lights.key, lights.fill),
+    [lights.key.intensity, lights.fill.intensity],
   )
 
   if (material === 'glass') {
@@ -36,18 +43,18 @@ function CaseMesh({
       <mesh geometry={geometry} receiveShadow>
         <meshPhysicalMaterial
           color="#050505"
-          roughness={0.035}
+          roughness={0.06}
           metalness={0}
-          transmission={0.32}
+          transmission={0.22}
           thickness={params.c * 1.2}
           ior={1.52}
-          envMapIntensity={0}
-          specularIntensity={1}
+          envMapIntensity={envStrength}
+          specularIntensity={0.35}
           specularColor="#ffffff"
-          clearcoat={0.92}
-          clearcoatRoughness={0.018}
+          clearcoat={1}
+          clearcoatRoughness={0.045}
           attenuationColor="#000000"
-          attenuationDistance={params.c * 1.8}
+          attenuationDistance={params.c * 1.6}
           transparent
           side={THREE.FrontSide}
         />
@@ -92,7 +99,7 @@ function SceneContent({
         glassMode={material === 'glass'}
       />
 
-      <CaseMesh params={params} material={material} />
+      <CaseMesh params={params} material={material} lights={lights} />
 
       <ContactShadows
         position={[0, 0, -params.c - 0.04]}
@@ -165,7 +172,7 @@ export function WhiteModelView({ params, lights }: WhiteModelViewProps) {
           {`${(a * 2).toFixed(1)} × ${(b * 2).toFixed(1)} × ${(c * 2).toFixed(1)} mm · n=${n.toFixed(1)}`}
         </span>
         <span className="white-model-spec__hint">
-          主光 + 反射光面光源 · 右侧面板调节 · 拖拽旋转
+          主光 + 反射光柔光板 · 大小/强度/位置控制表盘反射 · 拖拽旋转
         </span>
       </footer>
     </div>
