@@ -10,8 +10,8 @@ import {
 } from './figmaDialStates'
 import type { DialTextureMap } from './useDialKeyframes'
 
-/** Pool 内腔相对玻璃壳的缩放 */
-const POOL_SCALE = 0.965
+/** Pool 内腔相对玻璃壳的缩放 — 贴近玻璃，光场浮在表面正下方 */
+const POOL_SCALE = 0.985
 /** 光场 xy 分布相对表壳的内缩（与 Figma 关键帧潭口对齐） */
 const FIELD_INSET = 0.94
 
@@ -51,7 +51,18 @@ float rhoAt(vec3 p) {
   return pow(q.x, uN) + pow(q.y, uN) + pow(q.z, uN);
 }
 
-// 体积中一点的发光：Figma 光场 xy 分布 × 壳层密度 × 纵深偏置
+// 新旧状态 × 各两帧关键帧的混合采样；uv 越界处返回 0（防止 clamp 拉丝）
+vec3 blendedField(vec2 uvRaw) {
+  float mask = step(abs(uvRaw.x - 0.5), 0.494) * step(abs(uvRaw.y - 0.5), 0.494);
+  if (mask < 0.5) return vec3(0.0);
+  vec2 uv = uvRaw;
+  vec4 texOld = mix(texture2D(uTexOldA, uv), texture2D(uTexOldB, uv), uMixOld);
+  vec4 texNew = mix(texture2D(uTexNewA, uv), texture2D(uTexNewB, uv), uMixNew);
+  return texOld.rgb * texOld.a * uWOld * uBreathOld
+       + texNew.rgb * texNew.a * uWNew * uBreathNew;
+}
+
+// 体积中一点的发光：边缘/背部流动 + 稀薄填充（前壁显示层由解析项负责）
 vec3 fieldColor(vec3 p, float rho) {
   // 边缘流动：光场绕潭心缓慢摆动，越贴内壁摆幅越大
   float ang = uSwirl * smoothstep(0.25, 1.0, rho);
@@ -59,21 +70,14 @@ vec3 fieldColor(vec3 p, float rho) {
   float sn = sin(ang);
   vec2 xy = mat2(cs, -sn, sn, cs) * p.xy;
 
-  vec2 uv = clamp(0.5 + xy / (2.0 * uUvHalf), 0.0, 1.0);
+  vec3 col = blendedField(0.5 + xy / (2.0 * uUvHalf));
 
-  vec4 texOld = mix(texture2D(uTexOldA, uv), texture2D(uTexOldB, uv), uMixOld);
-  vec4 texNew = mix(texture2D(uTexNewA, uv), texture2D(uTexNewB, uv), uMixNew);
-  vec3 col = texOld.rgb * texOld.a * uWOld * uBreathOld
-           + texNew.rgb * texNew.a * uWNew * uBreathNew;
-
-  // 密度分布：贴内壁最亮（边缘/背部流动），中心是稀薄填充光
   float shell = smoothstep(0.35, 1.0, rho);
   shell *= shell;
-  float density = 0.20 + 0.95 * shell;
+  float frontness = smoothstep(-0.15, 1.0, p.z / uHalf.z);
 
-  // 纵深偏置：光住在潭底（-z），靠近正面玻璃逐渐变淡 → 潭状景深
-  float front = smoothstep(-0.5, 1.0, p.z / uHalf.z);
-  density *= mix(1.0, 0.55, front);
+  float rimBackFlow = shell * (1.0 - 0.75 * frontness);
+  float density = 0.07 + 0.55 * rimBackFlow;
 
   return col * density;
 }
@@ -86,11 +90,17 @@ float ditherHash(vec2 co) {
 void main() {
   vec3 rd = normalize(vWorldPos - cameraPosition);
 
+  // —— 贴玻璃显示层（解析，零采样噪声）——
+  // 入射点即内壁：直接采样光场，UI 像手机屏一样浮在玻璃正下方；
+  // swirl 不作用于此层，保证 UI 稳定不晃
+  float frontness = smoothstep(0.0, 0.85, vWorldPos.z / uHalf.z);
+  vec3 surface = blendedField(0.5 + vWorldPos.xy / (2.0 * uUvHalf)) * frontness * frontness * 1.2;
+
+  // —— Pool 体积层（边缘/背部流动 + 稀薄填充）——
   float span = 2.2 * max(uHalf.x, max(uHalf.y, uHalf.z));
-  const int STEPS = 36;
+  const int STEPS = 30;
   float stepLen = span / float(STEPS);
 
-  // 抖动起点：把带状量化误差换成噪声
   vec3 p = vWorldPos + rd * stepLen * ditherHash(gl_FragCoord.xy);
 
   vec3 acc = vec3(0.0);
@@ -101,9 +111,9 @@ void main() {
     acc += fieldColor(p, rho) * stepLen;
   }
 
-  vec3 col = acc * uIntensity;
+  vec3 col = surface + acc * uIntensity;
   // 柔和压缩：防止长光路（侧/背视角）过曝发白
-  col = col / (1.0 + col * 0.45);
+  col = col / (1.0 + col * 0.4);
 
   gl_FragColor = vec4(col, 1.0);
   #include <tonemapping_fragment>

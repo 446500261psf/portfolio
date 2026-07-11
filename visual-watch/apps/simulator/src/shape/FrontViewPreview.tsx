@@ -46,18 +46,18 @@ function WatchGlassScene({ params, dialId, lights }: FrontViewPreviewProps) {
       <mesh geometry={caseGeo} renderOrder={1}>
         <meshPhysicalMaterial
           color="#050505"
-          roughness={0.06}
+          roughness={0.05}
           metalness={0}
           transmission={0.22}
-          thickness={params.c * 1.2}
-          ior={1.52}
+          thickness={params.c * 0.3}
+          ior={1.5}
           envMapIntensity={envStrength}
-          specularIntensity={0.35}
+          specularIntensity={0.32}
           specularColor="#ffffff"
           clearcoat={1}
-          clearcoatRoughness={0.045}
+          clearcoatRoughness={0.035}
           attenuationColor="#000000"
-          attenuationDistance={params.c * 1.6}
+          attenuationDistance={params.c * 2.4}
           transparent
           depthWrite={false}
           side={THREE.FrontSide}
