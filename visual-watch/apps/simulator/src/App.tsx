@@ -1,15 +1,17 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { caseFromSliders } from './shape/CaseParams'
 import {
-  DEFAULT_SLIDERS,
   ShapeControls,
   type ShapeSliderState,
 } from './shape/ShapeControls'
 import { ShapeStudio } from './shape/ShapeStudio'
 import { LightControls } from './shape/LightControls'
-import { DialControls, DEFAULT_FIGMA_DIAL } from './shape/DialControls'
-import { DEFAULT_STUDIO_LIGHTS, type StudioLightingState } from './shape/studioLighting'
+import { DialControls } from './shape/DialControls'
+import type { StudioLightingState } from './shape/studioLighting'
 import type { FigmaDialId } from './dial/figmaDialStates'
+import type { AppMode, SurfaceMaterial } from './simulatorStorage'
+import { getInitialSimulatorState } from './usePersistSimulator'
+import { usePersistSimulator } from './usePersistSimulator'
 
 const WhiteModelView = lazy(() =>
   import('./shape/WhiteModelView').then((m) => ({ default: m.WhiteModelView })),
@@ -19,15 +21,18 @@ const FrontViewPreview = lazy(() =>
   import('./shape/FrontViewPreview').then((m) => ({ default: m.FrontViewPreview })),
 )
 
-type AppMode = 'shape' | 'white3d' | 'frontview' | 'field'
+const initial = getInitialSimulatorState()
 
 export default function App() {
-  const [mode, setMode] = useState<AppMode>('shape')
-  const [sliders, setSliders] = useState<ShapeSliderState>(DEFAULT_SLIDERS)
-  const [lights, setLights] = useState<StudioLightingState>(DEFAULT_STUDIO_LIGHTS)
-  const [dialId, setDialId] = useState<FigmaDialId>(DEFAULT_FIGMA_DIAL)
+  const [mode, setMode] = useState<AppMode>(initial.mode)
+  const [sliders, setSliders] = useState<ShapeSliderState>(initial.sliders)
+  const [lights, setLights] = useState<StudioLightingState>(initial.lights)
+  const [dialId, setDialId] = useState<FigmaDialId>(initial.dialId)
+  const [surfaceMaterial, setSurfaceMaterial] = useState<SurfaceMaterial>(initial.surfaceMaterial)
 
   const caseParams = useMemo(() => caseFromSliders(sliders), [sliders])
+
+  usePersistSimulator(mode, sliders, lights, dialId, surfaceMaterial)
 
   const handleSliderChange = (next: Partial<ShapeSliderState>) => {
     setSliders((s) => ({ ...s, ...next }))
@@ -92,7 +97,12 @@ export default function App() {
         <>
           <main className="shape-panel shape-panel--3d">
             <Suspense fallback={<p className="white-model-loading">加载 3D 引擎…</p>}>
-              <WhiteModelView params={caseParams} lights={lights} />
+              <WhiteModelView
+                params={caseParams}
+                lights={lights}
+                material={surfaceMaterial}
+                onMaterialChange={setSurfaceMaterial}
+              />
             </Suspense>
           </main>
           <LightControls lights={lights} onChange={handleLightChange} />

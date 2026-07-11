@@ -1,18 +1,22 @@
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Bounds, ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
 import type { StudioLightingState } from './studioLighting'
-import { StudioLights, reflectionEnvStrength } from './StudioLights'
+import type { SurfaceMaterial } from '../simulatorStorage'
 
 interface WhiteModelViewProps {
   params: CaseParams
   lights: StudioLightingState
+  material: SurfaceMaterial
+  onMaterialChange: (material: SurfaceMaterial) => void
 }
 
-export type SurfaceMaterial = 'clay' | 'glass'
+import { StudioLights, reflectionEnvStrength } from './StudioLights'
+
+export type { SurfaceMaterial } from '../simulatorStorage'
 
 function cameraDistance(params: CaseParams): number {
   const span = Math.max(params.a, params.b, params.c) * 2
@@ -116,9 +120,13 @@ function SceneContent({
 }
 
 /** 由三视图参数挤出表壳 · 可调主光/反射光 */
-export function WhiteModelView({ params, lights }: WhiteModelViewProps) {
+export function WhiteModelView({
+  params,
+  lights,
+  material,
+  onMaterialChange,
+}: WhiteModelViewProps) {
   const { a, b, c, n } = params
-  const [material, setMaterial] = useState<SurfaceMaterial>('glass')
   const camKey = `${a.toFixed(2)}-${b.toFixed(2)}-${c.toFixed(2)}-${n.toFixed(2)}-${material}`
 
   return (
@@ -142,7 +150,7 @@ export function WhiteModelView({ params, lights }: WhiteModelViewProps) {
           role="tab"
           aria-selected={material === 'clay'}
           className={material === 'clay' ? 'active' : ''}
-          onClick={() => setMaterial('clay')}
+          onClick={() => onMaterialChange('clay')}
         >
           白膜
         </button>
@@ -151,7 +159,7 @@ export function WhiteModelView({ params, lights }: WhiteModelViewProps) {
           role="tab"
           aria-selected={material === 'glass'}
           className={material === 'glass' ? 'active' : ''}
-          onClick={() => setMaterial('glass')}
+          onClick={() => onMaterialChange('glass')}
         >
           镜面玻璃
         </button>
