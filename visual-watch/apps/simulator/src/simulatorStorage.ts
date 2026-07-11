@@ -8,6 +8,13 @@ export type SurfaceMaterial = 'clay' | 'glass'
 
 export type AppMode = 'shape' | 'white3d' | 'frontview' | 'field'
 
+/** OrbitControls 球坐标：水平角、俯仰角、相机距目标距离（缩放） */
+export interface OrbitCameraState {
+  azimuth: number
+  polar: number
+  distance: number
+}
+
 export interface PersistedSimulatorState {
   version: 1
   mode: AppMode
@@ -15,6 +22,7 @@ export interface PersistedSimulatorState {
   lights: StudioLightingState
   dialId: FigmaDialId
   surfaceMaterial: SurfaceMaterial
+  orbitCamera: OrbitCameraState | null
 }
 
 const VALID_MODES: AppMode[] = ['shape', 'white3d', 'frontview', 'field']
@@ -64,6 +72,27 @@ function parseLights(raw: unknown): StudioLightingState {
   }
 }
 
+function parseOrbitCamera(raw: unknown): OrbitCameraState | null {
+  if (!raw || typeof raw !== 'object') return null
+  const o = raw as Record<string, unknown>
+  const azimuth = Number(o.azimuth)
+  const polar = Number(o.polar)
+  const distance = Number(o.distance)
+  if (
+    !Number.isFinite(azimuth) ||
+    !Number.isFinite(polar) ||
+    !Number.isFinite(distance) ||
+    distance <= 0
+  ) {
+    return null
+  }
+  return {
+    azimuth,
+    polar: clamp(polar, 0.05, Math.PI - 0.05),
+    distance: clamp(distance, 1, 500),
+  }
+}
+
 export function loadPersistedState(): PersistedSimulatorState {
   const fallback: PersistedSimulatorState = {
     version: 1,
@@ -72,6 +101,7 @@ export function loadPersistedState(): PersistedSimulatorState {
     lights: DEFAULT_STUDIO_LIGHTS,
     dialId: DEFAULT_FIGMA_DIAL,
     surfaceMaterial: 'glass',
+    orbitCamera: null,
   }
 
   try {
@@ -100,6 +130,7 @@ export function loadPersistedState(): PersistedSimulatorState {
       lights: parseLights(parsed.lights),
       dialId,
       surfaceMaterial,
+      orbitCamera: parseOrbitCamera(parsed.orbitCamera),
     }
   } catch {
     return fallback

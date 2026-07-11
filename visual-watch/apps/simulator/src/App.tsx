@@ -9,7 +9,7 @@ import { LightControls } from './shape/LightControls'
 import { DialControls } from './shape/DialControls'
 import type { StudioLightingState } from './shape/studioLighting'
 import type { FigmaDialId } from './dial/figmaDialStates'
-import type { AppMode, SurfaceMaterial } from './simulatorStorage'
+import type { AppMode, OrbitCameraState, SurfaceMaterial } from './simulatorStorage'
 import { getInitialSimulatorState } from './usePersistSimulator'
 import { usePersistSimulator } from './usePersistSimulator'
 
@@ -29,10 +29,11 @@ export default function App() {
   const [lights, setLights] = useState<StudioLightingState>(initial.lights)
   const [dialId, setDialId] = useState<FigmaDialId>(initial.dialId)
   const [surfaceMaterial, setSurfaceMaterial] = useState<SurfaceMaterial>(initial.surfaceMaterial)
+  const [orbitCamera, setOrbitCamera] = useState<OrbitCameraState | null>(initial.orbitCamera)
 
   const caseParams = useMemo(() => caseFromSliders(sliders), [sliders])
 
-  usePersistSimulator(mode, sliders, lights, dialId, surfaceMaterial)
+  usePersistSimulator(mode, sliders, lights, dialId, surfaceMaterial, orbitCamera)
 
   const handleSliderChange = (next: Partial<ShapeSliderState>) => {
     setSliders((s) => ({ ...s, ...next }))
@@ -101,7 +102,9 @@ export default function App() {
                 params={caseParams}
                 lights={lights}
                 material={surfaceMaterial}
+                orbitCamera={orbitCamera}
                 onMaterialChange={setSurfaceMaterial}
+                onOrbitChange={setOrbitCamera}
               />
             </Suspense>
           </main>

@@ -8,7 +8,7 @@ import {
 import type { FigmaDialId } from './dial/figmaDialStates'
 import type { ShapeSliderState } from './shape/ShapeControls'
 import type { StudioLightingState } from './shape/studioLighting'
-import type { SurfaceMaterial } from './simulatorStorage'
+import type { SurfaceMaterial, OrbitCameraState } from './simulatorStorage'
 
 export function usePersistSimulator(
   mode: AppMode,
@@ -16,6 +16,7 @@ export function usePersistSimulator(
   lights: StudioLightingState,
   dialId: FigmaDialId,
   surfaceMaterial: SurfaceMaterial,
+  orbitCamera: OrbitCameraState | null,
 ): void {
   useEffect(() => {
     const snapshot: PersistedSimulatorState = {
@@ -25,10 +26,11 @@ export function usePersistSimulator(
       lights,
       dialId,
       surfaceMaterial,
+      orbitCamera,
     }
     const t = window.setTimeout(() => savePersistedState(snapshot), 120)
     return () => window.clearTimeout(t)
-  }, [mode, sliders, lights, dialId, surfaceMaterial])
+  }, [mode, sliders, lights, dialId, surfaceMaterial, orbitCamera])
 }
 
 export { getInitialSimulatorState }

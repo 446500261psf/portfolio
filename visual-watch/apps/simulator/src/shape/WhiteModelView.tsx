@@ -1,20 +1,22 @@
 import { Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Bounds, ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { Bounds, ContactShadows, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
 import type { StudioLightingState } from './studioLighting'
-import type { SurfaceMaterial } from '../simulatorStorage'
+import type { OrbitCameraState, SurfaceMaterial } from '../simulatorStorage'
+import { StudioLights, reflectionEnvStrength } from './StudioLights'
+import { PersistedOrbitControls } from './PersistedOrbitControls'
 
 interface WhiteModelViewProps {
   params: CaseParams
   lights: StudioLightingState
   material: SurfaceMaterial
+  orbitCamera: OrbitCameraState | null
   onMaterialChange: (material: SurfaceMaterial) => void
+  onOrbitChange: (orbit: OrbitCameraState) => void
 }
-
-import { StudioLights, reflectionEnvStrength } from './StudioLights'
 
 export type { SurfaceMaterial } from '../simulatorStorage'
 
@@ -77,12 +79,17 @@ function SceneContent({
   params,
   material,
   lights,
+  orbitCamera,
+  onOrbitChange,
 }: {
   params: CaseParams
   material: SurfaceMaterial
   lights: StudioLightingState
+  orbitCamera: OrbitCameraState | null
+  onOrbitChange: (orbit: OrbitCameraState) => void
 }) {
   const dist = cameraDistance(params)
+  const autoFit = orbitCamera === null
 
   return (
     <>
@@ -90,7 +97,7 @@ function SceneContent({
 
       <PerspectiveCamera makeDefault fov={32} near={0.1} far={500} />
 
-      <Bounds fit clip observe margin={1.32}>
+      <Bounds fit={autoFit} clip observe={autoFit} margin={1.32}>
         <StudioLights
           keyLight={lights.key}
           fillLight={lights.fill}
@@ -108,12 +115,11 @@ function SceneContent({
         far={params.c * 2.5}
       />
 
-      <OrbitControls
-        enablePan={false}
+      <PersistedOrbitControls
         minDistance={dist * 0.45}
         maxDistance={dist * 2.8}
-        enableDamping
-        dampingFactor={0.06}
+        orbit={orbitCamera}
+        onOrbitChange={onOrbitChange}
       />
     </>
   )
@@ -124,7 +130,9 @@ export function WhiteModelView({
   params,
   lights,
   material,
+  orbitCamera,
   onMaterialChange,
+  onOrbitChange,
 }: WhiteModelViewProps) {
   const { a, b, c, n } = params
   const camKey = `${a.toFixed(2)}-${b.toFixed(2)}-${c.toFixed(2)}-${n.toFixed(2)}-${material}`
@@ -139,7 +147,13 @@ export function WhiteModelView({
           gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
         >
           <Suspense fallback={null}>
-            <SceneContent params={params} material={material} lights={lights} />
+            <SceneContent
+              params={params}
+              material={material}
+              lights={lights}
+              orbitCamera={orbitCamera}
+              onOrbitChange={onOrbitChange}
+            />
           </Suspense>
         </Canvas>
       </div>
