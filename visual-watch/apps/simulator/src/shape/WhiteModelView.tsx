@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { Bounds, ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
@@ -83,38 +83,31 @@ function SceneContent({
   return (
     <>
       <color attach="background" args={['#0a0a0a']} />
-      <fog attach="fog" args={['#0a0a0a', dist * 2.2, dist * 5]} />
 
-      <PerspectiveCamera
-        makeDefault
-        position={[dist * 0.92, dist * 0.68, dist * 0.92]}
-        fov={32}
-        near={0.1}
-        far={500}
-      />
+      <PerspectiveCamera makeDefault fov={32} near={0.1} far={500} />
 
-      <StudioLights
-        keyLight={lights.key}
-        fillLight={lights.fill}
-        glassMode={material === 'glass'}
-      />
-
-      <CaseMesh params={params} material={material} lights={lights} />
+      <Bounds fit clip observe margin={1.32}>
+        <StudioLights
+          keyLight={lights.key}
+          fillLight={lights.fill}
+          glassMode={material === 'glass'}
+        />
+        <CaseMesh params={params} material={material} lights={lights} />
+      </Bounds>
 
       <ContactShadows
         position={[0, 0, -params.c - 0.04]}
         rotation={[Math.PI / 2, 0, 0]}
-        opacity={material === 'glass' ? 0.22 : 0.35}
-        scale={Math.max(params.a, params.b) * 4}
-        blur={2.4}
-        far={params.c * 3}
+        opacity={material === 'glass' ? 0.12 : 0.28}
+        scale={Math.max(params.a, params.b) * 3.2}
+        blur={2.8}
+        far={params.c * 2.5}
       />
 
       <OrbitControls
         enablePan={false}
-        minDistance={dist * 0.55}
-        maxDistance={dist * 2.4}
-        target={[0, 0, 0]}
+        minDistance={dist * 0.45}
+        maxDistance={dist * 2.8}
         enableDamping
         dampingFactor={0.06}
       />

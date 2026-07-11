@@ -104,8 +104,8 @@ body {
 
 .white-model-canvas-wrap {
   width: 100%;
-  aspect-ratio: 4 / 5;
-  max-height: min(72vh, 640px);
+  aspect-ratio: 1 / 1;
+  max-height: min(68vh, 560px);
   background: #0a0a0a;
   border: 1px solid var(--braun-border);
   border-radius: 2px;
