@@ -116,7 +116,7 @@ export default function App() {
         <>
           <main className="shape-panel shape-panel--3d">
             <Suspense fallback={<p className="white-model-loading">加载正视预览…</p>}>
-              <FrontViewPreview params={caseParams} dialId={dialId} />
+              <FrontViewPreview params={caseParams} dialId={dialId} lights={lights} />
             </Suspense>
           </main>
           <DialControls dialId={dialId} onChange={setDialId} />

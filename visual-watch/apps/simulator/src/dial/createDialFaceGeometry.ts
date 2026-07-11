@@ -4,12 +4,20 @@ import type { CaseParams } from '../shape/CaseParams'
 /** 表盘显示区相对表壳的内缩比例（潭口唇边，PRD §1.2） */
 export const DIAL_INSET = 0.94
 
-/** 正视表盘显示区 — 贴合超椭圆正面，略低于外壳表面 */
+/**
+ * 屏幕嵌入深度：表壳挤出剖面在 s 环处的高度为 z = c·(1−sⁿ)^(1/n)，
+ * 取表盘外缘（s=inset）对应高度再留 12% 余量，保证屏幕整体贴在玻璃穹顶正下方
+ */
+export function dialScreenZ(params: CaseParams): number {
+  const { c, n } = params
+  return 0.88 * c * Math.pow(1 - Math.pow(DIAL_INSET, n), 1 / n)
+}
+
+/** 玻璃表壳内的 3D 显示屏 — 贴合超椭圆，嵌于穹顶之下 */
 export function createDialFaceGeometry(params: CaseParams, segments = 96): THREE.BufferGeometry {
-  const { a, b, c, n } = params
+  const { a, b, n } = params
   const inset = DIAL_INSET
-  // 必须高于外壳穹顶极点 z=c，否则壳体高光会从潭面中心顶穿
-  const z = c * 1.02 + 0.05
+  const z = dialScreenZ(params)
   const verts: number[] = [0, 0, z]
   const uvs: number[] = [0.5, 0.5]
   const idx: number[] = []

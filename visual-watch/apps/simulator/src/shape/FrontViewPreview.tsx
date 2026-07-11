@@ -1,168 +1,28 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrthographicCamera } from '@react-three/drei'
+import { Suspense, useMemo } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
-import {
-  DIAL_CROSSING_MS,
-  DIAL_STATE_MAP,
-  type FigmaDialId,
-} from '../dial/figmaDialStates'
+import type { StudioLightingState } from './studioLighting'
+import { StudioLights, reflectionEnvStrength } from './StudioLights'
+import { DIAL_STATE_MAP, type FigmaDialId } from '../dial/figmaDialStates'
 import { createDialFaceGeometry } from '../dial/createDialFaceGeometry'
-import { useDialKeyframes, type DialTextureMap } from '../dial/useDialKeyframes'
+import { DialFaceAnimated } from '../dial/DialFaceAnimated'
+import { useDialKeyframes } from '../dial/useDialKeyframes'
 
 interface FrontViewPreviewProps {
   params: CaseParams
   dialId: FigmaDialId
+  lights: StudioLightingState
 }
 
-/** 相机随画布尺寸与表壳大小自适应，保证整表始终完整可见 */
-function FitOrthoCamera({ params }: { params: CaseParams }) {
-  const { size } = useThree()
-  const pad = 1.24
-  const zoom = Math.min(size.width, size.height) / (2 * Math.max(params.a, params.b) * pad)
-
-  return (
-    <OrthographicCamera
-      makeDefault
-      position={[0, 0, 120]}
-      zoom={zoom}
-      near={0.1}
-      far={400}
-    />
-  )
+function cameraDistance(params: CaseParams): number {
+  const span = Math.max(params.a, params.b, params.c) * 2
+  return span * 2.3
 }
 
-interface DialLayerProps {
-  geometry: THREE.BufferGeometry
-  dialId: FigmaDialId
-  textures: DialTextureMap
-  /** 整组透明度（用于状态渡越） */
-  groupOpacity: React.MutableRefObject<number>
-  renderOrder: number
-}
-
-/**
- * 单个状态的潭面动画：
- * - 关键帧 A/B 交叉淡化（loopSec 往返一周）
- * - 呼吸 envelope 调制亮度（PRD §3.2：5–7bpm，±5–12%）
- */
-function DialStateLayer({ geometry, dialId, textures, groupOpacity, renderOrder }: DialLayerProps) {
-  const state = DIAL_STATE_MAP[dialId]
-  const frames = textures[dialId]
-  const baseRef = useRef<THREE.MeshBasicMaterial>(null)
-  const overlayRef = useRef<THREE.MeshBasicMaterial>(null)
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime()
-    const breath =
-      1 - state.breathAmount * (0.5 + 0.5 * Math.sin((t * state.breathBpm * Math.PI * 2) / 60))
-    const master = groupOpacity.current
-
-    if (baseRef.current) {
-      baseRef.current.opacity = master
-      baseRef.current.color.setScalar(breath)
-    }
-    if (overlayRef.current) {
-      // 0→1→0 余弦往返：关键帧间连续 morph，永不硬切
-      const phase = 0.5 - 0.5 * Math.cos((t * Math.PI * 2) / state.loopSec)
-      overlayRef.current.opacity = master * phase
-      overlayRef.current.color.setScalar(breath)
-    }
-  })
-
-  return (
-    <>
-      <mesh geometry={geometry} renderOrder={renderOrder}>
-        <meshBasicMaterial
-          ref={baseRef}
-          map={frames[0]}
-          transparent
-          toneMapped={false}
-          depthWrite={false}
-          side={THREE.FrontSide}
-        />
-      </mesh>
-      {frames.length > 1 && (
-        <mesh geometry={geometry} renderOrder={renderOrder + 1}>
-          <meshBasicMaterial
-            ref={overlayRef}
-            map={frames[1]}
-            transparent
-            toneMapped={false}
-            depthWrite={false}
-            side={THREE.FrontSide}
-          />
-        </mesh>
-      )}
-    </>
-  )
-}
-
-/** 状态切换时保留旧场淡出、新场淡入（渡越 ≥800ms，禁止硬切） */
-function DialFace({
-  geometry,
-  dialId,
-  textures,
-}: {
-  geometry: THREE.BufferGeometry
-  dialId: FigmaDialId
-  textures: DialTextureMap
-}) {
-  const [layers, setLayers] = useState<{ current: FigmaDialId; previous: FigmaDialId | null }>({
-    current: dialId,
-    previous: null,
-  })
-  const fadeStartRef = useRef(0)
-  const currentOpacity = useRef(1)
-  const previousOpacity = useRef(0)
-
-  useEffect(() => {
-    setLayers((l) => {
-      if (l.current === dialId) return l
-      fadeStartRef.current = performance.now()
-      currentOpacity.current = 0
-      previousOpacity.current = 1
-      return { current: dialId, previous: l.current }
-    })
-  }, [dialId])
-
-  useFrame(() => {
-    if (!layers.previous) {
-      currentOpacity.current = 1
-      return
-    }
-    const t = Math.min(1, (performance.now() - fadeStartRef.current) / DIAL_CROSSING_MS)
-    const eased = t * t * (3 - 2 * t)
-    currentOpacity.current = eased
-    previousOpacity.current = 1 - eased
-    if (t >= 1) setLayers((l) => ({ ...l, previous: null }))
-  })
-
-  return (
-    <>
-      {layers.previous && (
-        <DialStateLayer
-          geometry={geometry}
-          dialId={layers.previous}
-          textures={textures}
-          groupOpacity={previousOpacity}
-          renderOrder={2}
-        />
-      )}
-      <DialStateLayer
-        geometry={geometry}
-        dialId={layers.current}
-        textures={textures}
-        groupOpacity={currentOpacity}
-        renderOrder={4}
-      />
-    </>
-  )
-}
-
-function WatchFrontScene({ params, dialId }: FrontViewPreviewProps) {
+function WatchGlassScene({ params, dialId, lights }: FrontViewPreviewProps) {
   const caseGeo = useMemo(
     () => createWatchCaseGeometry(params, 80),
     [params.a, params.b, params.c, params.n],
@@ -172,36 +32,73 @@ function WatchFrontScene({ params, dialId }: FrontViewPreviewProps) {
     [params.a, params.b, params.c, params.n],
   )
   const textures = useDialKeyframes()
+  const dist = cameraDistance(params)
+
+  const envStrength = useMemo(
+    () => reflectionEnvStrength(lights.key, lights.fill),
+    [lights.key.intensity, lights.fill.intensity],
+  )
 
   return (
     <>
       <color attach="background" args={['#0a0a0a']} />
 
-      <FitOrthoCamera params={params} />
+      <PerspectiveCamera makeDefault fov={30} near={0.1} far={500} position={[0, 0, dist]} />
 
-      <ambientLight intensity={0.42} />
-      <directionalLight position={[0, 0, 80]} intensity={0.3} />
+      <StudioLights keyLight={lights.key} fillLight={lights.fill} glassMode />
 
-      {/* 表壳唇边（岸） */}
-      <mesh geometry={caseGeo}>
+      {/* 镜面玻璃外壳（岸 + 潭口） */}
+      <mesh geometry={caseGeo} renderOrder={1}>
         <meshPhysicalMaterial
-          color="#0b0b0b"
-          roughness={0.3}
-          metalness={0.05}
-          clearcoat={0.5}
-          clearcoatRoughness={0.18}
-          envMapIntensity={0}
+          color="#050505"
+          roughness={0.06}
+          metalness={0}
+          transmission={0.22}
+          thickness={params.c * 1.2}
+          ior={1.52}
+          envMapIntensity={envStrength}
+          specularIntensity={0.35}
+          specularColor="#ffffff"
+          clearcoat={1}
+          clearcoatRoughness={0.045}
+          attenuationColor="#000000"
+          attenuationDistance={params.c * 1.6}
+          transparent
+          depthWrite={false}
+          side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* 潭面：Figma 光场关键帧动画 */}
-      <DialFace geometry={dialGeo} dialId={dialId} textures={textures} />
+      {/* 玻璃下的 3D 显示屏：Figma 光场关键帧，加法混合透出玻璃 */}
+      <DialFaceAnimated
+        geometry={dialGeo}
+        dialId={dialId}
+        textures={textures}
+        renderOrderBase={10}
+      />
+
+      <ContactShadows
+        position={[0, -params.b * 1.28, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        opacity={0.14}
+        scale={Math.max(params.a, params.b) * 3}
+        blur={2.6}
+        far={params.b * 2.2}
+      />
+
+      <OrbitControls
+        enablePan={false}
+        minDistance={dist * 0.5}
+        maxDistance={dist * 2.4}
+        enableDamping
+        dampingFactor={0.06}
+      />
     </>
   )
 }
 
-/** 固定正视图 — Figma 表盘光场贴合实体正面，关键帧连续演化 */
-export function FrontViewPreview({ params, dialId }: FrontViewPreviewProps) {
+/** 3D 玻璃表壳 + 内嵌显示屏 — Figma 光场 UI 动画实机演示 */
+export function FrontViewPreview({ params, dialId, lights }: FrontViewPreviewProps) {
   const state = DIAL_STATE_MAP[dialId]
 
   return (
@@ -209,21 +106,21 @@ export function FrontViewPreview({ params, dialId }: FrontViewPreviewProps) {
       <div className="front-view-canvas-wrap">
         <Canvas
           dpr={[1, 2]}
-          gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
+          gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
         >
           <Suspense fallback={null}>
-            <WatchFrontScene params={params} dialId={dialId} />
+            <WatchGlassScene params={params} dialId={dialId} lights={lights} />
           </Suspense>
         </Canvas>
       </div>
 
       <footer className="white-model-spec">
-        <span className="white-model-spec__title">正视预览 · Front View</span>
+        <span className="white-model-spec__title">正视预览 · 3D 实机演示</span>
         <span className="white-model-spec__dims">
-          {`${(params.a * 2).toFixed(1)} × ${(params.b * 2).toFixed(1)} mm · ${state.label} · ${state.labelEn}`}
+          {`${(params.a * 2).toFixed(1)} × ${(params.b * 2).toFixed(1)} × ${(params.c * 2).toFixed(1)} mm · ${state.label} · ${state.labelEn}`}
         </span>
         <span className="white-model-spec__hint">
-          Figma 光场关键帧 · 呼吸 {state.breathBpm}bpm · 外形来自外形工作室
+          镜面玻璃 + 内嵌显示屏 · 呼吸 {state.breathBpm}bpm · 拖拽旋转 · 光源在 3D 白膜页调节
         </span>
       </footer>
     </div>
