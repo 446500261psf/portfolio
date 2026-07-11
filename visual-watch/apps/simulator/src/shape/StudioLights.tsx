@@ -1,65 +1,53 @@
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import type { AreaLightSettings } from './studioLighting'
 
-const TARGET: [number, number, number] = [0, 0, 0]
+const TARGET = new THREE.Vector3(0, 0, 0)
 
-/** width/height → 聚光角 + 半影，模拟面光源大小 */
-function spotFromConfig(config: AreaLightSettings) {
+/** width/height → 聚光角 + 半影 */
+export function spotFromConfig(config: AreaLightSettings) {
   const dist = Math.hypot(config.position.x, config.position.y, config.position.z) || 1
   const half = Math.max(config.width, config.height) / 2
-  const angle = THREE.MathUtils.clamp(Math.atan(half / dist) * 2, 0.08, Math.PI / 2.2)
-  const penumbra = THREE.MathUtils.clamp(config.height / Math.max(config.width, 1), 0.12, 1)
-  return { angle, penumbra, distance: dist * 5 }
+  const angle = THREE.MathUtils.clamp(Math.atan(half / dist) * 2, 0.06, Math.PI / 2.4)
+  const penumbra = THREE.MathUtils.clamp(config.height / Math.max(config.width, 1), 0.15, 1)
+  return { angle, penumbra, distance: dist * 4.5 }
 }
 
-function StudioSpot({
-  config,
-}: {
-  config: AreaLightSettings
-}) {
+function StudioSpot({ config }: { config: AreaLightSettings }) {
   const groupRef = useRef<THREE.Group>(null)
-  const { x, y, z } = config.position
-  const spot = useMemo(() => spotFromConfig(config), [config])
+  const lightRef = useRef<THREE.SpotLight>(null)
 
   useLayoutEffect(() => {
-    groupRef.current?.lookAt(TARGET[0], TARGET[1], TARGET[2])
-  }, [x, y, z])
+    const group = groupRef.current
+    const light = lightRef.current
+    if (!group || !light) return
+
+    group.position.set(config.position.x, config.position.y, config.position.z)
+    group.lookAt(TARGET)
+
+    const spot = spotFromConfig(config)
+    light.intensity = config.intensity
+    light.color.set(config.color)
+    light.angle = spot.angle
+    light.penumbra = spot.penumbra
+    light.distance = spot.distance
+    light.decay = 2
+  }, [
+    config.intensity,
+    config.color,
+    config.width,
+    config.height,
+    config.position.x,
+    config.position.y,
+    config.position.z,
+  ])
 
   return (
-    <group ref={groupRef} position={[x, y, z]}>
-      <spotLight
-        intensity={config.intensity}
-        color={config.color}
-        angle={spot.angle}
-        penumbra={spot.penumbra}
-        decay={2}
-        distance={spot.distance}
-        castShadow={false}
-      />
+    <group ref={groupRef}>
+      <spotLight ref={lightRef} castShadow={false} />
     </group>
   )
-}
-
-/** 中性灰室环境（程序化，非 HDR 场景照片），辅助玻璃边缘反射 */
-function NeutralStudioEnv() {
-  const { gl, scene } = useThree()
-
-  useLayoutEffect(() => {
-    const pmrem = new THREE.PMREMGenerator(gl)
-    pmrem.compileEquirectangularShader()
-    const tex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
-    scene.environment = tex
-    return () => {
-      scene.environment = null
-      tex.dispose()
-      pmrem.dispose()
-    }
-  }, [gl, scene])
-
-  return null
 }
 
 interface StudioLightsProps {
@@ -68,24 +56,21 @@ interface StudioLightsProps {
   glassMode?: boolean
 }
 
-/** 主光 + 反射光软聚光，玻璃上可见镜面高光 */
+/** 主光 + 反射光；反射完全由聚光驱动，无环境贴图 */
 export function StudioLights({ keyLight, fillLight, glassMode = true }: StudioLightsProps) {
   const { gl } = useThree()
 
   useLayoutEffect(() => {
     gl.toneMapping = THREE.ACESFilmicToneMapping
-    gl.toneMappingExposure = glassMode ? 1.28 : 1.05
+    gl.toneMappingExposure = glassMode ? 0.78 : 1.0
     gl.outputColorSpace = THREE.SRGBColorSpace
   }, [gl, glassMode])
 
   return (
     <>
-      {glassMode && <NeutralStudioEnv />}
-      <ambientLight intensity={glassMode ? 0.18 : 0.35} />
-      <StudioSpot config={keyLight} />
-      <StudioSpot config={fillLight} />
+      <ambientLight intensity={glassMode ? 0.04 : 0.3} />
+      <StudioSpot key={`key-${keyLight.intensity}-${keyLight.position.x}-${keyLight.width}`} config={keyLight} />
+      <StudioSpot key={`fill-${fillLight.intensity}-${fillLight.position.x}-${fillLight.width}`} config={fillLight} />
     </>
   )
 }
-
-export { spotFromConfig }

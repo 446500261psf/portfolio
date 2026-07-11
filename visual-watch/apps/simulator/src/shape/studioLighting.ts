@@ -15,16 +15,16 @@ export interface StudioLightingState {
 export const DEFAULT_STUDIO_LIGHTS: StudioLightingState = {
   key: {
     position: { x: 52, y: 58, z: 68 },
-    intensity: 280,
+    intensity: 55,
     width: 42,
     height: 32,
-    color: '#fff4ec',
+    color: '#fff0e6',
   },
   fill: {
     position: { x: -48, y: 28, z: -52 },
-    intensity: 110,
+    intensity: 22,
     width: 56,
     height: 44,
-    color: '#b8c8dc',
+    color: '#a8b8cc',
   },
 }

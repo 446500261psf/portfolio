@@ -25,7 +25,7 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
         light={lights.key}
         onPatch={patchKey}
         posRange={80}
-        intensityMax={400}
+        intensityMax={120}
         sizeMax={90}
       />
 
@@ -34,7 +34,7 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
         light={lights.fill}
         onPatch={patchFill}
         posRange={80}
-        intensityMax={200}
+        intensityMax={60}
         sizeMax={100}
       />
 

@@ -35,19 +35,19 @@ function CaseMesh({
     return (
       <mesh geometry={geometry} receiveShadow>
         <meshPhysicalMaterial
-          color="#080808"
-          roughness={0.02}
+          color="#050505"
+          roughness={0.035}
           metalness={0}
-          transmission={0.52}
-          thickness={params.c * 1.4}
+          transmission={0.32}
+          thickness={params.c * 1.2}
           ior={1.52}
-          envMapIntensity={0.45}
-          specularIntensity={1.4}
+          envMapIntensity={0}
+          specularIntensity={1}
           specularColor="#ffffff"
-          clearcoat={1}
-          clearcoatRoughness={0.012}
+          clearcoat={0.92}
+          clearcoatRoughness={0.018}
           attenuationColor="#000000"
-          attenuationDistance={params.c * 2.5}
+          attenuationDistance={params.c * 1.8}
           transparent
           side={THREE.FrontSide}
         />
