@@ -151,6 +151,31 @@ body {
   text-transform: uppercase;
 }
 
+.white-model-material-tabs {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.white-model-material-tabs button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--braun-border);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--braun-muted);
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.white-model-material-tabs button.active {
+  background: var(--braun-panel);
+  border-color: var(--braun-accent);
+  color: var(--braun-text);
+}
+
 .three-view-sheet-wrap {
   width: 100%;
   max-width: 820px;
