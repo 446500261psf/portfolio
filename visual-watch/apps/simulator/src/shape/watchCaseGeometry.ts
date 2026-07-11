@@ -11,61 +11,62 @@ function zFromFrontProfile(x: number, y: number, a: number, b: number, c: number
   return c * Math.pow(1 - rho, 1 / n)
 }
 
-function buildHemisphere(
+function ringXY(params: CaseParams, s: number, t: number): [number, number] {
+  const { a, b, n } = params
+  const cos = Math.cos(t)
+  const sin = Math.sin(t)
+  return [s * a * superPow(cos, n), s * b * superPow(sin, n)]
+}
+
+function pushRing(
   params: CaseParams,
-  sign: 1 | -1,
+  s: number,
+  zSign: 1 | -1 | 0,
   slices: number,
-  rings: number,
   verts: number[],
-  idx: number[],
-): void {
+): number {
   const { a, b, c, n } = params
-
-  const ringStart: number[] = []
-
-  ringStart.push(verts.length / 3)
-  verts.push(0, 0, sign * c)
-
-  for (let ring = 1; ring <= rings; ring++) {
-    const s = Math.pow(ring / rings, 1 / n)
-    ringStart.push(verts.length / 3)
-    for (let j = 0; j < slices; j++) {
-      const t = (j / slices) * Math.PI * 2
-      const cos = Math.cos(t)
-      const sin = Math.sin(t)
-      const x = s * a * superPow(cos, n)
-      const y = s * b * superPow(sin, n)
-      const z = sign * zFromFrontProfile(x, y, a, b, c, n)
-      verts.push(x, y, z)
-    }
+  const start = verts.length / 3
+  for (let j = 0; j < slices; j++) {
+    const t = (j / slices) * Math.PI * 2
+    const [x, y] = ringXY(params, s, t)
+    const z =
+      zSign === 0 ? 0 : zSign * zFromFrontProfile(x, y, a, b, c, n)
+    verts.push(x, y, z)
   }
+  return start
+}
 
-  const pole = ringStart[0]
-  const firstRing = ringStart[1]
+function fanPole(
+  pole: number,
+  ring: number,
+  slices: number,
+  idx: number[],
+  outwardNorth: boolean,
+): void {
   for (let j = 0; j < slices; j++) {
     const j1 = (j + 1) % slices
-    if (sign > 0) {
-      idx.push(pole, firstRing + j, firstRing + j1)
+    if (outwardNorth) {
+      idx.push(pole, ring + j, ring + j1)
     } else {
-      idx.push(pole, firstRing + j1, firstRing + j)
-    }
-  }
-
-  for (let ring = 1; ring < rings; ring++) {
-    const curr = ringStart[ring]
-    const next = ringStart[ring + 1]
-    for (let j = 0; j < slices; j++) {
-      const j1 = (j + 1) % slices
-      if (sign > 0) {
-        idx.push(curr + j, next + j, next + j1, curr + j, next + j1, curr + j1)
-      } else {
-        idx.push(curr + j, curr + j1, next + j1, curr + j, next + j1, next + j)
-      }
+      idx.push(pole, ring + j1, ring + j)
     }
   }
 }
 
-/** 由正视超椭圆轮廓 |x/a|^n + |y/b|^n = 1 隐式挤出 ±Z 半球，极点单顶点无破面 */
+function stitchRings(
+  curr: number,
+  next: number,
+  slices: number,
+  idx: number[],
+): void {
+  for (let j = 0; j < slices; j++) {
+    const j1 = (j + 1) % slices
+    idx.push(curr + j, next + j, next + j1, curr + j, next + j1, curr + j1)
+  }
+}
+
+/** 由正视超椭圆轮廓隐式挤出完整表壳，赤道共享顶点，连续曲面 */
 export function createWatchCaseGeometry(
   params: CaseParams,
   segments = 80,
@@ -74,9 +75,37 @@ export function createWatchCaseGeometry(
   const idx: number[] = []
   const slices = segments
   const rings = Math.max(8, Math.ceil(segments / 2))
+  const ringStart: number[] = []
 
-  buildHemisphere(params, 1, slices, rings, verts, idx)
-  buildHemisphere(params, -1, slices, rings, verts, idx)
+  const { c } = params
+
+  ringStart.push(verts.length / 3)
+  verts.push(0, 0, c)
+
+  for (let ring = 1; ring < rings; ring++) {
+    const s = Math.pow(ring / rings, 1 / params.n)
+    ringStart.push(pushRing(params, s, 1, slices, verts))
+  }
+
+  ringStart.push(pushRing(params, 1, 0, slices, verts))
+
+  for (let ring = rings - 1; ring >= 1; ring--) {
+    const s = Math.pow(ring / rings, 1 / params.n)
+    ringStart.push(pushRing(params, s, -1, slices, verts))
+  }
+
+  ringStart.push(verts.length / 3)
+  verts.push(0, 0, -c)
+
+  fanPole(ringStart[0], ringStart[1], slices, idx, true)
+
+  for (let r = 1; r < ringStart.length - 2; r++) {
+    stitchRings(ringStart[r], ringStart[r + 1], slices, idx)
+  }
+
+  const southRing = ringStart[ringStart.length - 2]
+  const southPole = ringStart[ringStart.length - 1]
+  fanPole(southPole, southRing, slices, idx, false)
 
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3))

@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { ContactShadows, Edges, Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { ContactShadows, Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
@@ -51,7 +51,6 @@ function CaseMesh({
   return (
     <mesh geometry={geometry} castShadow receiveShadow>
       <meshStandardMaterial color="#ececee" roughness={0.94} metalness={0} />
-      <Edges threshold={18} color="#5a5a62" />
     </mesh>
   )
 }
