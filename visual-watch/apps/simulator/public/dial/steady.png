@@ -1,0 +1,24 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 972 972" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 5">
+<g clip-path="url(#clip0_0_4)">
+<rect id="watch" width="972" height="972" rx="430" fill="var(--fill-0, black)"/>
+<g id="light1" filter="url(#filter0_f_0_4)">
+<path d="M825 430C825 192.518 667.5 0 405 0H517C754.482 0 947 192.518 947 430V542C947 779.482 754.482 972 517 972H405C695.5 972 825 779.482 825 542V430Z" fill="url(#paint0_linear_0_4)"/>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_4" x="305" y="-100" width="742" height="1172" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="50" result="effect1_foregroundBlur_0_4"/>
+</filter>
+<linearGradient id="paint0_linear_0_4" x1="947" y1="436.5" x2="516" y2="436.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#3B3B3B"/>
+</linearGradient>
+<clipPath id="clip0_0_4">
+<rect width="972" height="972" rx="430" fill="white"/>
+</clipPath>
+</defs>
+</svg>

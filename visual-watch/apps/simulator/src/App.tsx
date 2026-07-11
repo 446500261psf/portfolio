@@ -7,18 +7,25 @@ import {
 } from './shape/ShapeControls'
 import { ShapeStudio } from './shape/ShapeStudio'
 import { LightControls } from './shape/LightControls'
+import { DialControls, DEFAULT_FIGMA_DIAL } from './shape/DialControls'
 import { DEFAULT_STUDIO_LIGHTS, type StudioLightingState } from './shape/studioLighting'
+import type { FigmaDialId } from './dial/figmaDialStates'
 
 const WhiteModelView = lazy(() =>
   import('./shape/WhiteModelView').then((m) => ({ default: m.WhiteModelView })),
 )
 
-type AppMode = 'shape' | 'white3d' | 'field'
+const FrontViewPreview = lazy(() =>
+  import('./shape/FrontViewPreview').then((m) => ({ default: m.FrontViewPreview })),
+)
+
+type AppMode = 'shape' | 'white3d' | 'frontview' | 'field'
 
 export default function App() {
   const [mode, setMode] = useState<AppMode>('shape')
   const [sliders, setSliders] = useState<ShapeSliderState>(DEFAULT_SLIDERS)
   const [lights, setLights] = useState<StudioLightingState>(DEFAULT_STUDIO_LIGHTS)
+  const [dialId, setDialId] = useState<FigmaDialId>(DEFAULT_FIGMA_DIAL)
 
   const caseParams = useMemo(() => caseFromSliders(sliders), [sliders])
 
@@ -52,6 +59,13 @@ export default function App() {
         </button>
         <button
           type="button"
+          className={mode === 'frontview' ? 'active' : ''}
+          onClick={() => setMode('frontview')}
+        >
+          正视预览
+        </button>
+        <button
+          type="button"
           className={mode === 'field' ? 'active' : ''}
           onClick={() => setMode('field')}
           disabled
@@ -82,6 +96,17 @@ export default function App() {
             </Suspense>
           </main>
           <LightControls lights={lights} onChange={handleLightChange} />
+        </>
+      )}
+
+      {mode === 'frontview' && (
+        <>
+          <main className="shape-panel shape-panel--3d">
+            <Suspense fallback={<p className="white-model-loading">加载正视预览…</p>}>
+              <FrontViewPreview params={caseParams} dialId={dialId} />
+            </Suspense>
+          </main>
+          <DialControls dialId={dialId} onChange={setDialId} />
         </>
       )}
     </div>
