@@ -109,7 +109,7 @@ export function FrontViewPreview({ params, dialId, lights }: FrontViewPreviewPro
           {`${(params.a * 2).toFixed(1)} × ${(params.b * 2).toFixed(1)} × ${(params.c * 2).toFixed(1)} mm · ${state.label} · ${state.labelEn}`}
         </span>
         <span className="white-model-spec__hint">
-          镜面玻璃 = 反射 + UI 演示 · 侧缘光带环绕 · 呼吸 {state.breathBpm}bpm · 拖拽旋转
+          镜面玻璃 = 反射 + UI 演示 · 呼吸 {state.breathBpm}bpm · 拖拽旋转
         </span>
       </footer>
     </div>

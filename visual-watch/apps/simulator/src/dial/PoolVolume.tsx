@@ -31,6 +31,7 @@ varying vec3 vWorldPos;
 
 uniform vec3 uHalf;        // 壳层半径 a,b,c
 uniform vec2 uUvHalf;      // 光场 xy 半径（uv 映射范围）
+uniform float uN;          // 超椭圆指数
 uniform sampler2D uTexOldA;
 uniform sampler2D uTexOldB;
 uniform sampler2D uTexNewA;
@@ -41,16 +42,26 @@ uniform float uWOld;       // 渡越权重（旧）
 uniform float uWNew;       // 渡越权重（新）
 uniform float uBreathOld;  // 呼吸亮度（旧）
 uniform float uBreathNew;  // 呼吸亮度（新）
-uniform float uSwirl;      // 边缘流动相位（弧度）
+
+// 轻微裁掉 PNG 最外层抗锯齿像素
+vec2 cropFigmaUv(vec2 uv) {
+  return 0.5 + (uv - 0.5) * 0.985;
+}
 
 // 新旧状态 × 各两帧关键帧的混合采样；uv 越界处返回 0（防止 clamp 拉丝）
 vec3 blendedField(vec2 uvRaw) {
   float mask = step(abs(uvRaw.x - 0.5), 0.494) * step(abs(uvRaw.y - 0.5), 0.494);
   if (mask < 0.5) return vec3(0.0);
-  vec4 texOld = mix(texture2D(uTexOldA, uvRaw), texture2D(uTexOldB, uvRaw), uMixOld);
-  vec4 texNew = mix(texture2D(uTexNewA, uvRaw), texture2D(uTexNewB, uvRaw), uMixNew);
-  return texOld.rgb * texOld.a * uWOld * uBreathOld
-       + texNew.rgb * texNew.a * uWNew * uBreathNew;
+  // Figma 图中自带一圈白色轮廓；按真实表壳 n 值建立超椭圆安全区，
+  // 在潭边平滑衰减 UI，玻璃反射不受影响
+  vec2 q = abs((uvRaw - 0.5) * 2.0);
+  float rho2d = pow(q.x, uN) + pow(q.y, uN);
+  float safeArea = 1.0 - smoothstep(0.88, 0.985, rho2d);
+  vec2 uv = cropFigmaUv(uvRaw);
+  vec4 texOld = mix(texture2D(uTexOldA, uv), texture2D(uTexOldB, uv), uMixOld);
+  vec4 texNew = mix(texture2D(uTexNewA, uv), texture2D(uTexNewB, uv), uMixNew);
+  return (texOld.rgb * texOld.a * uWOld * uBreathOld
+       + texNew.rgb * texNew.a * uWNew * uBreathNew) * safeArea;
 }
 
 void main() {
@@ -62,15 +73,7 @@ void main() {
   vec2 uv = 0.5 + vWorldPos.xy / (2.0 * uUvHalf);
   vec3 ui = blendedField(uv) * pow(frontness, 1.25) * 1.35;
 
-  // —— 边缘环绕（Pool 余韵）：侧缘微弱光带缓慢流动，不透出内部 ——
-  float sideness = smoothstep(0.75, 0.15, abs(zn));
-  float ang = uSwirl;
-  float cs = cos(ang);
-  float sn = sin(ang);
-  vec2 xySwirl = mat2(cs, -sn, sn, cs) * vWorldPos.xy;
-  vec3 rim = blendedField(0.5 + xySwirl / (2.0 * uUvHalf)) * sideness * (1.0 - frontness) * 0.22;
-
-  vec3 col = ui + rim;
+  vec3 col = ui;
   // 软压缩防高光带过曝
   col = col / (1.0 + col * 0.3);
 
@@ -92,8 +95,8 @@ interface PoolVolumeProps {
  *
  * 与镜面玻璃共面（同一挤出曲面，微放大避免 z-fight），加法混合：
  * 玻璃负责镜面反射，本层负责 UI 自发光，两者叠加 =「玻璃同时具有
- * 镜面与 UI 演示效果」。正面是 Figma 光场 UI，侧缘保留微弱的
- * 环绕流动光带（Pool 余韵），不再透视内部体积。
+ * 镜面与 UI 演示效果」。只在正面显示 Figma 光场 UI；侧缘不发光，
+ * 避免形成白色轮廓线。
  */
 export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolVolumeProps) {
   const geometry = useMemo(
@@ -134,6 +137,7 @@ export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolV
       uniforms: {
         uHalf: { value: new THREE.Vector3(1, 1, 1) },
         uUvHalf: { value: new THREE.Vector2(1, 1) },
+        uN: { value: 4.5 },
         uTexOldA: { value: placeholder },
         uTexOldB: { value: placeholder },
         uTexNewA: { value: placeholder },
@@ -144,7 +148,6 @@ export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolV
         uWNew: { value: 1 },
         uBreathOld: { value: 1 },
         uBreathNew: { value: 1 },
-        uSwirl: { value: 0 },
       },
       transparent: true,
       blending: THREE.AdditiveBlending,
@@ -160,6 +163,7 @@ export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolV
 
     u.uHalf.value.set(params.a * SHELL_SCALE, params.b * SHELL_SCALE, params.c * SHELL_SCALE)
     u.uUvHalf.value.set(params.a * FIELD_INSET, params.b * FIELD_INSET)
+    u.uN.value = params.n
 
     const cur = DIAL_STATE_MAP[states.current]
     const prev = DIAL_STATE_MAP[states.previous]
@@ -190,8 +194,6 @@ export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolV
       u.uWOld.value = 0
     }
 
-    // 边缘环绕流动：缓慢往返摆动（约 14s 周期）
-    u.uSwirl.value = 0.32 * Math.sin((t * Math.PI * 2) / 14)
   })
 
   return <mesh geometry={geometry} material={material} renderOrder={renderOrder} />
