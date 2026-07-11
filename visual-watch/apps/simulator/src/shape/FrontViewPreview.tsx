@@ -7,8 +7,7 @@ import { createWatchCaseGeometry } from './watchCaseGeometry'
 import type { StudioLightingState } from './studioLighting'
 import { StudioLights, reflectionEnvStrength } from './StudioLights'
 import { DIAL_STATE_MAP, type FigmaDialId } from '../dial/figmaDialStates'
-import { createDialFaceGeometry } from '../dial/createDialFaceGeometry'
-import { DialFaceAnimated } from '../dial/DialFaceAnimated'
+import { PoolVolume } from '../dial/PoolVolume'
 import { useDialKeyframes } from '../dial/useDialKeyframes'
 
 interface FrontViewPreviewProps {
@@ -25,10 +24,6 @@ function cameraDistance(params: CaseParams): number {
 function WatchGlassScene({ params, dialId, lights }: FrontViewPreviewProps) {
   const caseGeo = useMemo(
     () => createWatchCaseGeometry(params, 80),
-    [params.a, params.b, params.c, params.n],
-  )
-  const dialGeo = useMemo(
-    () => createDialFaceGeometry(params, 128),
     [params.a, params.b, params.c, params.n],
   )
   const textures = useDialKeyframes()
@@ -69,13 +64,8 @@ function WatchGlassScene({ params, dialId, lights }: FrontViewPreviewProps) {
         />
       </mesh>
 
-      {/* 玻璃下的 3D 显示屏：Figma 光场关键帧，加法混合透出玻璃 */}
-      <DialFaceAnimated
-        geometry={dialGeo}
-        dialId={dialId}
-        textures={textures}
-        renderOrderBase={10}
-      />
+      {/* Pool：玻璃内腔体积光场 — 光在背部与边缘流动 */}
+      <PoolVolume params={params} dialId={dialId} textures={textures} renderOrder={10} />
 
       <ContactShadows
         position={[0, -params.b * 1.28, 0]}
@@ -97,7 +87,7 @@ function WatchGlassScene({ params, dialId, lights }: FrontViewPreviewProps) {
   )
 }
 
-/** 3D 玻璃表壳 + 内嵌显示屏 — Figma 光场 UI 动画实机演示 */
+/** 3D 玻璃表壳 + Pool 体积光场 — Figma 光场 UI 动画实机演示 */
 export function FrontViewPreview({ params, dialId, lights }: FrontViewPreviewProps) {
   const state = DIAL_STATE_MAP[dialId]
 
@@ -115,12 +105,12 @@ export function FrontViewPreview({ params, dialId, lights }: FrontViewPreviewPro
       </div>
 
       <footer className="white-model-spec">
-        <span className="white-model-spec__title">正视预览 · 3D 实机演示</span>
+        <span className="white-model-spec__title">正视预览 · Pool 体积光场</span>
         <span className="white-model-spec__dims">
           {`${(params.a * 2).toFixed(1)} × ${(params.b * 2).toFixed(1)} × ${(params.c * 2).toFixed(1)} mm · ${state.label} · ${state.labelEn}`}
         </span>
         <span className="white-model-spec__hint">
-          镜面玻璃 + 内嵌显示屏 · 呼吸 {state.breathBpm}bpm · 拖拽旋转 · 光源在 3D 白膜页调节
+          镜面玻璃内腔即演示场 · 光沿背部与边缘流动 · 呼吸 {state.breathBpm}bpm · 拖拽旋转
         </span>
       </footer>
     </div>
