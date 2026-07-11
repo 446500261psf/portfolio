@@ -46,25 +46,24 @@ function WatchGlassScene({ params, dialId, lights }: FrontViewPreviewProps) {
       <mesh geometry={caseGeo} renderOrder={1}>
         <meshPhysicalMaterial
           color="#050505"
-          roughness={0.05}
+          roughness={0.06}
           metalness={0}
           transmission={0.22}
-          thickness={params.c * 0.3}
-          ior={1.5}
+          thickness={params.c * 1.2}
+          ior={1.52}
           envMapIntensity={envStrength}
-          specularIntensity={0.32}
+          specularIntensity={0.35}
           specularColor="#ffffff"
           clearcoat={1}
-          clearcoatRoughness={0.035}
+          clearcoatRoughness={0.045}
           attenuationColor="#000000"
-          attenuationDistance={params.c * 2.4}
+          attenuationDistance={params.c * 1.6}
           transparent
-          depthWrite={false}
           side={THREE.FrontSide}
         />
       </mesh>
 
-      {/* Pool：玻璃内腔体积光场 — 光在背部与边缘流动 */}
+      {/* Pool 发光壳层：UI 直接演示在镜面玻璃上（反射 + 自发光叠加） */}
       <PoolVolume params={params} dialId={dialId} textures={textures} renderOrder={10} />
 
       <ContactShadows
@@ -105,12 +104,12 @@ export function FrontViewPreview({ params, dialId, lights }: FrontViewPreviewPro
       </div>
 
       <footer className="white-model-spec">
-        <span className="white-model-spec__title">正视预览 · Pool 体积光场</span>
+        <span className="white-model-spec__title">正视预览 · 镜面玻璃 Pool</span>
         <span className="white-model-spec__dims">
           {`${(params.a * 2).toFixed(1)} × ${(params.b * 2).toFixed(1)} × ${(params.c * 2).toFixed(1)} mm · ${state.label} · ${state.labelEn}`}
         </span>
         <span className="white-model-spec__hint">
-          镜面玻璃内腔即演示场 · 光沿背部与边缘流动 · 呼吸 {state.breathBpm}bpm · 拖拽旋转
+          镜面玻璃 = 反射 + UI 演示 · 侧缘光带环绕 · 呼吸 {state.breathBpm}bpm · 拖拽旋转
         </span>
       </footer>
     </div>
