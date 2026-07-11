@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { ContactShadows, Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
@@ -30,17 +30,19 @@ function CaseMesh({
 
   if (material === 'glass') {
     return (
-      <mesh geometry={geometry} castShadow receiveShadow>
+      <mesh geometry={geometry} receiveShadow>
         <meshPhysicalMaterial
-          color="#f4f6fa"
-          roughness={0.04}
+          color="#121216"
+          roughness={0.07}
           metalness={0}
-          transmission={1}
+          transmission={0.94}
           thickness={params.c * 0.85}
           ior={1.52}
-          envMapIntensity={1.35}
-          clearcoat={1}
-          clearcoatRoughness={0.02}
+          envMapIntensity={0}
+          specularIntensity={0}
+          clearcoat={0.85}
+          clearcoatRoughness={0.04}
+          reflectivity={0.55}
           transparent
           side={THREE.FrontSide}
         />
@@ -77,23 +79,22 @@ function SceneContent({
         far={500}
       />
 
-      <ambientLight intensity={material === 'glass' ? 0.35 : 0.62} />
-      <hemisphereLight intensity={0.28} color="#ffffff" groundColor="#141414" />
-      <directionalLight
-        position={[dist, dist * 1.35, dist * 0.75]}
-        intensity={material === 'glass' ? 1.25 : 1.05}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
+      <ambientLight intensity={material === 'glass' ? 0.72 : 0.62} />
+      <hemisphereLight
+        intensity={material === 'glass' ? 0.55 : 0.28}
+        color="#c8ccd4"
+        groundColor="#080808"
       />
-      <directionalLight position={[-dist * 0.55, dist * 0.35, -dist * 0.25]} intensity={0.32} />
-      {material === 'glass' && (
-        <pointLight position={[-dist * 0.3, dist * 0.5, dist * 0.6]} intensity={0.45} color="#ddeeff" />
-      )}
-
-      {material === 'glass' && (
-        <Suspense fallback={null}>
-          <Environment preset="city" environmentIntensity={0.85} />
-        </Suspense>
+      {material === 'clay' && (
+        <>
+          <directionalLight
+            position={[dist, dist * 1.35, dist * 0.75]}
+            intensity={1.05}
+            castShadow
+            shadow-mapSize={[1024, 1024]}
+          />
+          <directionalLight position={[-dist * 0.55, dist * 0.35, -dist * 0.25]} intensity={0.32} />
+        </>
       )}
 
       <CaseMesh params={params} material={material} />
@@ -170,7 +171,7 @@ export function WhiteModelView({ params }: WhiteModelViewProps) {
         </span>
         <span className="white-model-spec__hint">
           {material === 'glass'
-            ? '物理玻璃 · IOR 1.52 · 环境反射 · 拖拽旋转'
+            ? '暗色镜面 · 无场景贴图 · 无光源高光 · 拖拽旋转'
             : '由外形工作室三视图轮廓挤出 · 拖拽旋转'}
         </span>
       </footer>
