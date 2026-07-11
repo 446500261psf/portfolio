@@ -35,17 +35,17 @@ function CaseMesh({
     return (
       <mesh geometry={geometry} receiveShadow>
         <meshPhysicalMaterial
-          color="#222228"
-          roughness={0.04}
+          color="#52525c"
+          roughness={0.02}
           metalness={0}
-          transmission={0.9}
-          thickness={params.c * 0.9}
+          transmission={0.52}
+          thickness={params.c * 1.4}
           ior={1.52}
-          envMapIntensity={0}
-          specularIntensity={1}
+          envMapIntensity={0.45}
+          specularIntensity={1.4}
           specularColor="#ffffff"
           clearcoat={1}
-          clearcoatRoughness={0.02}
+          clearcoatRoughness={0.012}
           transparent
           side={THREE.FrontSide}
         />
@@ -84,7 +84,11 @@ function SceneContent({
         far={500}
       />
 
-      <StudioLights keyLight={lights.key} fillLight={lights.fill} />
+      <StudioLights
+        keyLight={lights.key}
+        fillLight={lights.fill}
+        glassMode={material === 'glass'}
+      />
 
       <CaseMesh params={params} material={material} />
 

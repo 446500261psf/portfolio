@@ -25,7 +25,7 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
         light={lights.key}
         onPatch={patchKey}
         posRange={80}
-        intensityMax={24}
+        intensityMax={400}
         sizeMax={90}
       />
 
@@ -34,14 +34,14 @@ export function LightControls({ lights, onChange }: LightControlsProps) {
         light={lights.fill}
         onPatch={patchFill}
         posRange={80}
-        intensityMax={16}
+        intensityMax={200}
         sizeMax={100}
       />
 
       <section className="control-block hint-block">
         <p>
-          <strong>大小</strong>：面光源宽 × 高（mm 等效）<br />
-          <strong>强度</strong>：亮度 cd/m²<br />
+          <strong>大小</strong>：控制光锥张角与柔边<br />
+          <strong>强度</strong>：镜面高光亮度<br />
           <strong>位置</strong>：XYZ 世界坐标，自动朝向表壳中心<br />
           外形参数请在外形工作室调节
         </p>
