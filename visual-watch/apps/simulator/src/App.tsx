@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { caseFromSliders } from './shape/CaseParams'
 import {
   DEFAULT_SLIDERS,
@@ -7,7 +7,11 @@ import {
 } from './shape/ShapeControls'
 import { ShapeStudio } from './shape/ShapeStudio'
 
-type AppMode = 'shape' | 'field'
+const WhiteModelView = lazy(() =>
+  import('./shape/WhiteModelView').then((m) => ({ default: m.WhiteModelView })),
+)
+
+type AppMode = 'shape' | 'white3d' | 'field'
 
 export default function App() {
   const [mode, setMode] = useState<AppMode>('shape')
@@ -31,6 +35,13 @@ export default function App() {
         </button>
         <button
           type="button"
+          className={mode === 'white3d' ? 'active' : ''}
+          onClick={() => setMode('white3d')}
+        >
+          3D 白膜
+        </button>
+        <button
+          type="button"
           className={mode === 'field' ? 'active' : ''}
           onClick={() => setMode('field')}
           disabled
@@ -44,6 +55,21 @@ export default function App() {
         <>
           <main className="shape-panel">
             <ShapeStudio params={caseParams} />
+          </main>
+          <ShapeControls
+            sliders={sliders}
+            params={caseParams}
+            onChange={handleSliderChange}
+          />
+        </>
+      )}
+
+      {mode === 'white3d' && (
+        <>
+          <main className="shape-panel shape-panel--3d">
+            <Suspense fallback={<p className="white-model-loading">加载 3D 引擎…</p>}>
+              <WhiteModelView params={caseParams} />
+            </Suspense>
           </main>
           <ShapeControls
             sliders={sliders}
