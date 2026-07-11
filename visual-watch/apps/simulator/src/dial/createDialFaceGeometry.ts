@@ -1,11 +1,15 @@
 import * as THREE from 'three'
 import type { CaseParams } from '../shape/CaseParams'
 
+/** 表盘显示区相对表壳的内缩比例（潭口唇边，PRD §1.2） */
+export const DIAL_INSET = 0.94
+
 /** 正视表盘显示区 — 贴合超椭圆正面，略低于外壳表面 */
 export function createDialFaceGeometry(params: CaseParams, segments = 96): THREE.BufferGeometry {
   const { a, b, c, n } = params
-  const inset = 0.93
-  const z = c * 0.999
+  const inset = DIAL_INSET
+  // 必须高于外壳穹顶极点 z=c，否则壳体高光会从潭面中心顶穿
+  const z = c * 1.02 + 0.05
   const verts: number[] = [0, 0, z]
   const uvs: number[] = [0.5, 0.5]
   const idx: number[] = []
@@ -17,7 +21,12 @@ export function createDialFaceGeometry(params: CaseParams, segments = 96): THREE
     const x = inset * a * Math.sign(cos) * Math.pow(Math.abs(cos), 2 / n)
     const y = inset * b * Math.sign(sin) * Math.pow(Math.abs(sin), 2 / n)
     verts.push(x, y, z)
-    uvs.push(0.5 + x / (a * 2), 0.5 - y / (b * 2))
+    // Figma 关键帧位图的超椭圆恰好铺满整张 972×972 画布，
+    // 因此表盘面的最大内缩范围要映射到纹理 [0,1] 全幅；
+    // crop 裁掉边界抗锯齿像素，避免出现白色描边。
+    // flipY 纹理下 v=1 对应图片顶部，故 v 随世界 y 正向增长
+    const crop = 1 - 0.009
+    uvs.push(0.5 + (x / (inset * a * 2)) * crop, 0.5 + (y / (inset * b * 2)) * crop)
   }
 
   for (let i = 0; i < segments; i++) {
