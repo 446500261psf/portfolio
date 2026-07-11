@@ -176,6 +176,10 @@ body {
   color: var(--braun-text);
 }
 
+.control-block--accent h2 {
+  color: var(--braun-accent);
+}
+
 .three-view-sheet-wrap {
   width: 100%;
   max-width: 820px;

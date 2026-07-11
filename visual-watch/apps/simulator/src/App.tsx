@@ -6,6 +6,8 @@ import {
   type ShapeSliderState,
 } from './shape/ShapeControls'
 import { ShapeStudio } from './shape/ShapeStudio'
+import { LightControls } from './shape/LightControls'
+import { DEFAULT_STUDIO_LIGHTS, type StudioLightingState } from './shape/studioLighting'
 
 const WhiteModelView = lazy(() =>
   import('./shape/WhiteModelView').then((m) => ({ default: m.WhiteModelView })),
@@ -16,11 +18,19 @@ type AppMode = 'shape' | 'white3d' | 'field'
 export default function App() {
   const [mode, setMode] = useState<AppMode>('shape')
   const [sliders, setSliders] = useState<ShapeSliderState>(DEFAULT_SLIDERS)
+  const [lights, setLights] = useState<StudioLightingState>(DEFAULT_STUDIO_LIGHTS)
 
   const caseParams = useMemo(() => caseFromSliders(sliders), [sliders])
 
   const handleSliderChange = (next: Partial<ShapeSliderState>) => {
     setSliders((s) => ({ ...s, ...next }))
+  }
+
+  const handleLightChange = (next: Partial<StudioLightingState>) => {
+    setLights((l) => ({
+      key: next.key ?? l.key,
+      fill: next.fill ?? l.fill,
+    }))
   }
 
   return (
@@ -68,14 +78,10 @@ export default function App() {
         <>
           <main className="shape-panel shape-panel--3d">
             <Suspense fallback={<p className="white-model-loading">加载 3D 引擎…</p>}>
-              <WhiteModelView params={caseParams} />
+              <WhiteModelView params={caseParams} lights={lights} />
             </Suspense>
           </main>
-          <ShapeControls
-            sliders={sliders}
-            params={caseParams}
-            onChange={handleSliderChange}
-          />
+          <LightControls lights={lights} onChange={handleLightChange} />
         </>
       )}
     </div>

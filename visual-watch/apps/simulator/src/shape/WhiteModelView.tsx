@@ -4,9 +4,12 @@ import { ContactShadows, OrbitControls, PerspectiveCamera } from '@react-three/d
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
+import type { StudioLightingState } from './studioLighting'
+import { StudioLights } from './StudioLights'
 
 interface WhiteModelViewProps {
   params: CaseParams
+  lights: StudioLightingState
 }
 
 export type SurfaceMaterial = 'clay' | 'glass'
@@ -14,39 +17,6 @@ export type SurfaceMaterial = 'clay' | 'glass'
 function cameraDistance(params: CaseParams): number {
   const span = Math.max(params.a, params.b, params.c) * 2
   return span * 2.4
-}
-
-function GlassCase({ geometry, thickness }: { geometry: THREE.BufferGeometry; thickness: number }) {
-  return (
-    <group>
-      <mesh geometry={geometry} receiveShadow>
-        <meshPhysicalMaterial
-          color="#34343c"
-          roughness={0.09}
-          metalness={0}
-          transmission={0.78}
-          thickness={thickness}
-          ior={1.52}
-          envMapIntensity={0}
-          specularIntensity={0}
-          clearcoat={0.65}
-          clearcoatRoughness={0.06}
-          transparent
-          side={THREE.FrontSide}
-        />
-      </mesh>
-      {/* 背向壳体：只在轮廓处可见，形成柔边 rim light */}
-      <mesh geometry={geometry} scale={1.018}>
-        <meshBasicMaterial
-          color="#a8b0bc"
-          side={THREE.BackSide}
-          transparent
-          opacity={0.42}
-          depthWrite={false}
-        />
-      </mesh>
-    </group>
-  )
 }
 
 function CaseMesh({
@@ -62,7 +32,25 @@ function CaseMesh({
   )
 
   if (material === 'glass') {
-    return <GlassCase geometry={geometry} thickness={params.c * 0.85} />
+    return (
+      <mesh geometry={geometry} receiveShadow>
+        <meshPhysicalMaterial
+          color="#222228"
+          roughness={0.04}
+          metalness={0}
+          transmission={0.9}
+          thickness={params.c * 0.9}
+          ior={1.52}
+          envMapIntensity={0}
+          specularIntensity={1}
+          specularColor="#ffffff"
+          clearcoat={1}
+          clearcoatRoughness={0.02}
+          transparent
+          side={THREE.FrontSide}
+        />
+      </mesh>
+    )
   }
 
   return (
@@ -75,9 +63,11 @@ function CaseMesh({
 function SceneContent({
   params,
   material,
+  lights,
 }: {
   params: CaseParams
   material: SurfaceMaterial
+  lights: StudioLightingState
 }) {
   const dist = cameraDistance(params)
 
@@ -94,41 +84,16 @@ function SceneContent({
         far={500}
       />
 
-      <ambientLight intensity={material === 'glass' ? 0.95 : 0.62} />
-      <hemisphereLight
-        intensity={material === 'glass' ? 0.72 : 0.28}
-        color="#d8dce4"
-        groundColor="#181818"
-      />
-      {material === 'glass' && (
-        <>
-          {/* 轮廓光：从模型后方打光，specular=0 时仅提亮边缘漫反射 */}
-          <directionalLight position={[-dist * 0.9, dist * 0.55, -dist * 0.85]} intensity={0.55} color="#c8d0dc" />
-          <directionalLight position={[dist * 0.75, dist * 0.35, -dist * 0.9]} intensity={0.38} color="#b0b8c8" />
-          <directionalLight position={[0, -dist * 0.6, -dist * 0.5]} intensity={0.22} color="#9098a8" />
-          <directionalLight position={[0, 0, dist * 0.85]} intensity={0.12} color="#606870" />
-        </>
-      )}
-      {material === 'clay' && (
-        <>
-          <directionalLight
-            position={[dist, dist * 1.35, dist * 0.75]}
-            intensity={1.05}
-            castShadow
-            shadow-mapSize={[1024, 1024]}
-          />
-          <directionalLight position={[-dist * 0.55, dist * 0.35, -dist * 0.25]} intensity={0.32} />
-        </>
-      )}
+      <StudioLights keyLight={lights.key} fillLight={lights.fill} />
 
       <CaseMesh params={params} material={material} />
 
       <ContactShadows
         position={[0, 0, -params.c - 0.04]}
         rotation={[Math.PI / 2, 0, 0]}
-        opacity={material === 'glass' ? 0.28 : 0.35}
+        opacity={material === 'glass' ? 0.22 : 0.35}
         scale={Math.max(params.a, params.b) * 4}
-        blur={2.2}
+        blur={2.4}
         far={params.c * 3}
       />
 
@@ -144,10 +109,10 @@ function SceneContent({
   )
 }
 
-/** 由三视图参数挤出超椭球表壳白膜 / 镜面玻璃 */
-export function WhiteModelView({ params }: WhiteModelViewProps) {
+/** 由三视图参数挤出表壳 · 可调主光/反射光 */
+export function WhiteModelView({ params, lights }: WhiteModelViewProps) {
   const { a, b, c, n } = params
-  const [material, setMaterial] = useState<SurfaceMaterial>('clay')
+  const [material, setMaterial] = useState<SurfaceMaterial>('glass')
   const camKey = `${a.toFixed(2)}-${b.toFixed(2)}-${c.toFixed(2)}-${n.toFixed(2)}-${material}`
 
   return (
@@ -160,7 +125,7 @@ export function WhiteModelView({ params }: WhiteModelViewProps) {
           gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
         >
           <Suspense fallback={null}>
-            <SceneContent params={params} material={material} />
+            <SceneContent params={params} material={material} lights={lights} />
           </Suspense>
         </Canvas>
       </div>
@@ -194,9 +159,7 @@ export function WhiteModelView({ params }: WhiteModelViewProps) {
           {`${(a * 2).toFixed(1)} × ${(b * 2).toFixed(1)} × ${(c * 2).toFixed(1)} mm · n=${n.toFixed(1)}`}
         </span>
         <span className="white-model-spec__hint">
-          {material === 'glass'
-            ? '暗色镜面 · 轮廓光 · 无场景贴图 · 拖拽旋转'
-            : '由外形工作室三视图轮廓挤出 · 拖拽旋转'}
+          主光 + 反射光面光源 · 右侧面板调节 · 拖拽旋转
         </span>
       </footer>
     </div>
