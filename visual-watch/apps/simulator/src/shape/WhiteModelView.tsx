@@ -1,6 +1,6 @@
 import { Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Edges, OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { Edges, OrbitControls, PerspectiveCamera, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
 import type { CaseParams } from './CaseParams'
 import { createWatchCaseGeometry } from './watchCaseGeometry'
@@ -61,10 +61,14 @@ function SceneContent({ params }: { params: CaseParams }) {
 
       <WhiteClayCase params={params} />
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -params.c - 0.02]} receiveShadow>
-        <planeGeometry args={[dist * 3, dist * 3]} />
-        <shadowMaterial opacity={0.22} color="#000000" />
-      </mesh>
+      <ContactShadows
+        position={[0, 0, -params.c - 0.04]}
+        rotation={[Math.PI / 2, 0, 0]}
+        opacity={0.35}
+        scale={Math.max(params.a, params.b) * 4}
+        blur={2.2}
+        far={params.c * 3}
+      />
 
       <OrbitControls
         enablePan={false}

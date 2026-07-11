@@ -75,24 +75,28 @@ export function createSuperellipsoidGeometry(segments = 72): THREE.BufferGeometr
 
   for (let i = 0; i <= segments; i++) {
     const nu = -Math.PI / 2 + (i / segments) * Math.PI
+    const cosNu = Math.cos(nu)
+    const sinNu = Math.sin(nu)
     for (let j = 0; j <= segments; j++) {
       const omega = -Math.PI + (j / segments) * Math.PI * 2
-      const x = a * cosN(nu) * cosN(omega)
-      const y = b * cosN(nu) * sinN(omega)
-      const z = c * sinN(nu)
+      const cosOm = Math.cos(omega)
+      const sinOm = Math.sin(omega)
+      const x = a * cosN(cosNu) * cosN(cosOm)
+      const y = b * cosN(cosNu) * sinN(sinOm)
+      const z = c * sinN(sinNu)
       verts.push(x, y, z)
       uvs.push(j / segments, i / segments)
 
       const eps = 0.002
-      const x1 = a * cosN(nu + eps) * cosN(omega)
-      const y1 = b * cosN(nu + eps) * sinN(omega)
-      const z1 = c * sinN(nu + eps)
+      const x1 = a * cosN(Math.cos(nu + eps)) * cosN(cosOm)
+      const y1 = b * cosN(Math.cos(nu + eps)) * sinN(sinOm)
+      const z1 = c * sinN(Math.sin(nu + eps))
       const tx = x1 - x
       const ty = y1 - y
       const tz = z1 - z
-      const x2 = a * cosN(nu) * cosN(omega + eps)
-      const ty2 = b * cosN(nu) * sinN(omega + eps) - y
-      const tz2 = c * sinN(nu) - z
+      const x2 = a * cosN(cosNu) * cosN(Math.cos(omega + eps))
+      const ty2 = b * cosN(cosNu) * sinN(Math.sin(omega + eps)) - y
+      const tz2 = c * sinN(sinNu) - z
       const nx = ty * tz2 - tz * ty2
       const ny = tz * (x2 - x) - tx * tz2
       const nz = tx * ty2 - ty * (x2 - x)

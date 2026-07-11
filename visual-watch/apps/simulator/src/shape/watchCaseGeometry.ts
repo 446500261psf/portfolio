@@ -14,11 +14,15 @@ export function createWatchCaseGeometry(
 
   for (let i = 0; i <= segments; i++) {
     const nu = -Math.PI / 2 + (i / segments) * Math.PI
+    const cosNu = Math.cos(nu)
+    const sinNu = Math.sin(nu)
     for (let j = 0; j <= segments; j++) {
       const omega = -Math.PI + (j / segments) * Math.PI * 2
-      const x = a * cosN(nu) * cosN(omega)
-      const y = b * cosN(nu) * sinN(omega)
-      const z = c * sinN(nu)
+      const cosOm = Math.cos(omega)
+      const sinOm = Math.sin(omega)
+      const x = a * cosN(cosNu) * cosN(cosOm)
+      const y = b * cosN(cosNu) * sinN(sinOm)
+      const z = c * sinN(sinNu)
       verts.push(x, y, z)
     }
   }
