@@ -16,6 +16,39 @@ function cameraDistance(params: CaseParams): number {
   return span * 2.4
 }
 
+function GlassCase({ geometry, thickness }: { geometry: THREE.BufferGeometry; thickness: number }) {
+  return (
+    <group>
+      <mesh geometry={geometry} receiveShadow>
+        <meshPhysicalMaterial
+          color="#34343c"
+          roughness={0.09}
+          metalness={0}
+          transmission={0.78}
+          thickness={thickness}
+          ior={1.52}
+          envMapIntensity={0}
+          specularIntensity={0}
+          clearcoat={0.65}
+          clearcoatRoughness={0.06}
+          transparent
+          side={THREE.FrontSide}
+        />
+      </mesh>
+      {/* 背向壳体：只在轮廓处可见，形成柔边 rim light */}
+      <mesh geometry={geometry} scale={1.018}>
+        <meshBasicMaterial
+          color="#a8b0bc"
+          side={THREE.BackSide}
+          transparent
+          opacity={0.42}
+          depthWrite={false}
+        />
+      </mesh>
+    </group>
+  )
+}
+
 function CaseMesh({
   params,
   material,
@@ -29,25 +62,7 @@ function CaseMesh({
   )
 
   if (material === 'glass') {
-    return (
-      <mesh geometry={geometry} receiveShadow>
-        <meshPhysicalMaterial
-          color="#121216"
-          roughness={0.07}
-          metalness={0}
-          transmission={0.94}
-          thickness={params.c * 0.85}
-          ior={1.52}
-          envMapIntensity={0}
-          specularIntensity={0}
-          clearcoat={0.85}
-          clearcoatRoughness={0.04}
-          reflectivity={0.55}
-          transparent
-          side={THREE.FrontSide}
-        />
-      </mesh>
-    )
+    return <GlassCase geometry={geometry} thickness={params.c * 0.85} />
   }
 
   return (
@@ -79,12 +94,21 @@ function SceneContent({
         far={500}
       />
 
-      <ambientLight intensity={material === 'glass' ? 0.72 : 0.62} />
+      <ambientLight intensity={material === 'glass' ? 0.95 : 0.62} />
       <hemisphereLight
-        intensity={material === 'glass' ? 0.55 : 0.28}
-        color="#c8ccd4"
-        groundColor="#080808"
+        intensity={material === 'glass' ? 0.72 : 0.28}
+        color="#d8dce4"
+        groundColor="#181818"
       />
+      {material === 'glass' && (
+        <>
+          {/* 轮廓光：从模型后方打光，specular=0 时仅提亮边缘漫反射 */}
+          <directionalLight position={[-dist * 0.9, dist * 0.55, -dist * 0.85]} intensity={0.55} color="#c8d0dc" />
+          <directionalLight position={[dist * 0.75, dist * 0.35, -dist * 0.9]} intensity={0.38} color="#b0b8c8" />
+          <directionalLight position={[0, -dist * 0.6, -dist * 0.5]} intensity={0.22} color="#9098a8" />
+          <directionalLight position={[0, 0, dist * 0.85]} intensity={0.12} color="#606870" />
+        </>
+      )}
       {material === 'clay' && (
         <>
           <directionalLight
@@ -171,7 +195,7 @@ export function WhiteModelView({ params }: WhiteModelViewProps) {
         </span>
         <span className="white-model-spec__hint">
           {material === 'glass'
-            ? '暗色镜面 · 无场景贴图 · 无光源高光 · 拖拽旋转'
+            ? '暗色镜面 · 轮廓光 · 无场景贴图 · 拖拽旋转'
             : '由外形工作室三视图轮廓挤出 · 拖拽旋转'}
         </span>
       </footer>
