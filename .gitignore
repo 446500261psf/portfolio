@@ -25,3 +25,10 @@ dist-ssr
 
 # 秘书 O 私人备忘（含账号信息，勿提交）
 O/**/kontodaten*.md
+
+# API secrets
+O/api-config/.env
+O/api-config/*.key
+.env
+.env.*
+!.env.example
