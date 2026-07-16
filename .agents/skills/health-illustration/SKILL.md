@@ -1,67 +1,74 @@
 ---
 name: health-illustration
-description: "Generate HUAWEI Health app hand-drawn spot illustrations for empty states, onboarding, and benefit moments. Use when the user asks for health/exercise illustrations, 手绘插画, empty state art, Morandi health art, kinetic exercise art, or app illustration matching HeartLine brand. Switches between Health Morandi (calm, high lightness, narrow gamut) and Exercise Kinetic (soft-bright, wider gamut). Complements naive-design and baoyu-article-illustrator."
+description: "Generate HUAWEI Health app card-flat illustrations for Achieve/Body/Heart content cards, empty states, and benefit moments. Use when the user asks for card illustration, card-flat, faceless flat vector, 卡片插画, health/exercise illustrations, Morandi blended health art, or partitioned exercise card art. Default style is card-flat: faceless rubber-limb characters, narrative props, Exercise partitioned color, Health blended atmosphere. Complements naive-design and baoyu-article-illustrator."
 license: MIT
 compatibility: Agent-agnostic. Pairs with naive-design, baoyu-article-illustrator, and HeartLine logo guidelines.
 metadata:
   author: HUAWEI Health Design System
-  version: "0.1.0"
+  version: "0.2.0"
   palette: "Illustration Palettes v0.2"
   brand: "HeartLine / HUAWEI Health"
+  defaultStyle: "card-flat"
 ---
 
 # health-illustration
 
-> App spot illustrations that feel **hand-drawn and human**, but stay **on-brand and production-safe**.  
-> Product chrome stays clean. Warmth lives in the illustration layer only.
+> **Primary deliverable: `card-flat` illustrations for content cards.**  
+> Faceless flat characters + narrative props. Product chrome stays clean; art fills the card media area.
 
 This skill encodes:
 
-1. **naive-design** — intentional imperfection, limited palette, brand-layer boundary  
-2. **baoyu styles** — `warm` / `notion` for Health; `flat-doodle` energy for Exercise  
-3. **kunaal DNA** — one image = one idea; subject 40–60%; generous whitespace  
-4. **HeartLine + Illustration Palettes v0.2** — locked color systems
+1. **card-flat** — faceless flat vector for Achieve / Body / Heart cards (default)  
+2. **naive-design** — intentional composition, limited palette, brand-layer boundary  
+3. **Narrative props** — scene tells a story beyond a lone figure  
+4. **HeartLine + Illustration Palettes v0.2** — locked color systems  
+5. **baoyu / doodle modes** — optional for empty-state sketch moments (non-default)
 
 ## When to use
 
 **Use for**
 
-- Empty states (no data / first-run / permission)
-- Onboarding & celebration moments
-- Benefit cards, AI+ soft coaching scenes
-- Sleep / recovery / vitals / stress (Health track)
+- Content cards (Achieve / Body / Heart) — **default `card-flat`**
+- Empty states, onboarding, benefit moments
+- Sleep / recovery / nutrition / vitals (Health track)
 - Run / strength / outdoor / challenge (Exercise track)
 
 **Do NOT use for**
 
 - Data tables, charts chrome, settings forms, medical-critical UI
-- Replacing icons (use `health-icon-system` / icon-set-generator)
-- Full-screen photographic realism or 3D glossy renders
-- Putting doodles on dense product UI
-
-Rule of surface (from naive-design): **disciplined product UI, naive illustration layer.**
+- Replacing icons (use icon skills)
+- Photoreal / 3D glossy / anime faces
 
 ## The one rule
 
-**Intentional, not broken.**  
-Childlike warmth that would survive a senior design review. Grid + whitespace + limited palette underneath; wobble/grain only on decorative marks.
+**One card = one verb + a short visual story.**  
+Hero action is clear in 1 second; props explain *why it matters*; composition stays card-safe (room for title overlay).
 
 Fatal failures:
 
-- Chaos (random rotation, overcrowded)
-- Fake-handmade (perfect vector “doodle”, zero texture)
-- Lazy shorthand (generic clip-art stars, Comic Sans, rainbow packs)
+- Lonely floating figure with no narrative props
+- Overcrowded sticker sheet
+- Health cards with harsh partitioned poster contrast (unless asked)
+- Exercise cards that feel muddy / un-scannable
+- Detailed faces, neon glow, photo collage
 
 ## Mode selection
 
-Read the brief and pick **exactly one** mode:
+Pick **style** + **track**:
 
-| Mode | Use when | Style DNA | Palette file |
-|------|----------|-----------|--------------|
-| `health` | Sleep, HRV, stress, recovery, cycle care, health profile, AI soft consult | warm + notion; airy, high lightness | `references/palettes.md` → Health Morandi |
-| `exercise` | Run, strength, outdoor, HIIT, challenges, weekly highlight, AI coach hype | flat-doodle + kinetic motion | `references/palettes.md` → Exercise Kinetic |
+| Style | Default? | Use when |
+|-------|----------|----------|
+| `card-flat` | **Yes** | Content cards, benefit tiles, feed cards |
+| `doodle` | No | Soft empty states that need sketch warmth |
 
-If mixed (e.g. “recovery after run”), prefer **health** for rest/recovery emotion, **exercise** only when the hero action is motion.
+| Track | Color strategy | Palette |
+|-------|----------------|---------|
+| `exercise` | **Partitioned** — solid field bg, character/props pop | Olive/ochre field + Kinetic accents (`palettes.md`) |
+| `health` | **Blended** — bg + subject fuse in one Morandi atmosphere | Health Morandi v0.2 (`palettes.md`) |
+
+Always read `references/card-flat.md` when style is `card-flat`.
+
+If mixed (e.g. “recovery after run”), prefer **health + blended** for rest emotion; **exercise + partitioned** only when the hero verb is motion.
 
 ## Workflow
 
@@ -69,45 +76,46 @@ If mixed (e.g. “recovery after run”), prefer **health** for rest/recovery em
 
 Collect:
 
-- Mode (`health` | `exercise`)
-- Scene job (empty / onboard / celebrate / explain)
-- Aspect (`1:1` default for app spots; `4:5` for tall empty; `16:9` for banners)
-- Must include / must avoid objects
-- Whether HeartLine mark appears (usually **no** inside spot art; if yes, follow logo guidelines)
+- Style (`card-flat` default | `doodle`)
+- Track (`health` | `exercise`)
+- Scene job (card / empty / onboard / celebrate)
+- Aspect (`1:1` default for cards; `4:5` tall card; `16:9` banner)
+- Narrative beats (hero verb + required props)
+- Leave clear zone for title overlay? (default yes — keep top band quieter)
 
 Read before drawing:
 
-1. `references/palettes.md` (mandatory)
-2. `references/scenes.md` (scene recipes)
-3. `references/prompt-template.md` (generation contract)
-4. `references/qa-checklist.md` (before delivery)
+1. `references/card-flat.md` (mandatory for cards)
+2. `references/palettes.md` (mandatory)
+3. `references/scenes.md` (scene recipes)
+4. `references/prompt-template.md` (generation contract)
+5. `references/qa-checklist.md` (before delivery)
 
 Also load sibling skills when available:
 
-- `naive-design` — imperfection discipline + AVOID block
-- `baoyu-article-illustrator` — Type × Style × Palette prompt structure
+- `naive-design` — composition discipline + AVOID block
+- `baoyu-article-illustrator` — optional for `doodle` style only
 
-### 2. One image, one job
+### 2. One image, one job + narrative
 
-From kunaal DNA:
-
-- Subject occupies **~40–60%** of canvas
-- Leave **≥35%** quiet negative space
-- At most **one** metaphor / action / state
+- **One hero verb** only
+- Subject + props occupy **~45–65%** of canvas
+- **2–5 narrative props** required (see `card-flat.md`)
+- Leave quiet margins / top band for app typography
 - No PPT titles, no flowchart chrome, no multi-panel storyboards unless asked
 
 ### 3. Build the prompt
 
-Follow `references/prompt-template.md` exactly. Always include:
+Follow `references/prompt-template.md` → **card-flat** section. Always include:
 
-1. Artifact + scene
-2. Style declaration (mode-specific)
-3. Concrete marks (named objects, not vague “nice doodles”)
-4. Layout / whitespace
-5. **Named hex palette from palettes.md** (never invent new hues)
-6. Texture (subtle paper/grain for health; clean soft flat for exercise)
+1. Artifact + scene (app content card)
+2. Style: faceless card-flat vector
+3. Hero action + named narrative props (3–5)
+4. Color strategy: Exercise **partitioned** OR Health **blended**
+5. **Named hex list** from `palettes.md` / card-flat grounds
+6. Layout: clear top band for title overlay
 7. Emotional target
-8. AVOID block (cold perfection **and** childish chaos)
+8. AVOID block
 
 ### 4. Generate & check
 
@@ -123,23 +131,26 @@ If palette drift is visible (neon coral on Health, muddy gray on Exercise), rege
 
 ## Style recipes (short)
 
-### Health Morandi
+### card-flat · Health (blended)
 
-- High lightness, low saturation, **narrow** gamut (sage / mist / clay / peach)
-- Soft rounded forms, gentle line wobble, calm breathing space
-- Max **4–5** colors per image; sage + mist ≈ 70% of color area
-- No neon, no pure black, no brand-orange full chroma (`#FD8F1B`)
-- Line/ink: `#5A544E`; canvas: `#F7F3EE` / `#FCFAF7`
-- Characters: soft limbs, quiet faces (dot eyes OK), restful poses
+- Faceless rubber-limb character; **no facial features**
+- Bg + clothing + props share Morandi family — **fused atmosphere**
+- Narrative props: moon/plant/bowl/blanket/waveform… (3–5)
+- Soft same-hue shadows; high lightness; max ~5–6 colors
+- Forbidden: stark poster blocks, neon, pure black, full `#FD8F1B`
 
-### Exercise Kinetic
+### card-flat · Exercise (partitioned)
 
-- Soft-bright (saturation already lowered in v0.2), **wide** hue span
-- Diagonal motion, speed marks, path curves; still not fluorescent
-- Max **5–7** colors; `energy.orange` `#E89A45` appears at least once
-- Allowed soft complements: orange↔blue, coral↔teal
-- Deep night scenes use `#1A2028` + `#F2F4F7` line
-- Do **not** mix Health Morandi dust-pinks as dominant fills
+- Faceless character pops on **solid olive/ochre (or deep) field**
+- Accents from Kinetic v0.2 (orange/blue/teal/coral)
+- Narrative props: path/bottle/kettlebell/flag/hills… (3–5)
+- Hard soft ground shadow; scannable feed energy
+- Forbidden: muddy low-contrast fields, Health dust-pinks as dominant fills
+
+### doodle (optional, non-default)
+
+- Soft sketch empty states only; see earlier Morandi / Kinetic doodle notes
+- Still require one verb; props can be lighter (2–3)
 
 ## HeartLine coexistence
 
@@ -163,3 +174,5 @@ Append-only failure log:
 - [2026-07-16] Health samples drifted into cream+terracotta cliché → lock Morandi hex list; forbid `#F4F1EA` + terracotta pairing as default.
 - [2026-07-16] Exercise looked neon → use v0.2 softened kinetic hexes, not `#FF4B5C` full chroma.
 - [2026-07-16] Overcrowded empty states → enforce 40–60% subject + one metaphor.
+- [2026-07-16] Lonely figure on cards → require 2–5 narrative props (`card-flat.md`).
+- [2026-07-16] Health cards used harsh indigo partition like Achieve → switch to **blended** Morandi fuse.

@@ -4,50 +4,63 @@ Paste blocks in order. Replace `[BRACKETS]`. Always attach the AVOID block.
 
 ## Shared — AVOID
 
-> Avoid: photorealism, 3D render, glossy plastic, complex multi-layer shading, corporate stock, luxury minimalism, cyberpunk, anime, cluttered collage, random childish chaos, Comic Sans, generic clip-art star packs, perfect mechanical vector with zero wobble, purple-on-white AI-default gradients, warm-cream + terracotta cliché pairing, fluorescent neon.
+> Avoid: photorealism, detailed faces/eyes, 3D render, glossy plastic, complex multi-layer shading, corporate stock photo, cyberpunk, anime, cluttered sticker collage, random childish chaos, neon/fluorescent glow, purple-on-white AI-default gradients, warm-cream + terracotta cliché pairing, UI chrome, in-image titles, flowchart boxes.
 
-## Mode: health
+---
 
-> Create a **square (1:1) hand-drawn spot illustration** for a health app **[SCENE: e.g. empty sleep state]**.
+## DEFAULT · card-flat · exercise (partitioned)
+
+> Create a **square (1:1) app content-card illustration** in modern **card-flat** faceless vector style.
 >
-> Style: contemporary naive doodle + warm Notion-like line art — childlike but professionally art-directed; intentionally imperfect yet well-composed. Soft rounded forms, gentle line wobble, airy high-lightness Morandi mood.
+> Style: Corporate Memphis–adjacent wellness card art — rubbery simplified limbs, **no facial features**, flat fills, hard soft geometric ground shadow, clean but story-rich.
 >
-> Subject: **[CONCRETE MARKS — name 3–6 objects/actions]**. One metaphor only. Character participates in the action if present (not decorative).
+> Color strategy: **PARTITIONED**. Solid muted olive-ochre field background (`#8B8C5E` or `#7E8A56`). Character and key props POP with white, charcoal, sport blue `#5B8FD9`, energy orange `#E89A45`, optional teal `#3DB8B0` / coral `#E86B78`. High scannable contrast.
 >
-> Layout: clean app empty-state composition, generous negative space, main subject ~40–60% of canvas, calm center of gravity, no UI chrome, no flowchart boxes, no corner titles.
+> Narrative (required): Hero action **[VERB e.g. running / push-ups]** PLUS supporting story props: **[list 3–5 props e.g. curved track, water bottle, finish ribbon, route dots, soft hills]**. One verb only. Character must participate in the action.
 >
-> Palette — use ONLY these hex colors: canvas `#F7F3EE`, surface `#FCFAF7`, ink `#5A544E`, secondary ink `#8E877F`, sage `#B7C7B5`, mist `#B5C5CE`, clay `#D4C2BC`, taupe `#CDC4BB`, lilac `#C7BFCA`, peach `#D8BFA8`, forest `#7A8A78`, line `#E6E1DA`. Max 4–5 colors. Sage + mist dominate.
+> Layout: leave a quieter top band for app title overlay; subject+props ~45–65% of canvas; uncluttered margins; no text; no UI.
 >
-> Texture: subtle matte paper grain, uneven ink pressure, soft hand-drawn edges. No heavy noise.
->
-> Emotion: calm, trustworthy, recoverable, emotionally safe, daytime wellness.
+> Emotion: energetic, forward, motivating, feed-friendly.
 >
 > [AVOID]
 
-## Mode: exercise
+---
 
-> Create a **square (1:1) hand-drawn spot illustration** for a fitness app **[SCENE: e.g. running progress empty]**.
+## DEFAULT · card-flat · health (blended)
+
+> Create a **square (1:1) app content-card illustration** in modern **card-flat** faceless vector style.
 >
-> Style: soft flat-doodle with kinetic motion — bold-but-soft outlines, rounded athletic forms, diagonal energy, professionally art-directed (not chaotic).
+> Style: faceless rubber-limb character, flat fills, soft same-hue shadows — **no facial features**.
 >
-> Subject: **[CONCRETE MARKS]**. Show motion with path curves / speed ticks. One primary action only.
+> Color strategy: **BLENDED / FUSED**. Background and subject share one Morandi atmosphere — clothing, props, and backdrop close in lightness and saturation so the figure feels embedded in the space (NOT a stark poster partition). Use ONLY: canvas `#F7F3EE`, sage `#B7C7B5`, mist `#B5C5CE`, clay `#D4C2BC`, taupe `#CDC4BB`, lilac `#C7BFCA`, peach `#D8BFA8`, forest `#7A8A78`, ink `#5A544E`, line `#E6E1DA`.
 >
-> Layout: dynamic but readable; subject ~40–60%; leave quiet corners; no device UI, no charts, no badge spam.
+> Narrative (required): Hero action **[VERB e.g. resting / cooking]** PLUS supporting story props: **[list 3–5 props e.g. moon, plant, blanket, juice glass, cutting board, soft waveform]**. One verb only.
 >
-> Palette — use ONLY these hex colors: orange `#E89A45`, coral `#E86B78`, yellow `#E6C35A`, lime `#8FCB5A`, teal `#3DB8B0`, blue `#5B8FD9`, violet `#7A6FD1` (only if AI+), dark `#1A2028`, white `#F2F4F7`, light `#F4F5F7`, mid `#252D38`, trail `#8E97A5`. Include orange at least once. 5–7 colors OK. Softened saturation — not neon.
+> Layout: quieter top band for title overlay; calm center; ~45–65% subject+props; no text; no UI.
 >
-> Texture: clean soft flat fills, slight hand wobble on outlines, matte (no glow bloom).
+> Emotion: calm, trustworthy, continuous, wellness-safe.
 >
-> Emotion: energetic, forward, motivating, still App-friendly for daily use.
->
-> [AVOID]
+> [AVOID] Also avoid harsh dark-indigo blocks with high-contrast white figures unless explicitly requested.
+
+---
+
+## Optional · doodle · health / exercise
+
+Use only when user asks for sketch / naive empty-state warmth (not default cards).
+
+### health doodle
+
+> Soft hand-drawn Morandi spot, high lightness, max 4–5 colors from Health Morandi hex list, gentle wobble, one metaphor, airy whitespace. [AVOID]
+
+### exercise doodle
+
+> Soft flat-doodle kinetic spot, Kinetic v0.2 hexes, orange once, motion ticks, not neon. [AVOID]
 
 ## Aspect overrides
 
-- Tall empty state: say `4:5 portrait` instead of square
-- Banner / week review: `16:9 landscape`, still one metaphor
+- Tall card: `4:5 portrait`
+- Banner: `16:9 landscape` (still one verb)
 
 ## Label policy
 
-Default: **no text** inside the illustration (UI copy lives in the app).  
-If labels are required: ≤ 3 short words, hand-lettered, in ink color only.
+Default: **no text** inside the illustration.

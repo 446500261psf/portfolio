@@ -2,34 +2,33 @@
 
 Run after every generation. Fail → regenerate or local edit.
 
-## Palette
+## Style
 
-- [ ] Only hexes from the chosen mode in `palettes.md`
-- [ ] Health: no neon / pure black / full `#FD8F1B`
-- [ ] Exercise: orange `#E89A45` present; not fluorescent
-- [ ] No accidental cream+terracotta AI-default look on Health
+- [ ] `card-flat` unless user asked for doodle
+- [ ] Faceless character (no eyes/nose/mouth)
+- [ ] Flat vector; hard soft shadow OK; no photo/3D/neon
+
+## Narrative
+
+- [ ] Clear hero verb in 1 second
+- [ ] **2–5 narrative props** present (not a lonely figure)
+- [ ] Props support the benefit story
+- [ ] Not overcrowded sticker spam
+
+## Color strategy
+
+- [ ] Exercise = **partitioned** (field bg + popping character/props)
+- [ ] Health = **blended** (bg + subject fused in Morandi family)
+- [ ] Only allowed hexes for the track
+- [ ] Health avoided harsh indigo/white poster contrast (unless requested)
 
 ## Composition
 
-- [ ] One metaphor / one primary action
-- [ ] Subject ~40–60% of canvas
-- [ ] ≥35% quiet negative space
-- [ ] No UI chrome, device frames, charts, PPT titles
-
-## Style
-
-- [ ] Hand-drawn wobble present (not perfect CAD vector)
-- [ ] Texture subtle (not noisy costume grain)
-- [ ] Would survive senior designer review (intentional, not broken)
-- [ ] Not childish chaos; not cute-overdone sticker spam
-
-## Brand / product
-
-- [ ] Suitable for empty state / onboarding slot (not settings/table decoration)
-- [ ] HeartLine absent, or follows logo usage rules if present
-- [ ] Works at ~160–240pt phone width without muddying
+- [ ] Quieter top band for title overlay
+- [ ] Subject+props ~45–65%
+- [ ] No UI chrome / in-image titles
 
 ## Delivery
 
-- [ ] Named `{mode}-{scene}-{nn}.png`
-- [ ] Mode + palette version noted in handoff
+- [ ] Named `{track}-{scene}-cardflat-{nn}.png`
+- [ ] Style + track + palette version noted

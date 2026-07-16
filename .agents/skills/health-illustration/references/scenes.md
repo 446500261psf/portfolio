@@ -1,31 +1,34 @@
-# Scene recipes
+# Scene recipes · card-flat narrative
 
-Pick a recipe, then fill concrete marks into the prompt template.
+Each row = hero verb + suggested props (pick 3–5).
 
-## Health
+## Exercise · partitioned
 
-| ID | Scene | Concrete marks (examples) | Emotion |
-|----|-------|---------------------------|---------|
-| `h-rest` | Recovery / breathe empty | Person reclining on soft cushion, gentle waveform, small leaves | Quiet restore |
-| `h-sleep` | Sleep tracking empty | Crescent moon, soft clouds, person under light blanket, moon phases | Soft night calm (still high-lightness palette) |
-| `h-heart` | Vitals / HRV | Ribbon heart (not medical red), pulse dots, soft leaves | Trust, care |
-| `h-stress` | Stress relief | Person sitting, slow concentric rings, unclenched hands | Release |
-| `h-cycle` | Cycle care | Soft calendar petal marks, gentle curve, warm clay accents | Gentle care |
-| `h-ai` | AI soft consult empty | Soft chat bubble as leaf/cloud, calm figure, peach accent only | Approachable help |
+| ID | Verb | Narrative props |
+|----|------|-----------------|
+| `e-run` | Running | curved track, route dots, water bottle, finish ribbon, soft hills |
+| `e-strength` | Push-up / lift | kettlebells, mat, towel, dumbbells, chalk/motion arcs |
+| `e-outdoor` | Cycling / trail | bike or trail path, sun disc, hills, bottle, birds optional |
+| `e-hiit` | Jump / burst | jump rope, cones, sweat towel, burst ticks |
+| `e-challenge` | Finish challenge | ribbon, podium step, path dots, watch |
 
-## Exercise
+Field: olive `#8B8C5E` (default Achieve) unless night run → `#1A2028`.
 
-| ID | Scene | Concrete marks (examples) | Emotion |
-|----|-------|---------------------------|---------|
-| `e-run` | Running | Runner mid-stride, path curve, speed ticks, orange + blue | Forward |
-| `e-strength` | Strength | Athlete + dumbbell, motion arcs, lime accent for effort | Power |
-| `e-outdoor` | Outdoor / ride | Cyclist or trail runner, hills, sun disc, teal/yellow | Open air |
-| `e-hiit` | HIIT burst | Jump pose, short burst marks, coral heat | Intensity |
-| `e-challenge` | Weekly challenge | Finish ribbon + path dots, orange must lead | Achievement |
-| `e-ai-coach` | AI coach hype | Coach gesture + route, optional violet bridge | Motivated |
+## Health · blended
 
-## Composition defaults
+| ID | Verb | Narrative props |
+|----|------|-----------------|
+| `h-sleep` | Resting / sleeping | moon, clouds, blanket, plant, moon phases, soft waveform |
+| `h-food` | Cooking / drinking | cutting board, veg, juice glass, herb pot, steam, bowl |
+| `h-heart` | Calm check-in | ribbon heart motif, leaves, soft pulse dots, cushion |
+| `h-stress` | Breathing | concentric rings, seated figure, plant, soft window shape |
+| `h-cycle` | Gentle care | petal/calendar marks, warm clay props, tea cup |
+| `h-ai` | Soft consult | leaf-like chat bubble, calm seat, peach accent prop only |
 
-- App empty state: subject slightly above vertical center; airy margin ≥ 12% on all sides
-- Prefer 1 character max unless comparison is the job
-- Props support the metaphor; delete anything that does not carry meaning
+Atmosphere: Morandi fuse — no stark partition.
+
+## Composition reminder
+
+- Keep top ~15% relatively clear for card title
+- One verb; props support the benefit claim
+- Delete any prop that doesn’t carry story
