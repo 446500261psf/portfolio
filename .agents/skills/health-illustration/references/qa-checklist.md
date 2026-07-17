@@ -1,34 +1,27 @@
 # QA checklist
 
-Run after every generation. Fail → regenerate or local edit.
+Fail → regenerate.
 
-## Style
+## Sparse narrative
 
-- [ ] `card-flat` unless user asked for doodle
-- [ ] Faceless character (no eyes/nose/mouth)
-- [ ] Flat vector; hard soft shadow OK; no photo/3D/neon
-
-## Narrative
-
+- [ ] Exactly **1 subject**
+- [ ] **2–3 supporting elements** only (count them)
+- [ ] No extra hills/flags/icons beyond the named list
 - [ ] Clear hero verb in 1 second
-- [ ] **2–5 narrative props** present (not a lonely figure)
-- [ ] Props support the benefit story
-- [ ] Not overcrowded sticker spam
 
-## Color strategy
+## Camera & form
 
-- [ ] Exercise = **partitioned** (field bg + popping character/props)
-- [ ] Health = **blended** (bg + subject fused in Morandi family)
-- [ ] Only allowed hexes for the track
-- [ ] Health avoided harsh indigo/white poster contrast (unless requested)
+- [ ] Shot declared: 特写 / 中景 / 远景
+- [ ] Framing matches the shot
+- [ ] Mild deformation only (charming, not chaotic)
 
-## Composition
+## Style & color
 
-- [ ] Quieter top band for title overlay
-- [ ] Subject+props ~45–65%
-- [ ] No UI chrome / in-image titles
+- [ ] `card-flat` faceless flat vector
+- [ ] Exercise = partitioned · Health = blended
+- [ ] Allowed hexes only
+- [ ] Quieter top band for title
 
 ## Delivery
 
-- [ ] Named `{track}-{scene}-cardflat-{nn}.png`
-- [ ] Style + track + palette version noted
+- [ ] `{track}-{scene}-{shot}-cardflat-{nn}.png`

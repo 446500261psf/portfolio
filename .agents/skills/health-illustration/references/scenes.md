@@ -1,34 +1,34 @@
-# Scene recipes · card-flat narrative
+# Scene recipes · card-flat (sparse)
 
-Each row = hero verb + suggested props (pick 3–5).
+**Budget: 1 subject + 2–3 supports.** Pick a shot.
 
 ## Exercise · partitioned
 
-| ID | Verb | Narrative props |
-|----|------|-----------------|
-| `e-run` | Running | curved track, route dots, water bottle, finish ribbon, soft hills |
-| `e-strength` | Push-up / lift | kettlebells, mat, towel, dumbbells, chalk/motion arcs |
-| `e-outdoor` | Cycling / trail | bike or trail path, sun disc, hills, bottle, birds optional |
-| `e-hiit` | Jump / burst | jump rope, cones, sweat towel, burst ticks |
-| `e-challenge` | Finish challenge | ribbon, podium step, path dots, watch |
+| ID | Verb | Supports (pick 2–3) | Suggested shot |
+|----|------|---------------------|----------------|
+| `e-run` | Running | track arc, water bottle, route dots *(pick 2)* | 中景 or 远景 |
+| `e-strength` | Push-up / lift | kettlebell(s), mat | 特写 or 中景 |
+| `e-outdoor` | Trail / cycle | path, sun disc *or* bottle | 远景 |
+| `e-hiit` | Jump | jump rope, towel | 中景 |
+| `e-challenge` | Finish | ribbon, watch | 中景 / 特写 |
 
-Field: olive `#8B8C5E` (default Achieve) unless night run → `#1A2028`.
+Field: olive `#8B8C5E` (default). Mild stride stretch OK.
 
 ## Health · blended
 
-| ID | Verb | Narrative props |
-|----|------|-----------------|
-| `h-sleep` | Resting / sleeping | moon, clouds, blanket, plant, moon phases, soft waveform |
-| `h-food` | Cooking / drinking | cutting board, veg, juice glass, herb pot, steam, bowl |
-| `h-heart` | Calm check-in | ribbon heart motif, leaves, soft pulse dots, cushion |
-| `h-stress` | Breathing | concentric rings, seated figure, plant, soft window shape |
-| `h-cycle` | Gentle care | petal/calendar marks, warm clay props, tea cup |
-| `h-ai` | Soft consult | leaf-like chat bubble, calm seat, peach accent prop only |
+| ID | Verb | Supports (pick 2–3) | Suggested shot |
+|----|------|---------------------|----------------|
+| `h-sleep` | Resting | moon, blanket *(+ optional plant)* | 中景 / 特写 |
+| `h-food` | Cooking / drinking | juice glass, cutting board *or* bowl | 中景 / 特写 |
+| `h-heart` | Calm check-in | soft pulse motif, cushion | 特写 / 中景 |
+| `h-stress` | Breathing | concentric rings, plant | 中景 |
+| `h-cycle` | Gentle care | tea cup, petal mark | 特写 |
+| `h-ai` | Soft consult | leaf-bubble, seat | 中景 |
 
-Atmosphere: Morandi fuse — no stark partition.
+Atmosphere: Morandi fuse. Soft relaxed deformation OK.
 
-## Composition reminder
+## Shot cheat-sheet
 
-- Keep top ~15% relatively clear for card title
-- One verb; props support the benefit claim
-- Delete any prop that doesn’t carry story
+- **特写** — crop to torso/hands/object; max 2 supports
+- **中景** — half/full body action; 2–3 supports
+- **远景** — small figure in space; only 2 supports so silhouette reads

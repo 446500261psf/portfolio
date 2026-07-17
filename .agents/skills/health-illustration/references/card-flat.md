@@ -12,26 +12,51 @@ Inspired by modern faceless flat wellness apps (Corporate Memphis–adjacent), t
 - **Narrative props** — 2–5 supporting elements that tell the story (not decorative clutter)
 - **No UI chrome, no card title text inside the art** (copy lives in the app)
 
-## Narrative rules (required)
+## Narrative rules (required) — keep it sparse
 
-Do **not** ship a lonely floating figure.
+**Hard budget: 1 subject + 2–3 supporting elements. No more.**
 
-Build a mini-story with:
+| Slot | Count | What counts |
+|------|-------|-------------|
+| Subject | **1** | Usually the person (or a single hero object if no character) |
+| Supporting elements | **2–3** | Props **or** environment cues that carry story |
 
-1. **Hero action** — what the person is doing (run / cook / rest / lift)
-2. **Context props** — 2–4 objects that prove the scene (kettlebell, juice glass, moon, track path, herb pot…)
-3. **Environment cue** — 1 ground plane / path / counter / soft room shape
-4. **Optional motif** — 1 brand-safe symbol (waveform, route dots, steam, ribbon) — never spam
+Examples that fit the budget:
 
-Subject + props together still occupy ~45–65% of canvas; keep quiet margins.
+- Runner + track arc + water bottle *(3 pieces)*
+- Sleeper + moon + blanket fold *(3 pieces)*
+- Cook + juice glass + cutting board *(3 pieces)*
+- Lifter + kettlebell + mat *(3 pieces)*
 
-### Prop budgets
+Do **not** add hills + flag + route dots + bottle + towel in one card.  
+If an element doesn’t earn its place, delete it. Empty air is a feature.
 
-| Mode | Props | Notes |
-|------|-------|-------|
-| Exercise | 3–5 | Motion helpers: path, bottle, towel, flag, hills — OK |
-| Health | 3–5 | Soft domestic/nature: plant, blanket, bowl, moon — OK |
-| Either | ≤ 5 total meaningful props | Delete anything that doesn’t carry story |
+### What counts as one element
+
+- A pair of matched props can count as **one** (two kettlebells = 1 element)
+- Ground plane / soft shadow alone does **not** count toward the 2–3
+- Tiny decorative dust (1–2 dots) OK only if invisible as “content”
+
+## Camera / framing (choose per brief)
+
+Pick **one** shot intentionally — don’t default to the same medium every time:
+
+| Shot | When to use | Notes |
+|------|-------------|-------|
+| **Close-up 特写** | Emotion, object focus, intimate habit (drink, pulse, sleep face-crop of torso) | Crop boldly; 1–2 supports max |
+| **Medium 中景** | Default card — full/half body action readable | Most Achieve/Body cards |
+| **Wide 远景** | Journey, outdoors, sense of space | Keep supports ≤2 so silhouette stays clear |
+
+Leave a quieter top band when the app overlays a title.
+
+## Character form — slight deformation OK
+
+Faceless rubber-limb language **allows mild exaggeration**:
+
+- Stretch a stride, squash a landing, longer arms in a reach
+- Soft “squash & stretch” for energy (Exercise) or melt/relax (Health)
+- Keep it **subtle** — charming, not cartoon-chaos or horror distortion
+- Still no facial features; anatomy stays simplified and on-model for the set
 
 ## Color strategy (critical difference)
 

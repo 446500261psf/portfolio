@@ -5,7 +5,7 @@ license: MIT
 compatibility: Agent-agnostic. Pairs with naive-design, baoyu-article-illustrator, and HeartLine logo guidelines.
 metadata:
   author: HUAWEI Health Design System
-  version: "0.2.0"
+  version: "0.2.1"
   palette: "Illustration Palettes v0.2"
   brand: "HeartLine / HUAWEI Health"
   defaultStyle: "card-flat"
@@ -41,15 +41,15 @@ This skill encodes:
 
 ## The one rule
 
-**One card = one verb + a short visual story.**  
-Hero action is clear in 1 second; props explain *why it matters*; composition stays card-safe (room for title overlay).
+**One card = 1 subject + 2–3 supporting elements + one clear verb.**  
+Readable in 1 second. Camera can be 特写 / 中景 / 远景. Mild pose deformation OK.
 
 Fatal failures:
 
-- Lonely floating figure with no narrative props
-- Overcrowded sticker sheet
+- More than 3 supporting elements (busy card)
+- Zero story (empty floating figure with no supports) — use 2–3, not 0–1 unless close-up object hero
 - Health cards with harsh partitioned poster contrast (unless asked)
-- Exercise cards that feel muddy / un-scannable
+- Extreme cartoon chaos / horror distortion
 - Detailed faces, neon glow, photo collage
 
 ## Mode selection
@@ -96,26 +96,27 @@ Also load sibling skills when available:
 - `naive-design` — composition discipline + AVOID block
 - `baoyu-article-illustrator` — optional for `doodle` style only
 
-### 2. One image, one job + narrative
+### 2. One image, one job + sparse narrative
 
 - **One hero verb** only
-- Subject + props occupy **~45–65%** of canvas
-- **2–5 narrative props** required (see `card-flat.md`)
-- Leave quiet margins / top band for app typography
-- No PPT titles, no flowchart chrome, no multi-panel storyboards unless asked
+- **1 subject + 2–3 supporting elements** (hard cap)
+- Choose shot: **特写 / 中景 / 远景**
+- Mild squash–stretch / elongated stride OK
+- Subject group occupies ~40–65% depending on shot
+- Quiet top band for app typography
 
 ### 3. Build the prompt
 
 Follow `references/prompt-template.md` → **card-flat** section. Always include:
 
 1. Artifact + scene (app content card)
-2. Style: faceless card-flat vector
-3. Hero action + named narrative props (3–5)
-4. Color strategy: Exercise **partitioned** OR Health **blended**
-5. **Named hex list** from `palettes.md` / card-flat grounds
-6. Layout: clear top band for title overlay
-7. Emotional target
-8. AVOID block
+2. Style: faceless card-flat vector + slight deformation allowed
+3. Shot type (close / medium / wide)
+4. Hero action + **exactly 2–3 named supports** (not more)
+5. Color strategy: Exercise **partitioned** OR Health **blended**
+6. **Named hex list** from `palettes.md` / card-flat grounds
+7. Layout: clear top band for title overlay
+8. AVOID block (including “too many props”)
 
 ### 4. Generate & check
 
@@ -134,18 +135,20 @@ If palette drift is visible (neon coral on Health, muddy gray on Exercise), rege
 ### card-flat · Health (blended)
 
 - Faceless rubber-limb character; **no facial features**
-- Bg + clothing + props share Morandi family — **fused atmosphere**
-- Narrative props: moon/plant/bowl/blanket/waveform… (3–5)
-- Soft same-hue shadows; high lightness; max ~5–6 colors
-- Forbidden: stark poster blocks, neon, pure black, full `#FD8F1B`
+- Bg + clothing + supports share Morandi family — **fused atmosphere**
+- **2–3 supports only** (e.g. moon + blanket, or glass + board)
+- Soft same-hue shadows; high lightness
+- Shot varies: sleep often 中景/特写; food 中景
+- Forbidden: stark poster blocks, prop clutter, neon
 
 ### card-flat · Exercise (partitioned)
 
 - Faceless character pops on **solid olive/ochre (or deep) field**
 - Accents from Kinetic v0.2 (orange/blue/teal/coral)
-- Narrative props: path/bottle/kettlebell/flag/hills… (3–5)
-- Hard soft ground shadow; scannable feed energy
-- Forbidden: muddy low-contrast fields, Health dust-pinks as dominant fills
+- **2–3 supports only** (e.g. path + bottle; kettlebell + mat)
+- Mild stride stretch / squash landing OK
+- Shot varies: run 中景 or 远景; strength 特写/中景
+- Forbidden: muddy fields, 4+ props, Health dust-pinks as dominant fills
 
 ### doodle (optional, non-default)
 
@@ -174,5 +177,6 @@ Append-only failure log:
 - [2026-07-16] Health samples drifted into cream+terracotta cliché → lock Morandi hex list; forbid `#F4F1EA` + terracotta pairing as default.
 - [2026-07-16] Exercise looked neon → use v0.2 softened kinetic hexes, not `#FF4B5C` full chroma.
 - [2026-07-16] Overcrowded empty states → enforce 40–60% subject + one metaphor.
-- [2026-07-16] Lonely figure on cards → require 2–5 narrative props (`card-flat.md`).
+- [2026-07-16] Lonely figure on cards → require supports (`card-flat.md`).
 - [2026-07-16] Health cards used harsh indigo partition like Achieve → switch to **blended** Morandi fuse.
+- [2026-07-17] Cards too busy → hard cap **1 subject + 2–3 supports**; vary 特写/中景/远景; allow mild deformation.
