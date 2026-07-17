@@ -2,6 +2,9 @@
 
 Source of truth also in Figma: `Illustration · Palettes` (file HUAWEI Health Design System).
 
+**Brand parent:** `health-design-language/references/color.md`  
+Illustration may soften brand orange; it must not invent a competing identity chroma (no purple-default UI, no cream+terracotta kit).
+
 ## Health · Morandi (higher lightness)
 
 Low saturation · gray undertone · **narrow** gamut (sage / mist / clay). Airy daytime wellness.

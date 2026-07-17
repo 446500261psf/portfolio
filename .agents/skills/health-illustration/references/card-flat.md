@@ -6,10 +6,14 @@ Inspired by modern faceless flat wellness apps (Corporate Memphis–adjacent), t
 
 ## Visual DNA
 
+Aligned with **HeartLine** (`health-design-language`): continuous narrative, soft geometry, local depth.
+
 - **Faceless characters** — no eyes/nose/mouth; rubbery simplified limbs
 - **Flat vector** — hard-edged soft shadows, minimal or no gradients
-- **Single primary action** — one clear verb per card
-- **Narrative props** — 2–5 supporting elements that tell the story (not decorative clutter)
+- **Soft geometry** — arcs/circles over sharp spikes; even stroke kinship with the ribbon mark
+- **Single primary action** — one clear verb per card (one continuous idea)
+- **Narrative props** — 2–3 supporting elements that tell the story (not decorative clutter)
+- **Local depth** — soft contact / overlap shadows only; no neon glow stacks
 - **No UI chrome, no card title text inside the art** (copy lives in the app)
 
 ## Narrative rules (required) — keep it sparse

@@ -2,6 +2,12 @@
 
 Fail → regenerate.
 
+## Design language (parent)
+
+- [ ] Obeys `health-design-language` DNA (soft geometry, local depth, no competing identity chroma)
+- [ ] No purple-default / cream+terracotta brand cliché
+- [ ] Logo absent or using approved colorways only
+
 ## Sparse narrative
 
 - [ ] Exactly **1 subject**

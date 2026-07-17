@@ -1,14 +1,15 @@
 ---
 name: health-illustration
-description: "Generate HUAWEI Health app card-flat illustrations for Achieve/Body/Heart content cards, empty states, and benefit moments. Use when the user asks for card illustration, card-flat, faceless flat vector, 卡片插画, health/exercise illustrations, Morandi blended health art, or partitioned exercise card art. Default style is card-flat: faceless rubber-limb characters, narrative props, Exercise partitioned color, Health blended atmosphere. Complements naive-design and baoyu-article-illustrator."
+description: "Generate HUAWEI Health app card-flat illustrations for Achieve/Body/Heart content cards, empty states, and benefit moments. Use when the user asks for card illustration, card-flat, faceless flat vector, 卡片插画, health/exercise illustrations, Morandi blended health art, or partitioned exercise card art. Default style is card-flat: faceless rubber-limb characters, narrative props, Exercise partitioned color, Health blended atmosphere. MUST align with health-design-language (HeartLine logo-locked DNA)."
 license: MIT
-compatibility: Agent-agnostic. Pairs with naive-design, baoyu-article-illustrator, and HeartLine logo guidelines.
+compatibility: Agent-agnostic. Requires health-design-language. Pairs with naive-design and baoyu-article-illustrator.
 metadata:
   author: HUAWEI Health Design System
-  version: "0.2.1"
+  version: "0.3.0"
   palette: "Illustration Palettes v0.2"
   brand: "HeartLine / HUAWEI Health"
   defaultStyle: "card-flat"
+  alignsWith: "health-design-language@1.0.0"
 ---
 
 # health-illustration
@@ -16,13 +17,23 @@ metadata:
 > **Primary deliverable: `card-flat` illustrations for content cards.**  
 > Faceless flat characters + narrative props. Product chrome stays clean; art fills the card media area.
 
+## Alignment (mandatory)
+
+Before generating art, load **`health-design-language`** (v1.0+). Logo is locked; illustration is a downstream voice of that mark:
+
+- Soft geometry, continuous narrative, local depth only  
+- Brand orange `#FD8F1B` is identity chroma — not a large Health Morandi fill  
+- Atmosphere teal–forest is valid for dark brand-adjacent empty states  
+- No purple-on-white / cream+terracotta default kits  
+
 This skill encodes:
 
-1. **card-flat** — faceless flat vector for Achieve / Body / Heart cards (default)  
-2. **naive-design** — intentional composition, limited palette, brand-layer boundary  
-3. **Narrative props** — scene tells a story beyond a lone figure  
-4. **HeartLine + Illustration Palettes v0.2** — locked color systems  
-5. **baoyu / doodle modes** — optional for empty-state sketch moments (non-default)
+1. **health-design-language** — parent DNA (logo / color / type / motion)  
+2. **card-flat** — faceless flat vector for Achieve / Body / Heart cards (default)  
+3. **naive-design** — intentional composition, limited palette, brand-layer boundary  
+4. **Narrative props** — scene tells a story beyond a lone figure  
+5. **Illustration Palettes v0.2** — Health Morandi / Exercise Kinetic  
+6. **baoyu / doodle modes** — optional for empty-state sketch moments (non-default)
 
 ## When to use
 
@@ -85,6 +96,7 @@ Collect:
 
 Read before drawing:
 
+0. **`health-design-language`** (mandatory parent — principles + color bridges)
 1. `references/card-flat.md` (mandatory for cards)
 2. `references/palettes.md` (mandatory)
 3. `references/scenes.md` (scene recipes)
@@ -158,9 +170,10 @@ If palette drift is visible (neon coral on Health, muddy gray on Exercise), rege
 ## HeartLine coexistence
 
 - Prefer **no logo** inside spot illustrations
-- If required: Health/light → Mono Gray or `accent.peach`; Exercise/dark → white mark
-- Never stretch, recolor arbitrarily, or place on busy texture without scrim  
-  (see Figma: Logo · Usage Guidelines)
+- If required: follow `health-design-language/references/logo.md` colorways only  
+  (Health/light → Mono / soft peach echo; Exercise/dark → white mark on deep field)
+- Never stretch, recolor arbitrarily, or place on busy texture without scrim
+- Props/lines may echo ribbon kinship (even stroke, soft arcs) without copying the mark
 
 ## Pairing with code / UI
 
@@ -180,3 +193,4 @@ Append-only failure log:
 - [2026-07-16] Lonely figure on cards → require supports (`card-flat.md`).
 - [2026-07-16] Health cards used harsh indigo partition like Achieve → switch to **blended** Morandi fuse.
 - [2026-07-17] Cards too busy → hard cap **1 subject + 2–3 supports**; vary 特写/中景/远景; allow mild deformation.
+- [2026-07-17] Logo style locked → parent skill `health-design-language@1.0.0`; illustration must inherit soft-geometry / local-depth / brand chroma rules.
