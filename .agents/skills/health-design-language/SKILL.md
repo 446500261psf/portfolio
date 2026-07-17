@@ -71,7 +71,8 @@ Fatal failures:
 3. `references/color.md` — brand + atmosphere + illustration bridges  
 4. `references/typography.md` — locked type stack  
 5. `references/motion.md` — path language for animation  
-6. Then domain skills (`health-illustration`, icons, etc.)
+6. `references/icons.md` — HeartLine DNA icon rules + page map  
+7. Then domain skills (`health-illustration`, etc.)
 
 ## System stack (quick)
 
@@ -92,7 +93,7 @@ Fatal failures:
 |-------|--------------------------|
 | `health-illustration` | Card-flat art; Health blended / Exercise partitioned — colors & softness must echo HeartLine |
 | `naive-design` | Composition discipline only; do not override HeartLine color/type |
-| Future `health-icon` | 24 grid, rounded caps, unified stroke — ribbon kinship |
+| Feature icons (Figma) | **Icons · HeartLine DNA** — thick (~2.5) ROUND stroke, circle/arc first; keep **Icons · Feature Samples** (HarmonyOS) as parallel legacy |
 
 ## Versioning
 
