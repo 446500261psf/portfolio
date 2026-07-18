@@ -93,7 +93,8 @@ Fatal failures:
 |-------|--------------------------|
 | `health-illustration` | Card-flat art; Health blended / Exercise partitioned — colors & softness must echo HeartLine |
 | `naive-design` | Composition discipline only; do not override HeartLine color/type |
-| Feature icons (Figma) | **Icons · HeartLine DNA v1.1 On Dark** — only **soft geometry + local overlap depth**; 2–3 strokes + fills OK; keep Harmony Feature Samples as legacy |
+| `health-icon` | Icon system skill — soft geometry + local depth; 点线面 kit + figure actions |
+| Feature icons (Figma) | **Icons · HeartLine DNA** — v1.1 On Dark samples; boards `Icon Elements · 点线面` + `Figure Actions · 构成` |
 
 ## Versioning
 

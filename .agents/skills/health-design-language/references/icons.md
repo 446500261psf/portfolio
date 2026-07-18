@@ -4,9 +4,12 @@ Figma pages (do not overwrite legacy):
 
 | Page / board | Role |
 |--------------|------|
-| **Icons · HeartLine DNA** → `Feature Icons · HeartLine DNA v1.1 · On Dark` | **Current** — black plate samples |
+| **Icons · HeartLine DNA** → `Feature Icons · HeartLine DNA v1.1 · On Dark` | Feature icon samples (states) |
+| same page → `Icon Elements · 点线面` | Element kit for authors |
+| same page → `Figure Actions · 构成` | Human action constructions |
 | same page → `v1.0 · On Light (superseded)` | Earlier line-only experiment |
 | **Icons · Feature Samples** | Legacy HarmonyOS Symbol parallel |
+| Skill | `health-icon` |
 
 ## Which DNA applies to icons
 
