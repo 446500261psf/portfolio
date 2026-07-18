@@ -1,29 +1,49 @@
 # Icons · HeartLine DNA
 
-Figma pages (do not merge / overwrite):
+Figma pages (do not overwrite legacy):
 
-| Page | Role |
-|------|------|
-| **Icons · HeartLine DNA** | New — DNA-aligned feature icons (`heartline.icon.*`) |
-| **Icons · Feature Samples** | Legacy parallel — HarmonyOS Symbol language (`sys.symbol.*`) |
-| Icons · App Icon Samples | Launcher marks (not in-app feature icons) |
+| Page / board | Role |
+|--------------|------|
+| **Icons · HeartLine DNA** → `Feature Icons · HeartLine DNA v1.1 · On Dark` | **Current** — black plate samples |
+| same page → `v1.0 · On Light (superseded)` | Earlier line-only experiment |
+| **Icons · Feature Samples** | Legacy HarmonyOS Symbol parallel |
 
-## DNA rules for icons
+## Which DNA applies to icons
 
-1. **Grid** — draw in 28×28 optical area inside 48×48 cell (24-grid kinship)
-2. **Stroke** — ≈ **2.5**, `ROUND` cap + join (ribbon weight, bolder than Harmony samples ≈2.1)
-3. **Primitives** — circles & arcs first; avoid sharp spikes and hairline detail
-4. **One idea** — single metaphor; no mini-illustrations
-5. **States** — Default `#1A2028` · Active `#FD8F1B` · AI `#7A6FD1` · Disabled `#C4C0BA`
-6. **Depth** — none by default (flat stroke). Fold shadows reserved for the master logo mark
-7. **Heart / vitals** — prefer HeartLine ribbon silhouette kinship (left loop readable)
+Icons inherit **only two** rules from the brand DNA:
+
+1. **软几何 Soft geometry** — circles, arcs, rounded caps/joins; no sharp spikes  
+2. **交叠处深度 Local overlap depth** — darker under-segment / fold patch **only where shapes cross**; no global drop shadow  
+
+Explicitly **not** required for icons:
+
+- One-stroke / continuous path narrative  
+- Ribbon-thick stroke as the only construction  
+
+Allowed:
+
+- **2–3 strokes** per icon  
+- **Filled faces (面)** mixed with strokes  
+- Simpler metaphors than the master logo mark  
+
+## Construction defaults (v1.1)
+
+| Item | Value |
+|------|--------|
+| Optical size | 28×28 in 48×48 cell |
+| Stroke (when used) | ≈2.25, ROUND cap/join |
+| On Dark Default | `#FFFFFF` |
+| Active | `#FD8F1B` |
+| AI | `#7A6FD1` |
+| Disabled | `#595E66` approx |
+| Overlap depth | darker sibling of icon color, or plate ink punch-through on filled faces |
 
 ## Naming
 
-- DNA set: `heartline.icon.{name}` (e.g. `heartline.icon.heart_rate`)
-- Harmony parallel: keep `sys.symbol.*` on the Feature Samples page
+- DNA set: `heartline.icon.{name}`
+- Harmony parallel: `sys.symbol.*` on Feature Samples
 
-## Set (v1.0)
+## Set (v1.1)
 
 Exercise: run, walk, cycle, swim, strength, yoga  
 Health: heart_rate, sleep, spo2, stress, breath, weight  
