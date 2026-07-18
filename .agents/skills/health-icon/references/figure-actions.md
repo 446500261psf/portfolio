@@ -1,8 +1,11 @@
 # Figure Actions · 人物动作构成
 
-Source board: `Figure Actions · 构成` on **Icons · HeartLine DNA**.
+Source boards on **Icons · HeartLine DNA**:
 
-Faceless soft figures. Head = filled disc. Limbs = ROUND strokes (2–3). Optional soft body face. Depth only where limb crosses torso / other limb.
+- `Figure Styles · 面构成 10 选` — **pick a face-built style** (200×200 samples A–J) before expanding actions  
+- `Figure Actions · 构成` — line+face construction recipes (earlier kit)
+
+Faceless soft figures built primarily with **面 (filled faces)**. Depth only where shapes overlap (under tint ± soft shadow).
 
 ## Construction recipe
 
