@@ -2,13 +2,17 @@
 
 Source boards on **Icons · HeartLine DNA**:
 
-- `Figure Styles · 面构成 10 选` — style picker (A–J); superseded for limb clarity when conflicting with this doc  
-- `Figure Actions · 构成` — v0.1 (too abstract; keep for history)  
-- **`Figure Actions · 四肢清晰 v0.2`** — **current** articulated soft figures
+- `Figure Styles · 面构成 10 选` — style picker (A–J); superseded when conflicting  
+- `Figure Actions · 构成` — v0.1 (history)  
+- `Figure Actions · 四肢清晰 v0.2` — separate capsules (history)  
+- **`Figure Actions · 连体渐细 v0.3`** — **current**
 
-## Root failure of v0.1
+## Root failures
 
-v0.1 budgeted **head + 2 limb strokes**. That merges arms/legs into one arc → no clear limbs, verbs misread.
+| Version | Failure |
+|---------|---------|
+| v0.1 | Head + 2 arcs → limbs fused, verb unreadable |
+| v0.2 | Separate capsules → limbs float off torso; equal thickness ignores anatomy |
 
 ## Articulated soft figure (required)
 
@@ -17,68 +21,99 @@ Figures are an **exception** to the general 2–3 mark icon budget.
 | Part | Role | Form |
 |------|------|------|
 | **Head** | Always separate | Disc |
-| **Torso** | Always separate | Soft capsule / oval (body mass) |
-| **Arm L / Arm R** | Two distinct limbs | Prefer **soft capsule (面)**; elbow = two capsules meeting |
-| **Leg L / Leg R** | Two distinct limbs | Prefer **soft capsule (面)**; knee = two capsules meeting |
+| **Torso** | Body mass; limbs grow from it | Soft capsule / oval |
+| **Arm L / Arm R** | Two distinct limbs | **One continuous filled taper** per arm |
+| **Leg L / Leg R** | Two distinct limbs | **One continuous filled taper** per leg |
 
-**Minimum = 6 parts** (head + torso + 4 limbs). Props (bar / wave) are extra marks.
+**Minimum = 6 parts** (head + torso + 4 limbs). Props are extra.
 
-### Limb rules
+---
+
+## Two hard rules (v0.3)
+
+### 1. 连体光滑曲线 · Continuous soft join
+
+- Each limb **joins the torso** — no floating gap between shoulder/hip and body.  
+- The silhouette at the join is a **smooth curve** (soft geometry), not a hard T-junction or broken stick.  
+- Upper + lower segments of the **same** limb are **one continuous shape** (大臂↔小臂、大腿↔小腿连在一起).  
+- Elbow / knee = **smooth direction change** along that one shape — not two separate capsules with a gap.
+
+### 2. 符合人体结构 · Proximal thick → distal thin
+
+| Limb | Proximal (near body) | Distal (end) |
+|------|----------------------|--------------|
+| Arm | 大臂 thicker | 小臂 thinner → hand tip soft round |
+| Leg | 大腿 thicker | 小腿 thinner → foot tip soft round |
+
+Typical width ratio at review scale (40px optical):  
+**大臂 : 小臂 ≈ 1 : 0.65–0.75** · **大腿 : 小腿 ≈ 1 : 0.65–0.75**
+
+Never draw equal-width sticks for upper and lower segments.
+
+---
+
+## Other limb rules
 
 1. **Never merge** both arms into one arc, or both legs into one V.  
-2. Each limb has a **clear direction** (vector from joint to end).  
-3. Elbow / knee read as a **direction change**, not a joint dot.  
-4. At 24px: you must still count **four limb ends** + head.  
-5. Depth only where a limb **crosses** the torso (under tint ± soft contact shadow).
+2. Each limb has a **clear direction** (centerline through joints).  
+3. At 24px: count **four limb tips** + head; taper still readable as thick→thin.  
+4. Depth only where a limb **crosses** the torso (under tint ± soft contact shadow).
 
 ### Soft geometry still applies
 
-- ROUND caps / soft capsule ends  
+- Soft joins, ROUND tips  
 - No fingers, shoes, face  
 - No global ground shadow  
 
-## Construction recipe (v0.2)
+## Construction recipe (v0.3)
 
-1. Place **head** disc  
-2. Place **torso** capsule under head (gap ≈ 0–1px optical)  
-3. Attach **4 limbs** from shoulder / hip points — each limb its own layer  
-4. Bend elbow/knee **only if the verb needs it**  
-5. Add local depth only at true overlaps  
-6. Scale-check at 24px: verb still readable; limbs still countable  
+1. Place **torso** capsule  
+2. Place **head** disc (slight gap OK optically)  
+3. For each limb: draw **one filled taper path**  
+   - Centerline: shoulder→elbow→wrist **or** hip→knee→ankle  
+   - Width: proximal thick → distal thin  
+   - Root overlaps torso so the outer contour reads as one smooth body  
+4. Bend only where the verb needs elbow/knee  
+5. Local depth only at true overlaps  
+6. Scale-check at 24px  
 
-Optical **28×28** in **48–72px** cell (review boards may use **40@96**).  
-Capsule limb width ≈ **3.6–4.2** at review scale (scale down proportionally for 28px).  
-Far-side limbs: lighter tint (`≈ #DBE3EA`), not missing. Near limbs may use light contact shadow only at torso cross.
+Optical **28×28** in **48–72px** cell (review **40@96**).  
+Far-side limbs: lighter tint (`≈ #DBE3EA`).  
 
-## Action set — pose specs (v0.2)
+## Action set — pose specs
 
 Angles are approximate; prioritize **opposite limb rhythm** and **verb silhouette**.
 
 | Key | Verb | Pose checklist |
 |-----|------|----------------|
-| `stand` | 站立 | Legs slightly apart, both nearly vertical; arms hang soft or short out |
-| `walk` | 步行 | Front leg forward · back leg trail; **opposite** arm forward; mild lean |
-| `run` | 跑步 | Strong lean; front knee bent; trail leg extended; larger arm swing |
-| `sit` | 坐下 | Torso upright/slight lean; thighs near horizontal; shanks down (L-bend) |
-| `stretch` | 伸展 | Both arms up/out; legs planted; long vertical torso |
-| `yoga` | 瑜伽 | Tree: one foot at knee; arms up or prayer arc — **both legs still visible** |
-| `lift` | 力量 | Both arms hold bar above / at shoulder; legs planted; plates as faces |
-| `swim` | 游泳 | Body near horizontal; front arm reach + back arm trail; kick legs staggered |
-| `cycle` | 骑行 | Seated torso; legs on pedals (opposite crank); arms to handlebar |
-| `jump` | 跳跃 | Both knees tuck or both legs out; arms up — air gap under feet |
+| `stand` | 站立 | Legs slightly apart; arms hang soft |
+| `walk` | 步行 | Front leg forward · back trail; **opposite** arm; mild lean |
+| `run` | 跑步 | Lean; front knee bent; trail leg extended; arm swing |
+| `sit` | 坐下 | Thighs near horizontal; shanks down (continuous L-bend) |
+| `stretch` | 伸展 | Both arms up; legs planted |
+| `yoga` | 瑜伽 | Tree: support + bent leg both visible as continuous tapers |
+| `lift` | 力量 | Arms to bar; legs planted |
+| `swim` | 游泳 | Body horizontal; reach + trail arms; staggered kick |
+| `cycle` | 骑行 | Seated; opposite pedals; arms to bar |
+| `jump` | 跳跃 | Arms up; legs out/tuck — air under feet |
 
 ## Acceptance test (must pass)
 
-- [ ] Can count **head + 4 limb tips** at 100%  
-- [ ] Can name the **verb** without reading the label  
-- [ ] Opposite arm/leg rhythm correct for walk/run  
-- [ ] No blob where two limbs fused into one stroke  
-- [ ] Soft geometry intact; depth only at overlaps  
+- [ ] Limbs **connected** to torso with smooth silhouette (no floating sticks)  
+- [ ] Each arm/leg is **one continuous** shape (upper+lower joined)  
+- [ ] Proximal **thicker** than distal on every limb  
+- [ ] Can count **head + 4 limb tips** at 100% and ~24px  
+- [ ] Can name the **verb** without the label  
+- [ ] Walk/run opposite arm/leg rhythm correct  
+- [ ] Soft geometry; depth only at overlaps  
 
 ## Don’ts
 
 - No facial features / fingers / shoe detail  
-- No single-stroke “whole body” silhouette as the only mark  
+- No equal-width stick limbs  
+- No gap between 大臂/小臂 or 大腿/小腿  
+- No floating limbs detached from torso  
+- No single-stroke whole-body blob as the only mark  
 - No global drop shadow under the figure  
 - Do not apply object-icon 2–3 mark budget to figures  
 
