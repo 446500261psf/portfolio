@@ -2,42 +2,86 @@
 
 Source boards on **Icons · HeartLine DNA**:
 
-- `Figure Styles · 面构成 10 选` — **pick a face-built style** (200×200 samples A–J) before expanding actions  
-- `Figure Actions · 构成` — line+face construction recipes (earlier kit)
+- `Figure Styles · 面构成 10 选` — style picker (A–J); superseded for limb clarity when conflicting with this doc  
+- `Figure Actions · 构成` — v0.1 (too abstract; keep for history)  
+- **`Figure Actions · 四肢清晰 v0.2`** — **current** articulated soft figures
 
-Faceless soft figures built primarily with **面 (filled faces)**. Depth only where shapes overlap (under tint ± soft shadow).
+## Root failure of v0.1
 
-## Construction recipe
+v0.1 budgeted **head + 2 limb strokes**. That merges arms/legs into one arc → no clear limbs, verbs misread.
 
-1. **点** — head disc (r ≈ 2.2–2.5 in 28px)  
-2. **线** — torso + 1–2 limb groups (arcs preferred)  
-3. **面** (optional) — soft torso oval behind limbs when overlap needs a body mass  
-4. **深度** — under tint or light shadow where arm/leg crosses torso  
+## Articulated soft figure (required)
 
-Budget: usually **head + 2 limb strokes** (± torso line/face) ≤ 3–4 marks.
+Figures are an **exception** to the general 2–3 mark icon budget.
 
-## Action set (v0.1)
+| Part | Role | Form |
+|------|------|------|
+| **Head** | Always separate | Disc |
+| **Torso** | Always separate | Soft capsule / oval (body mass) |
+| **Arm L / Arm R** | Two distinct limbs | Prefer **soft capsule (面)**; elbow = two capsules meeting |
+| **Leg L / Leg R** | Two distinct limbs | Prefer **soft capsule (面)**; knee = two capsules meeting |
 
-| Key | Verb | Notes |
-|-----|------|-------|
-| `stand` | 站立 | Symmetric legs; arms optional short arc |
-| `walk` | 步行 | Opposite arm/leg; moderate stride |
-| `run` | 跑步 | Longer stride arc; leading lean |
-| `sit` | 坐下 | Bent knee arc; torso slight lean |
-| `stretch` | 伸展 | Both arms up arc; long vertical |
-| `yoga` | 瑜伽 | Tree / reach — one leg bent soft |
-| `lift` | 力量 | Arms hold bar; plates as faces |
-| `swim` | 游泳 | Horizontal body arc + wave line |
-| `cycle` | 骑行 | Circles + figure reduced on saddle |
-| `jump` | 跳跃 | Both legs tuck / arms up |
+**Minimum = 6 parts** (head + torso + 4 limbs). Props (bar / wave) are extra marks.
+
+### Limb rules
+
+1. **Never merge** both arms into one arc, or both legs into one V.  
+2. Each limb has a **clear direction** (vector from joint to end).  
+3. Elbow / knee read as a **direction change**, not a joint dot.  
+4. At 24px: you must still count **four limb ends** + head.  
+5. Depth only where a limb **crosses** the torso (under tint ± soft contact shadow).
+
+### Soft geometry still applies
+
+- ROUND caps / soft capsule ends  
+- No fingers, shoes, face  
+- No global ground shadow  
+
+## Construction recipe (v0.2)
+
+1. Place **head** disc  
+2. Place **torso** capsule under head (gap ≈ 0–1px optical)  
+3. Attach **4 limbs** from shoulder / hip points — each limb its own layer  
+4. Bend elbow/knee **only if the verb needs it**  
+5. Add local depth only at true overlaps  
+6. Scale-check at 24px: verb still readable; limbs still countable  
+
+Optical **28×28** in **48–72px** cell (review boards may use **40@96**).  
+Capsule limb width ≈ **3.6–4.2** at review scale (scale down proportionally for 28px).  
+Far-side limbs: lighter tint (`≈ #DBE3EA`), not missing. Near limbs may use light contact shadow only at torso cross.
+
+## Action set — pose specs (v0.2)
+
+Angles are approximate; prioritize **opposite limb rhythm** and **verb silhouette**.
+
+| Key | Verb | Pose checklist |
+|-----|------|----------------|
+| `stand` | 站立 | Legs slightly apart, both nearly vertical; arms hang soft or short out |
+| `walk` | 步行 | Front leg forward · back leg trail; **opposite** arm forward; mild lean |
+| `run` | 跑步 | Strong lean; front knee bent; trail leg extended; larger arm swing |
+| `sit` | 坐下 | Torso upright/slight lean; thighs near horizontal; shanks down (L-bend) |
+| `stretch` | 伸展 | Both arms up/out; legs planted; long vertical torso |
+| `yoga` | 瑜伽 | Tree: one foot at knee; arms up or prayer arc — **both legs still visible** |
+| `lift` | 力量 | Both arms hold bar above / at shoulder; legs planted; plates as faces |
+| `swim` | 游泳 | Body near horizontal; front arm reach + back arm trail; kick legs staggered |
+| `cycle` | 骑行 | Seated torso; legs on pedals (opposite crank); arms to handlebar |
+| `jump` | 跳跃 | Both knees tuck or both legs out; arms up — air gap under feet |
+
+## Acceptance test (must pass)
+
+- [ ] Can count **head + 4 limb tips** at 100%  
+- [ ] Can name the **verb** without reading the label  
+- [ ] Opposite arm/leg rhythm correct for walk/run  
+- [ ] No blob where two limbs fused into one stroke  
+- [ ] Soft geometry intact; depth only at overlaps  
 
 ## Don’ts
 
-- No facial features  
-- No fingers / shoe detail  
-- No full-body outline silhouette unless asked  
-- No global ground shadow under the figure  
+- No facial features / fingers / shoe detail  
+- No single-stroke “whole body” silhouette as the only mark  
+- No global drop shadow under the figure  
+- Do not apply object-icon 2–3 mark budget to figures  
 
-## Scale check
+## Naming
 
-Must read at 24px: head disc still a circle; stride still a verb.
+`heartline.icon.{verb}` — e.g. `heartline.icon.run`

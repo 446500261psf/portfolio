@@ -5,7 +5,7 @@ license: MIT
 compatibility: Agent-agnostic. Requires health-design-language. Parallel to Icons · Feature Samples (HarmonyOS).
 metadata:
   author: HUAWEI Health Design System
-  version: "0.1.0"
+  version: "0.2.0"
   brand: "HeartLine / HUAWEI Health"
   figmaPage: "Icons · HeartLine DNA"
   alignsWith: "health-design-language@1.0.0"
@@ -14,7 +14,8 @@ metadata:
 # health-icon
 
 > Icons inherit **two DNA rules only**: soft geometry · local overlap depth.  
-> Build from **点 / 线 / 面**. Prefer **2–3 marks** per icon. Soft shadows OK **only at overlaps**.
+> Object icons: **2–3 marks**. **Figure icons are different** — must show articulated limbs (see below).  
+> Soft shadows OK **only at overlaps**.
 
 ## When to use
 
@@ -34,7 +35,7 @@ metadata:
 1. `health-design-language` → `references/icons.md` (parent rules)
 2. `references/elements.md` — 点线面 kit
 3. `references/figure-actions.md` — human action constructions
-4. Figma: **Icons · HeartLine DNA** → boards `Icon Elements · 点线面` + `Figure Actions · 构成`
+4. Figma: **Icons · HeartLine DNA** → `Figure Actions · 四肢清晰 v0.2` (current) + `Icon Elements · 点线面`
 
 ## The two rules
 
@@ -45,11 +46,21 @@ metadata:
 
 ## Construction budget
 
+### Object / metaphor icons
+
 - **1 idea** per icon  
-- **2–3 marks** typical (point + line + face combinations)  
+- **2–3 marks** typical (点 + 线 + 面)  
 - Optical **28×28** in **48×48** cell  
 - Stroke when used ≈ **2.25**  
 - Filled faces welcome  
+
+### Figure / action icons (exception)
+
+- **Always** head + torso + **Arm L/R** + **Leg L/R** (≥ 6 parts)  
+- Never merge both arms or both legs into one stroke  
+- Elbow / knee = direction change (no joint dots)  
+- Full pose specs: `references/figure-actions.md`  
+- Current board: **Figure Actions · 四肢清晰 v0.2** 
 
 ## States (On Dark first)
 
