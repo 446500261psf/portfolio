@@ -5,7 +5,7 @@ license: MIT
 compatibility: Agent-agnostic. Requires health-design-language. Parallel to Icons · Feature Samples (HarmonyOS).
 metadata:
   author: HUAWEI Health Design System
-  version: "0.5.0"
+  version: "0.5.1"
   brand: "HeartLine / HUAWEI Health"
   figmaPage: "Icons · HeartLine DNA"
   alignsWith: "health-design-language@1.0.0"
@@ -35,7 +35,8 @@ metadata:
 1. `health-design-language` → `references/icons.md` (parent rules)
 2. `references/elements.md` — 点线面 kit
 3. `references/figure-actions.md` — human action constructions
-4. Figma: **Icons · HeartLine DNA** → figure boards **正视 / 侧面 / 45° / Soft Block** + `Icon Elements · 点线面`
+4. `references/ball-sports.md` — Soft Layer 球类器材 icons（Style I 同源）
+5. Figma: **Icons · HeartLine DNA** → figure boards + **Ball Sports · Soft Layer** + `Icon Elements · 点线面`
 
 ## The two rules
 
