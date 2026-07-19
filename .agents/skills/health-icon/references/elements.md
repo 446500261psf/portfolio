@@ -38,9 +38,8 @@ When A sits over B:
 
 1. **Under tint** — B (or the hidden segment) uses a darker sibling of the icon color  
 2. **Optional soft shadow** — small DROP_SHADOW on the **upper** piece only:  
-   - offset ≈ (0.5–1, 0.5–1)  
-   - blur ≈ 2–3  
-   - color black @ 25–40% opacity  
+   - Default object icons: offset ≈ (0.5–1, 0.5–1), blur ≈ 2–3, black @ 25–40%  
+   - **Soft Layer 球类**（Style I）: offset `(2, 3)`, blur `6`, black @ **20%** — 只挂在白球上  
 3. Never cast a shadow from the whole icon to the cell floor  
 
 ## Assembly
@@ -50,3 +49,4 @@ Typical recipes:
 - Head(点) + torso(线) + limbs(线) → figure  
 - Plate(面) + bar(线) + under tint → strength  
 - Blob(面) + inner cut/under(面) → droplet / flame  
+- Equipment gray(面) + white ball(点) + local shadow → ball sports（见 `ball-sports.md`）
