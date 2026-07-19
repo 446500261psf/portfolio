@@ -5,7 +5,7 @@ license: MIT
 compatibility: Agent-agnostic. Requires health-design-language. Parallel to Icons · Feature Samples (HarmonyOS).
 metadata:
   author: HUAWEI Health Design System
-  version: "0.3.1"
+  version: "0.4.0"
   brand: "HeartLine / HUAWEI Health"
   figmaPage: "Icons · HeartLine DNA"
   alignsWith: "health-design-language@1.0.0"
@@ -35,7 +35,7 @@ metadata:
 1. `health-design-language` → `references/icons.md` (parent rules)
 2. `references/elements.md` — 点线面 kit
 3. `references/figure-actions.md` — human action constructions
-4. Figma: **Icons · HeartLine DNA** → `Figure Actions · 连体渐细 v0.3` (current) + `Icon Elements · 点线面`
+4. Figma: **Icons · HeartLine DNA** → figure boards **正视 / 侧面 / 45°** + `Icon Elements · 点线面`
 
 ## The two rules
 
@@ -60,9 +60,10 @@ metadata:
 - **连体光滑**：四肢与躯干相接为光滑曲线；大臂↔小臂、大腿↔小腿为**一条连续形**  
 - **近粗远细**：大臂 > 小臂，大腿 > 小腿（符合人体结构）  
 - **器材/场景**：动词依赖器材或环境时必须加最小线索（杠铃、车轮、水流、垫子等）  
+- **三视角**：正视 · 侧面 · 45° 各做一套（同一动作同一 DNA）  
 - Never merge both arms or both legs into one mark  
 - Full pose specs: `references/figure-actions.md`  
-- Current board: **Figure Actions · 连体渐细 v0.3** 
+- Boards: **正视 v0.3** · **侧面 v0.4** · **45° v0.4** 
 
 ## States (On Dark first)
 

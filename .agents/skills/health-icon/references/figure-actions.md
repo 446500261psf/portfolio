@@ -5,7 +5,9 @@ Source boards on **Icons · HeartLine DNA**:
 - `Figure Styles · 面构成 10 选` — style picker (A–J); superseded when conflicting  
 - `Figure Actions · 构成` — v0.1 (history)  
 - `Figure Actions · 四肢清晰 v0.2` — separate capsules (history)  
-- **`Figure Actions · 连体渐细 v0.3`** — **current** (includes props / scene cues)
+- **`Figure Actions · 连体渐细 v0.3 · 正视`** — front (includes props / scene)  
+- **`Figure Actions · 侧面 v0.4`** — **side / profile**  
+- **`Figure Actions · 45° v0.4`** — **three-quarter**
 
 ## Root failures
 
@@ -26,6 +28,25 @@ Figures are an **exception** to the general 2–3 mark icon budget.
 | **Leg L / Leg R** | Two distinct limbs | **One continuous filled taper** per leg |
 
 **Minimum = 6 parts** (head + torso + 4 limbs). **Props / scene cues are required** when the verb depends on equipment or environment — they are not optional decoration.
+
+---
+
+## View angles (ship as a set)
+
+Every action should exist in **three views**. Same DNA (连体渐细 + props/scene); only camera changes.
+
+| View | Board | Read as |
+|------|-------|---------|
+| **正视 front** | `…正视` | Facing camera; left/right limbs symmetric or mirrored |
+| **侧面 side** | `…侧面 v0.4` | Profile (default facing **right**); stride & lean clearest |
+| **45° three-quarter** | `…45° v0.4` | Between front and side; show near + far limbs with depth |
+
+### View rules
+
+1. **Side**: body depth collapsed; far arm/leg use FAR tint; one silhouette lean/stride reads the verb.  
+2. **45°**: shoulder/hip line slightly offset; **near** limbs WHITE in front, **far** limbs FAR behind torso; still 4 limb tips countable.  
+3. Props/scene follow the body (wheels in profile, waves under horizontal swim, bar foreshortened at 45°).  
+4. Do not mix cameras inside one icon.
 
 ---
 
