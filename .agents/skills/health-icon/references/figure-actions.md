@@ -7,7 +7,8 @@ Source boards on **Icons · HeartLine DNA**:
 - `Figure Actions · 四肢清晰 v0.2` — separate capsules (history)  
 - **`Figure Actions · 连体渐细 v0.3 · 正视`** — front (includes props / scene)  
 - **`Figure Actions · 侧面 v0.4`** — **side / profile**  
-- **`Figure Actions · 45° v0.4`** — **three-quarter**
+- **`Figure Actions · 45° v0.4`** — **three-quarter**  
+- **`Figure Actions · Soft Block v0.5`** — playful soft-block look + anatomical limbs
 
 ## Root failures
 
@@ -15,6 +16,21 @@ Source boards on **Icons · HeartLine DNA**:
 |---------|---------|
 | v0.1 | Head + 2 arcs → limbs fused, verb unreadable |
 | v0.2 | Separate capsules → limbs float off torso; equal thickness ignores anatomy |
+
+## Soft Block style (v0.5 · parallel look)
+
+Playful soft-block reading inspired by chunky capsule figures — **not** a replacement for 连体渐细 boards.
+
+| Keep from reference | Must still obey anatomy |
+|---------------------|-------------------------|
+| Head = disc, slight optical gap from torso | Full **4 limbs** (never stub arms only) |
+| Torso = soft capsule (略更敦厚 OK) | **连体光滑** join into torso |
+| Soft filled 面, dark cell | **近粗远细** continuous arm/leg |
+| Optional **silhouette cast** (hard offset shadow of whole figure) as style signature | Props/scene when verb needs them |
+
+Soft Block silhouette cast (front OK for this style only): offset ≈ `{-2, 2}`, blur `0–0.5`, opacity ≈ `0.35–0.45`, dark gray — one unified cast, **not** per-limb junction shadows mixed with 连体渐细 side rules.
+
+---
 
 ## Articulated soft figure (required)
 

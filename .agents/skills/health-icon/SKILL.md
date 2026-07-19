@@ -5,7 +5,7 @@ license: MIT
 compatibility: Agent-agnostic. Requires health-design-language. Parallel to Icons · Feature Samples (HarmonyOS).
 metadata:
   author: HUAWEI Health Design System
-  version: "0.4.1"
+  version: "0.5.0"
   brand: "HeartLine / HUAWEI Health"
   figmaPage: "Icons · HeartLine DNA"
   alignsWith: "health-design-language@1.0.0"
@@ -35,7 +35,7 @@ metadata:
 1. `health-design-language` → `references/icons.md` (parent rules)
 2. `references/elements.md` — 点线面 kit
 3. `references/figure-actions.md` — human action constructions
-4. Figma: **Icons · HeartLine DNA** → figure boards **正视 / 侧面 / 45°** + `Icon Elements · 点线面`
+4. Figma: **Icons · HeartLine DNA** → figure boards **正视 / 侧面 / 45° / Soft Block** + `Icon Elements · 点线面`
 
 ## The two rules
 
@@ -64,7 +64,8 @@ metadata:
 - **阴影**：正视无阴影；侧面（及 45°）仅在**肢体交界处**加接触阴影  
 - Never merge both arms or both legs into one mark  
 - Full pose specs: `references/figure-actions.md`  
-- Boards: **正视 v0.3** · **侧面 v0.4** · **45° v0.4** 
+- Boards: **正视 v0.3** · **侧面 v0.4** · **45° v0.4** · **Soft Block v0.5**  
+- Soft Block：趣味软块外形（头圆略离躯干、胶囊躯干、整影剪影），四肢仍按人体结构连体渐细 
 
 ## States (On Dark first)
 
