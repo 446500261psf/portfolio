@@ -48,6 +48,16 @@ Every action should exist in **three views**. Same DNA (连体渐细 + props/sce
 3. Props/scene follow the body (wheels in profile, waves under horizontal swim, bar foreshortened at 45°).  
 4. Do not mix cameras inside one icon.
 
+### Shadow by view (硬规则)
+
+| View | Shadow |
+|------|--------|
+| **正视 front** | **无阴影** — flat fill only; no drop shadow, no contact shadow |
+| **侧面 side** | **肢体交界处有阴影** — soft contact shadow only where a near limb meets / crosses the torso (or another limb) |
+| **45°** | Same as side at junctions (lighter OK); still no global ground shadow |
+
+Side / 45° contact shadow recipe (review 40px): offset ≈ `{x: 0.4–0.6, y: 0.5–0.8}`, blur ≈ `1.0–1.4`, opacity ≈ `0.18–0.28`, color black. Apply on the **near (WHITE)** limb layer that sits in front — not on the whole figure, not on FAR limbs as a second global shade.
+
 ---
 
 ## Props & scene (required when verb needs them)
