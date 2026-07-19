@@ -5,7 +5,7 @@ license: MIT
 compatibility: Agent-agnostic. Requires health-design-language. Parallel to Icons · Feature Samples (HarmonyOS).
 metadata:
   author: HUAWEI Health Design System
-  version: "0.3.0"
+  version: "0.3.1"
   brand: "HeartLine / HUAWEI Health"
   figmaPage: "Icons · HeartLine DNA"
   alignsWith: "health-design-language@1.0.0"
@@ -59,6 +59,7 @@ metadata:
 - **Always** head + torso + **Arm L/R** + **Leg L/R** (≥ 6 parts)  
 - **连体光滑**：四肢与躯干相接为光滑曲线；大臂↔小臂、大腿↔小腿为**一条连续形**  
 - **近粗远细**：大臂 > 小臂，大腿 > 小腿（符合人体结构）  
+- **器材/场景**：动词依赖器材或环境时必须加最小线索（杠铃、车轮、水流、垫子等）  
 - Never merge both arms or both legs into one mark  
 - Full pose specs: `references/figure-actions.md`  
 - Current board: **Figure Actions · 连体渐细 v0.3** 
