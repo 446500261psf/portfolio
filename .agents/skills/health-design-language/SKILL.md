@@ -72,7 +72,8 @@ Fatal failures:
 4. `references/typography.md` — locked type stack  
 5. `references/motion.md` — path language for animation  
 6. `references/icons.md` — HeartLine DNA icon rules + page map  
-7. Then domain skills (`health-illustration`, etc.)
+7. `references/components.md` — UX features → component library map (Progress Architect)  
+8. Then domain skills (`health-illustration`, `health-icon`, etc.)
 
 ## System stack (quick)
 
