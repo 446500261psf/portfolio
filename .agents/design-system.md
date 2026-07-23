@@ -76,13 +76,26 @@
 | 15 | 13 · Badge | Component | Badge component set (8 variants) |
 | 16 | ──── Product ──── | Separator | — |
 | 17 | 05 · IA / UX | Product | 4-tab IA document frame |
-| 18 | 06 · Screens | Product | (reserved for screen compositions) |
+| 18 | 06 · Screens | Product | (reserved) |
+| 19 | 07 · Screens · Lo-fi | Product | 8 grayscale wireframes |
+| 20 | 08 · Screens · Mid-fi | Product | 7 mid-fi screens |
+
+### Related files
+
+| Artifact | URL |
+|---|---|
+| FigJam user flows | https://www.figma.com/board/L8dn3zBruD2EermIve4CXU |
+| Lo-fi page | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=3-6 |
+| Mid-fi page | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=3-5 |
+| Project index | [../README.md](./README.md) → `.agents/README.md` |
 
 ---
 
 ## Components Built
 
 See [./design-system/components.md](./design-system/components.md) for full component inventory with node IDs.
+
+Lo-fi: [./design-system/lofi-screens.md](./design-system/lofi-screens.md) · Mid-fi: [./design-system/midfi-screens.md](./design-system/midfi-screens.md)
 
 ---
 
