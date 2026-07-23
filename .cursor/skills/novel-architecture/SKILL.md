@@ -11,8 +11,9 @@
 ## 必读材料
 
 1. `writing/studies/玄鉴仙族-构书法拆解.md` — 方法来源
-2. `writing/bible/README.md` — 档案目录与填写顺序
-3. 若已有作品设定，先读 `writing/bible/story.md` 与 `writing/bible/notes/decisions.md`
+2. `writing/architectures/README.md` — 多套完整故事架构索引（优先）
+3. 选定某套后，读该套目录下的 `story.md` 与 `notes/decisions.md`
+4. `writing/bible/` 仅为旧草案存档；新架构默认写到 `writing/architectures/<id>-<书名>/`
 
 ## 工作流（严格按序）
 
@@ -31,19 +32,19 @@
 
 ### Step B — 更新圣经（最小集合）
 
-按需更新，保持短、可执行：
+新故事默认建在 `writing/architectures/<编号>-<书名>/`。按需更新，保持短、可执行：
 
 | 文件 | 内容 |
 |---|---|
-| `writing/bible/story.md` | 一句话、反套路宣言、调性、核心冲突 |
-| `writing/bible/timeline.md` | 年表（只记改变世界的事件） |
-| `writing/bible/state.md` | 当前卷的资源/势力/信息差快照 |
-| `writing/bible/plot/outline.md` | 卷纲（求生→揭棋盘→制度升级→抗命数） |
-| `writing/bible/plot/threads.md` | 明线/暗线与交汇点 |
-| `writing/bible/notes/decisions.md` | 已定决策与否决项（防反复） |
-| `writing/bible/characters/*.md` | 每人：习惯/说话/行事 + 三层洋葱经历 |
-| `writing/bible/factions/*.md` | 规则、顾虑、吃什么资源 |
-| `writing/bible/systems/*.md` | 力量/法律/经济结算 |
+| `story.md` | 一句话、反套路宣言、六问、调性、死亡政策 |
+| `timeline.md` | 年表（只记改变世界的事件） |
+| `state.md` | 当前卷的资源/势力/信息差快照 |
+| `plot/outline.md` | 卷纲（求生→揭棋盘→制度升级→抗命数） |
+| `plot/threads.md` | 明线/暗线与交汇点 |
+| `notes/decisions.md` | 已定决策与否决项（防反复） |
+| `characters/*.md` | 每人：习惯/说话/行事 + 三层洋葱经历 |
+| `factions/*.md` | 规则、顾虑、吃什么资源 |
+| `systems/*.md` | 力量/法律/经济结算 |
 
 ### Step C — 人物经历公式
 
