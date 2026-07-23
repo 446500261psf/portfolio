@@ -161,4 +161,5 @@ From Cover / Mid-fi:
 
 ## Version
 
+- **1.1.0** — Figma pages `14–25` built from UX map; Cover index updated
 - **1.0.0** — Initial UX→component map from IA · Progress Architect v3 + gap backlog
