@@ -1,7 +1,7 @@
 # Design System — Component Inventory
 
 **Figma File:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System  
-**Total components built:** 10 component sets, 33 individual variants
+**Total components built:** 11 component sets · MetricTile 16 + TodayP0Card 4 + other core variants
 
 ---
 
@@ -198,6 +198,36 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 **Tokens bound:** color/brand/default, color/feedback/success, color/feedback/warning, color/feedback/error, color/text/inverse, radius/full  
 **Size:** Dot=8×8px, Count≈24×18px, Status≈60×20px
+
+---
+
+## 11. TodayP0Card
+
+**Page:** 17 · TodayP0Card  
+**Component Set Node ID:** `38:34`  
+**Variants:** 4 (`Kind`)  
+**Persona:** 减肥核心 — 体重 + 饮食摄入 + 睡眠保障 + 有氧平衡  
+**Usage:** Today 首页顶部 P0 区（先组件、再组页）
+
+| Kind | Node ID | Span | Size | Visual |
+|---|---|---|---|---|
+| WeightTrend | `37:5` | 2pr | 358×200 | 近 7 日体重折线 + 当前 kg + 周降幅 |
+| DietGap | `38:2` | 1pr | 168×168 | 卡路里缺口（目标 − 摄入）+ 摄入进度条 |
+| SleepScore | `38:12` | 1pr | 168×168 | 昨晚睡眠得分 /100 + 时长摘要 |
+| AerobicGap | `38:24` | 1pr | 168×168 | 今日有氧目标缺口（剩余 min）+ 完成进度条 |
+
+### 示例数据（Mid-fi）
+
+| Kind | Primary | Secondary |
+|---|---|---|
+| WeightTrend | 68.4 kg | ↓ 0.6 kg · 7天 |
+| DietGap | −420 kcal 缺口 | 摄入 1,580 / 目标 2,000 |
+| SleepScore | 82 /100 | 7h 12m · 深睡良好 |
+| AerobicGap | 18 min 目标缺口 | 已完成 12 / 目标 30 |
+
+**Tokens bound:** color/surface/elevated, color/surface/subtle, color/text/primary·secondary·tertiary·success·warning, color/brand/default, color/feedback/success·warning, radius/xl·full  
+**Grid:** 与 MetricTile 一致 — `content=358` · `gap=22` · `1pr=168` · `2pr=358`  
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=38-34
 
 ---
 

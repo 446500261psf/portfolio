@@ -29,7 +29,7 @@
 |-------|------|------|
 | PRD | 产品需求与屏幕清单 | Done |
 | FigJam | 6 条用户流程图 | Done |
-| Design System | Token + 10 组件集 + IA | Done |
+| Design System | Token + 11 组件集（含 TodayP0Card）+ IA | Done |
 | Lo-fi | 8 屏线框（含 BottomNav） | Done |
 | Mid-fi | 7 屏中保真（含 BottomNav） | Done |
 | Hi-fi | — | **Out of scope** |
