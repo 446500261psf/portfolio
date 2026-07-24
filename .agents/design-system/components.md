@@ -94,33 +94,39 @@
 ## 6. MetricTile
 
 **Page:** 09 · MetricTile  
-**Component Set Node ID:** `6:115`  
-**Variants:** 4 (`Span` × `Style`)
+**Component Set Node ID:** `34:238`  
+**Variants:** 16 (`Metric` × `Span`)
 
-| Variant | Size | Description |
+### Metrics（功能特性）
+
+| Metric | Tab 场景 | 示例值 | Accent |
+|---|---|---|---|
+| Steps | Today / Health | 8,521 steps | Blue |
+| HeartRate | Health | 72 bpm | Red |
+| Sleep | Health / Today | 7h 12m | Purple |
+| SpO2 | Health | 98% | Teal |
+| Calories | Exercise / Today | 486 kcal | Orange |
+| Distance | Exercise | 5.2 km | Green |
+| ActiveMin | Exercise / Today | 42 min | Gold |
+| Battery | Devices | 78% | Gray-blue |
+
+### Span
+
+| Span | Size | Layout |
 |---|---|---|
-| Span=1pr, Style=Default | 168×168 | 单列方卡：icon + value + label |
-| Span=1pr, Style=Highlighted | 168×168 | 同上，brand-subtle 底 |
-| Span=2pr, Style=Default | 358×168 | 通栏：icon + value/delta + sparkline |
-| Span=2pr, Style=Highlighted | 358×168 | 同上，brand-subtle 底 |
+| **1pr** | 168×168 | 方卡：icon + value + unit/period |
+| **2pr** | 358×168 | 通栏：icon + value/delta + sparkline |
 
-**Tokens bound:** color/surface/elevated, color/surface/brand-subtle, color/text/primary, color/text/brand, color/text/secondary, color/icon/default, color/icon/brand, color/border/default, radius/xl  
-
-### 宽度怎么算（pr 栅格）
-
-手机画板 **390** 宽，内容区双列：
+### 宽度算法
 
 ```
-content = phone − margin×2 = 390 − 16×2 = 358
+content = 390 − 16×2 = 358
 gap     = 22
-1pr     = (content − gap) / 2 = (358 − 22) / 2 = 168
-2pr     = content = 358  (= 1pr×2 + gap)
+1pr     = (358 − 22) / 2 = 168
+2pr     = 358
 ```
 
-布局：`[1pr] gap [1pr]` 或通栏 `[2pr]`。  
-你截图里的 MetricTile **就是 1pr**（168）。
-
-Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=6-115
+Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=34-238
 
 ---
 
