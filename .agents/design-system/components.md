@@ -233,6 +233,19 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 ---
 
+## 12. Icons (Phosphor)
+
+**Page:** 18 · Icons (`54:2`)  
+**Source:** [Phosphor Icons](https://phosphoricons.com) · MIT · Regular weight  
+**Count:** 30 components (`icon.<feature>`)  
+**Docs:** [icons.md](./icons.md)
+
+Categories: Activity · Vitals · Sleep & Recovery · Nutrition & Hydration · Body & Devices  
+
+Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=54-2
+
+---
+
 ## Foundation Documentation Frames
 
 | Page | Node ID | Contents |

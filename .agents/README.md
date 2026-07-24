@@ -16,6 +16,8 @@
 | Components | [`.agents/design-system/components.md`](./design-system/components.md) |
 | **Today P0 Cards** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=38-34 |
 | **Today Home (EN)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=45-2 |
+| **Icons (Phosphor)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=54-2 |
+| Icons inventory | [`.agents/design-system/icons.md`](./design-system/icons.md) |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |
