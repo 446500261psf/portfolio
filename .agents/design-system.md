@@ -77,7 +77,8 @@
 | — | 17 · TodayP0Card | Component | Today P0 insight cards (4 Kind · 减肥画像) |
 | — | 18 · Icons | Foundation | Phosphor Icons · 30 feature components (sports & health) |
 | — | 19 · WeightCard | Component | Weight Day/Week/Month + smart-scale metrics + AI tip |
-| — | 20 · WeeklyPlan | Component | WeekFocusCard (−5 kg / 7 w) + PlanWeekRow + Sticker/Plan + mid-fi list |
+| — | 20 · WeeklyPlan | Component | PlanWeekRow + Sticker/Plan list patterns |
+| — | Page 27 · WeekFocusCard | Component | Master from 91:240 · Week=1…7 · Sticker Kind variants |
 | 16 | ──── Product ──── | Separator | — |
 | 17 | 05 · IA / UX | Product | 4-tab IA document frame |
 | 18 | 06 · Screens | Product | (reserved) |

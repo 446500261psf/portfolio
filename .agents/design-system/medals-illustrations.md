@@ -37,18 +37,20 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 - 外形可多样：圆章、横幅、票根、胶囊、圆角方章
 - **不是勋章**；用于轻量激励与新特性试用
 
-| Sticker | 激励场景 |
-|---------|----------|
-| `NewFeature` | 尝试新特性 |
-| `FirstStart` | 首次开练 |
-| `SleepTried` | 打开睡眠洞察 |
-| `DevicePaired` | 完成设备配对 |
-| `Day3` | 连续 3 天活跃 |
-| `Hydration` | 尝试喝水提示 |
-| `EarlyBird` | 早间打开 App |
-| `Insight` | 查看健康洞察 |
+**Component set:** `Sticker` (`106:317`) · property **`Kind`**
 
-Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=29-2
+| Kind | 激励场景 | WeekFocusCard |
+|------|----------|---------------|
+| `NewFeature` | 尝试新特性 | Week 6 Strength |
+| `FirstStart` | 首次开练 | Week 1 Kickoff |
+| `SleepTried` | 打开睡眠洞察 | Week 4 Sleep |
+| `DevicePaired` | 完成设备配对 | — |
+| `Day3` | 连续 3 天活跃 | Week 3 Cardio |
+| `Hydration` | 喝水 / 缺口习惯 | Week 2 Deficit |
+| `EarlyBird` | 早间活跃 / 冲刺 | Week 7 Peak |
+| `Insight` | 查看健康洞察 | Week 5 Intensity |
+
+Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=106-317
 
 ### Plan stickers · 周计划奖励（`Sticker/Plan/*`）
 
