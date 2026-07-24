@@ -1,21 +1,35 @@
 # SportTile · 运动入口瓷砖
 
-**Master reference:** `Sport_Run` (`113:1358`)  
-**Component set:** `SportTile` (`114:692`)  
+**Master reference:** `Sport_Run · reference` (`113:1400`)  
+**Component set:** `SportTile` (`115:692`)  
 **Page:** Page 27 (`43:151`)  
-**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=114-692
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=115-692
 
 ---
 
-## Anatomy
+## Layout rules（对齐主稿）
 
-| Part | Spec |
-|------|------|
+文字与图标位置固定，**左对齐**，勿居中：
+
+```
+┌────────────── 112 ──────────────┐
+│ 14px                             │
+│   [icon 36×36]     ← top-left    │
+│   6px gap                        │
+│   Label 20 Semibold ← left       │
+│                     bottom 10px  │
+└──────────────────────────────────┘
+```
+
+| Token | Value |
+|-------|-------|
 | Size | **112×76** |
 | Radius | 20 |
-| Layout | Vertical · center · itemSpacing 8 · paddingTop 14 / bottom 12 |
-| Icon | Phosphor `icon.*` Fill · **36×36** · sport accent color |
-| Label | SF Compact Rounded Semibold **20** · `#111827` |
+| Padding | top **12** · left/right **14** · bottom **10** |
+| Gap | **6** |
+| Align | `primary=MIN` · `counter=MIN`（左上） |
+| Icon | Phosphor Fill · **36×36** · sport accent |
+| Label | SF Compact Rounded Semibold **20** · `#111827` · `textAlign=LEFT` |
 
 ---
 
@@ -26,9 +40,7 @@
 | **Sport** | Run · Bike · Swim · Walk · Strength · Yoga |
 | **State** | Default · Selected |
 
-**Total:** 6 × 2 = **12** variants
-
-### Sport → icon → accent
+**Total:** 6 × 2 = **12**
 
 | Sport | Icon | Accent |
 |-------|------|--------|
@@ -39,8 +51,6 @@
 | Strength | `icon.strength` | `#FF3B30` |
 | Yoga | `icon.yoga` | `#9650DF` |
 
-### State
-
 | State | Fill | Stroke |
 |-------|------|--------|
 | Default | White | none |
@@ -50,7 +60,7 @@
 
 ## Usage
 
-Exercise Hub sport grid uses Default instances (`111:619` · SportGrid).
+Exercise Hub (`111:619`) SportGrid → `SportTile/*` Default instances.
 
 ## Artifacts
 

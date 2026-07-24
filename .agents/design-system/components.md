@@ -305,18 +305,19 @@ Used on all L1 primary headers (top-right).
 ## 16. SportTile
 
 **Page:** Page 27 (`43:151`)  
-**Component Set Node ID:** `114:692`  
+**Component Set Node ID:** `115:692`  
 **Variants:** 12 (`Sport` × `State`)  
-**Master:** `Sport_Run` (`113:1358`)  
+**Master:** `113:1400` — icon **top-left** + label **left-aligned**  
 **Docs:** [sport-tile.md](./sport-tile.md)
 
 | Sport | Icon |
 |---|---|
 | Run / Bike / Swim / Walk / Strength / Yoga | `icon.run` … `icon.yoga` |
 
-Default = white tile · Selected = tinted fill + accent stroke.
+Default = white tile · Selected = tinted fill + accent stroke.  
+Layout: padding L/R 14 · icon 36 · gap 6 · label 20 Semibold LEFT（勿居中）.
 
-**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=114-692
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=115-692
 
 ---
 
