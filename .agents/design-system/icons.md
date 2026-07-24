@@ -10,72 +10,45 @@
 | **Library** | [Phosphor Icons](https://phosphoricons.com) |
 | **Repo** | https://github.com/phosphor-icons/core |
 | **License** | MIT |
-| **Weight used** | Regular |
-| **Why** | Strong coverage of sports people (run / walk / bike / swim / hike), vitals (heartbeat / pulse / waveform), sleep, nutrition, hydration — better product-UI fit than clinical medical sets |
+| **Weights** | Regular (outline / 线图) + Fill (filled / 面图) |
+| **Why** | Strong coverage of sports people (run / walk / bike / swim / hike), vitals, sleep, nutrition, hydration |
 
-> Alternatives considered: [Health Icons](https://healthicons.org) (CC0, public-health / clinical). Kept as optional supplement later if we need device/lab metaphors.
+## Component API
 
-## Naming
+Each feature icon is a **component set** named `icon.<feature>` with variants:
 
-Product components use `icon.<feature>` aliases mapped from Phosphor asset names.
+| Property | Values |
+|---|---|
+| **Style** | `Outline` (线图) · `Fill` (面图) |
+| **Color** | `Black` · `White` |
+| **Size** | **18×18** (fixed) |
 
-## Inventory (30 components)
+**4 variants per icon** → `Style=Outline, Color=Black` | `Style=Outline, Color=White` | `Style=Fill, Color=Black` | `Style=Fill, Color=White`
+
+Total: **30 sets × 4 = 120 components**
+
+## Inventory (30 sets)
 
 ### Activity
-| Component | Phosphor source | Use |
-|---|---|---|
-| `icon.steps` | footprints | Steps |
-| `icon.walk` | person-simple-walk | Walking |
-| `icon.run` | person-simple-run | Running / cardio |
-| `icon.bike` | person-simple-bike | Cycling |
-| `icon.swim` | person-simple-swim | Swimming |
-| `icon.hike` | person-simple-hike | Hiking |
-| `icon.sneaker` | sneaker-move | Workout / footwear |
-| `icon.strength` | barbell | Strength |
-| `icon.yoga` | person-simple-tai-chi | Yoga / mobility |
-| `icon.distance` | path | Distance |
-| `icon.active-min` | timer | Active minutes |
-| `icon.person` | person-simple | Profile / generic |
+`icon.steps` · `icon.walk` · `icon.run` · `icon.bike` · `icon.swim` · `icon.hike` · `icon.sneaker` · `icon.strength` · `icon.yoga` · `icon.distance` · `icon.active-min` · `icon.person`
 
 ### Vitals
-| Component | Phosphor source | Use |
-|---|---|---|
-| `icon.heart` | heart | Heart |
-| `icon.heart-rate` | heartbeat | Heart rate |
-| `icon.hrv` | waveform | HRV |
-| `icon.pulse` | pulse | Pulse / ECG-style |
-| `icon.spo2` | gauge | SpO₂ |
-| `icon.vitals` | stethoscope | Vitals hub |
+`icon.heart` · `icon.heart-rate` · `icon.hrv` · `icon.pulse` · `icon.spo2` · `icon.vitals`
 
 ### Sleep & Recovery
-| Component | Phosphor source | Use |
-|---|---|---|
-| `icon.sleep` | moon-stars | Sleep score / night |
-| `icon.bed` | bed | Sleep session |
+`icon.sleep` · `icon.bed`
 
 ### Nutrition & Hydration
-| Component | Phosphor source | Use |
-|---|---|---|
-| `icon.nutrition` | fork-knife | Nutrition / diet |
-| `icon.food` | bowl-food | Meals |
-| `icon.calories` | fire-simple | Calories |
-| `icon.water` | drop | Water |
-| `icon.hydration` | drop-simple | Hydration |
-| `icon.wellness` | leaf | Wellness |
+`icon.nutrition` · `icon.food` · `icon.calories` · `icon.water` · `icon.hydration` · `icon.wellness`
 
 ### Body & Devices
-| Component | Phosphor source | Use |
-|---|---|---|
-| `icon.weight` | scales | Weight |
-| `icon.watch` | watch | Wearable |
-| `icon.battery` | battery-medium | Device battery |
-| `icon.trend` | chart-line-up | Trend / progress |
+`icon.weight` · `icon.watch` · `icon.battery` · `icon.trend`
 
-## Feature → icon mapping (Today / Health / Exercise)
+## Feature → icon mapping
 
 | Feature | Preferred icon |
 |---|---|
-| Weight / Today P0 WeightTrend | `icon.weight` |
+| Weight / WeightTrend | `icon.weight` |
 | Nutrition / DietGap | `icon.nutrition` or `icon.calories` |
 | Sleep score | `icon.sleep` |
 | Cardio / AerobicGap | `icon.run` or `icon.active-min` |
@@ -85,3 +58,38 @@ Product components use `icon.<feature>` aliases mapped from Phosphor asset names
 | Water | `icon.water` |
 | SpO₂ | `icon.spo2` |
 | Battery | `icon.battery` |
+
+## Phosphor source map
+
+| Component | Outline asset | Fill asset |
+|---|---|---|
+| steps | footprints | footprints-fill |
+| walk | person-simple-walk | person-simple-walk-fill |
+| run | person-simple-run | person-simple-run-fill |
+| bike | person-simple-bike | person-simple-bike-fill |
+| swim | person-simple-swim | person-simple-swim-fill |
+| hike | person-simple-hike | person-simple-hike-fill |
+| sneaker | sneaker-move | sneaker-move-fill |
+| strength | barbell | barbell-fill |
+| yoga | person-simple-tai-chi | person-simple-tai-chi-fill |
+| distance | path | path-fill |
+| active-min | timer | timer-fill |
+| person | person-simple | person-simple-fill |
+| heart | heart | heart-fill |
+| heart-rate | heartbeat | heartbeat-fill |
+| hrv | waveform | waveform-fill |
+| pulse | pulse | pulse-fill |
+| spo2 | gauge | gauge-fill |
+| vitals | stethoscope | stethoscope-fill |
+| sleep | moon-stars | moon-stars-fill |
+| bed | bed | bed-fill |
+| nutrition | fork-knife | fork-knife-fill |
+| food | bowl-food | bowl-food-fill |
+| calories | fire-simple | fire-simple-fill |
+| water | drop | drop-fill |
+| hydration | drop-simple | drop-simple-fill |
+| wellness | leaf | leaf-fill |
+| weight | scales | scales-fill |
+| watch | watch | watch-fill |
+| battery | battery-medium | battery-medium-fill |
+| trend | chart-line-up | chart-line-up-fill |
