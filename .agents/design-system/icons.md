@@ -48,6 +48,10 @@ Total: **30 sets × 4 = 120 components**
 
 | Feature | Preferred icon |
 |---|---|
+| **BottomNav · Today** | `icon.person` |
+| **BottomNav · Health** | `icon.heart` |
+| **BottomNav · Exercise** | `icon.run` |
+| **BottomNav · Devices** | `icon.watch` |
 | Weight / WeightTrend | `icon.weight` |
 | Nutrition / DietGap | `icon.nutrition` or `icon.calories` |
 | Sleep score | `icon.sleep` |

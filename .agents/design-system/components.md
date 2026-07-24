@@ -38,8 +38,18 @@
 | Active=Exercise | `4:41` | Exercise tab highlighted |
 | Active=Devices | `4:54` | Devices tab highlighted |
 
+**Tab icons** (from `18 · Icons` Phosphor sets · 18×18):
+
+| Tab | Icon set | Active | Inactive |
+|---|---|---|---|
+| Today | `icon.person` | Fill · brand `#007AFF` | Outline · gray |
+| Health | `icon.heart` | Fill · brand | Outline · gray |
+| Exercise | `icon.run` | Fill · brand | Outline · gray |
+| Devices | `icon.watch` | Fill · brand | Outline · gray |
+
 **Tokens bound:** color/surface/page, color/text/brand, color/text/secondary, color/icon/brand, color/icon/secondary, color/border/default  
-**Size:** 390×56px, 4 tab items evenly distributed
+**Size:** 390×56px, 4 tab items evenly distributed  
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=4-67
 
 ---
 
