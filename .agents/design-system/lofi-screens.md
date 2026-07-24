@@ -56,7 +56,7 @@ Brand-agnostic sports & health app wireframes. Grayscale boxes + labels only —
 ## Wireframe Rules Applied
 
 - Phone frame: 390×844
-- Gray rectangles, 8–12px corner radius, Inter labels
+- Gray rectangles, 8–12px corner radius, SF Compact Rounded labels
 - Screen name annotated above each phone
 - BottomNav on every root tab screen with correct active tab
 - No color photography, illustrations, or brand-specific styling

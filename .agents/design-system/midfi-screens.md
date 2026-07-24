@@ -40,7 +40,7 @@
 | Purple | `#9650DF` | Sleep metric |
 | Orange | `#FF9500` | Running, warmup zone |
 
-### Typography (Inter)
+### Typography (SF Compact Rounded)
 | Style | Size | Weight | Usage |
 |-------|------|--------|-------|
 | Display | 72px | Bold | Hero metric values (heart rate, pace) |

@@ -4,7 +4,7 @@
 **File Key:** `1ibE2wPPDAauJKaj1ft6AC`  
 **Product:** 4-Tab App — Today · Health · Exercise · Devices  
 **Build:** v1 Foundations + Core Components  
-**Font:** Inter (all weights)
+**Font:** SF Compact Rounded (Regular / Medium / Semibold / Bold / …)
 
 ---
 
