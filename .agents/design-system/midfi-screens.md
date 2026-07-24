@@ -68,9 +68,10 @@
 **Layout zones:**
 - **Status bar** — 9:41, signal, battery
 - **Header** — “Good morning” + “Today · Thu, Jul 24” + avatar
-- **Today’s Plan (motivation)** — eyebrow `TODAY'S PLAN` + line: *Stay in your calorie deficit, protect last night's sleep win, and close the cardio gap.*
+- **Today’s Plan (gap → effort)** — eyebrow `TODAY'S PLAN` + line: *Close the gap from where you are to today’s targets — time and effort still required.*  
+  Gap rows (current → goal + remaining): Cardio `12 → 30 min · 18 min left` · Nutrition `1,580 → 2,000 kcal · 420 kcal room` · Sleep `82 → 80+ · On track`
 - **P0 stack** — `TodayP0Card` instances: WeightTrend (2pr) → DietGap + SleepScore (1pr row) → AerobicGap (1pr)
-- **BottomNav** — Today active
+- **BottomNav** — Today active · screen height ~1000 (scroll mid-fi)
 
 **Legacy:** `8:2` kept for reference (mixed ZH activity rings layout).
 
