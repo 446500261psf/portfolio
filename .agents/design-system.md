@@ -69,7 +69,7 @@
 | 8 | 06 · Header | Component | Header component set (2 variants) |
 | 9 | 07 · Card | Component | Card component set (2 variants) |
 | 10 | 08 · ListRow | Component | ListRow component set (2 variants) |
-| 11 | 09 · MetricTile | Component | MetricTile component set (2 variants) |
+| 11 | 09 · MetricTile | Component | MetricTile component set (16 variants · Metric × Span) |
 | 12 | 10 · SectionHeader | Component | SectionHeader component set (2 variants) |
 | 13 | 11 · Chip | Component | Chip component set (3 variants) |
 | 14 | 12 · EmptyState | Component | EmptyState component set (2 variants) |

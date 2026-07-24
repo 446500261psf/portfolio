@@ -14,6 +14,7 @@
 | **Design System** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System |
 | DS inventory | [`.agents/design-system.md`](./design-system.md) |
 | Components | [`.agents/design-system/components.md`](./design-system/components.md) |
+| **Today P0 Cards** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=38-34 |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |
