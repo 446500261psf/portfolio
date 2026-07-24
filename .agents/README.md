@@ -14,6 +14,8 @@
 | **Design System** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System |
 | DS inventory | [`.agents/design-system.md`](./design-system.md) |
 | Components | [`.agents/design-system/components.md`](./design-system/components.md) |
+| **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
+| Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Lo-fi** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=3-6 |
 | Lo-fi inventory | [`.agents/design-system/lofi-screens.md`](./design-system/lofi-screens.md) |
 | **Mid-fi** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=3-5 |
