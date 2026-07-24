@@ -14,6 +14,7 @@
 | **Title** | `Week N · {purpose}` + sparkle accents |
 | **Subtitle** | How to train this week (1–2 lines) |
 | **Targets** | Left: fat-loss kg + 3 metrics · Right: reward `Sticker/Plan/*` |
+| **Schedule** | **This week · Mon–Sun** — 7 day rows (day badge + session) |
 | **Recommended** | 1 course + 1 meditation (progressive duration/intensity) |
 
 Width **358** (content grid) · radius 16 · light elevation shadow.
@@ -34,7 +35,21 @@ Width **358** (content grid) · radius 16 · light elevation shadow.
 
 **Sum:** 0.5 + 0.6 + 0.7 + 0.7 + 0.8 + 0.8 + 0.9 = **5.0 kg**
 
-Intensity ramp: distance 12 → 35 km · cardio sessions 0/3 → 5 · course length 20 → 35 min · meditation 5 → 15 min.
+---
+
+## Mon–Sun schedule (progressive)
+
+| Day | W1 Kickoff | W2 Deficit | W3 Cardio | W4 Sleep | W5 Climb | W6 Strength | W7 Peak |
+|-----|------------|------------|-----------|----------|----------|-------------|---------|
+| Mon | Easy walk 20 | Brisk walk 25 | Jog intervals 28 | Yoga recover 25 | Tempo run 30 | Full-body strength 35 | HIIT fat-burn 28 |
+| Tue | Weigh-in · body-scan 5 | Walk 25 · mindful eating | Steady walk 30 | Walk 30 · early bedtime | Walk 35 · protein dinner | Cardio 35 | Strength 35 |
+| Wed | Easy walk 20 | Brisk walk 30 | Cardio session 30 | Easy cardio 25 | Cardio 35 | Full-body strength 35 | Tempo run 35 |
+| Thu | Rest · mobility 10 | Rest · stretch 12 | Rest · breath focus 10 | Light walk 20 · wind-down | Strength intro 25 | Brisk walk 30 | HIIT fat-burn 28 |
+| Fri | Easy walk 25 | Brisk walk 30 | Jog intervals 28 | Yoga recover 25 | Tempo run 30 | Cardio intervals 35 | Strength 35 |
+| Sat | Easy walk 20 | Long easy walk 40 | Long walk/run 45 | Walk 35 | Long cardio 50 | Long session 55 | Peak long session 60 |
+| Sun | Rest · plan next week | Active recovery walk 20 | Recovery walk 25 | Full rest · sleep priority | Recovery · stress-reset | Active recovery 25 | Easy walk 20 · victory calm |
+
+Rest / recovery days use muted day badges; training days use brand-tint badges.
 
 ---
 
