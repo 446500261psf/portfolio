@@ -290,7 +290,19 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 ---
 
-## 15. WeekFocusCard
+## 15. Avatar
+
+**Page:** Page 27 (`43:151`)  
+**Component Set:** `Avatar` (`104:798`) · `Face=A` \| `Face=B` (52×52 photo)  
+**Related:** `AvatarBadge` (`104:884`) · `Face=C` \| `Face=D`  
+
+Used on all L1 primary headers (top-right).  
+**Docs:** [l1-primary-screens.md](./l1-primary-screens.md)  
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=104-798
+
+---
+
+## 16. WeekFocusCard
 
 **Page:** Page 27 (`43:151`) · master from `91:240`  
 **Component Set Node ID:** `106:1085`  

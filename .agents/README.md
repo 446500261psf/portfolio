@@ -25,6 +25,10 @@
 | **WeekFocusCard (−5 kg / 7 w)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=106-1085 |
 | **Sticker (Kind variants)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=106-317 |
 | WeekFocusCard docs | [`.agents/design-system/week-focus-card.md`](./design-system/week-focus-card.md) |
+| **L1 Today (style master)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=104-588 |
+| **L1 Health / Exercise / Devices** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=111-518 |
+| L1 primary screens docs | [`.agents/design-system/l1-primary-screens.md`](./design-system/l1-primary-screens.md) |
+| **Avatar** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=104-798 |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |
