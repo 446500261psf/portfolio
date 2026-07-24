@@ -95,15 +95,32 @@
 
 **Page:** 09 · MetricTile  
 **Component Set Node ID:** `6:115`  
-**Variants:** 2 (Style)
+**Variants:** 4 (`Span` × `Style`)
 
-| Variant | Node ID | Description |
+| Variant | Size | Description |
 |---|---|---|
-| Style=Default | `6:101` | White tile: icon + value + unit/label |
-| Style=Highlighted | `6:108` | Brand-subtle background: highlighted metric |
+| Span=1pr, Style=Default | 168×168 | 单列方卡：icon + value + label |
+| Span=1pr, Style=Highlighted | 168×168 | 同上，brand-subtle 底 |
+| Span=2pr, Style=Default | 358×168 | 通栏：icon + value/delta + sparkline |
+| Span=2pr, Style=Highlighted | 358×168 | 同上，brand-subtle 底 |
 
 **Tokens bound:** color/surface/elevated, color/surface/brand-subtle, color/text/primary, color/text/brand, color/text/secondary, color/icon/default, color/icon/brand, color/border/default, radius/xl  
-**Size:** 168×168px
+
+### 宽度怎么算（pr 栅格）
+
+手机画板 **390** 宽，内容区双列：
+
+```
+content = phone − margin×2 = 390 − 16×2 = 358
+gap     = 22
+1pr     = (content − gap) / 2 = (358 − 22) / 2 = 168
+2pr     = content = 358  (= 1pr×2 + gap)
+```
+
+布局：`[1pr] gap [1pr]` 或通栏 `[2pr]`。  
+你截图里的 MetricTile **就是 1pr**（168）。
+
+Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=6-115
 
 ---
 
