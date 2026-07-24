@@ -50,6 +50,23 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=29-2
 
+### Plan stickers · 周计划奖励（`Sticker/Plan/*`）
+
+**Page:** `20 · WeeklyPlan` · Docs: [weekly-plan.md](./weekly-plan.md)
+
+| Sticker | Week unlock |
+|---------|-------------|
+| `Kickoff` | W1 开局习惯 |
+| `Deficit` | W2 锁住缺口 |
+| `Cardio3` | W3 三次有氧 |
+| `Sleep80` | W4 睡眠 ≥80 |
+| `Halfway` | W5 半程 |
+| `Protein` | W6 蛋白质 |
+| `Steady` | W7 稳态 |
+| `Finish` | W8 完赛 −4.0 kg |
+
+用于 **8 周减重计划** 小目标达成奖励；未达成周在 StickerWall 显示虚线空槽。
+
 ---
 
 ## Medals · 延后

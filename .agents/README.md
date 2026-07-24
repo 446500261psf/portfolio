@@ -20,6 +20,8 @@
 | Icons inventory | [`.agents/design-system/icons.md`](./design-system/icons.md) |
 | **WeightCard** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=75-122 |
 | WeightCard docs | [`.agents/design-system/weight-card.md`](./design-system/weight-card.md) |
+| **Weekly Weight Plan** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=88-5 |
+| WeeklyPlan docs | [`.agents/design-system/weekly-plan.md`](./design-system/weekly-plan.md) |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |

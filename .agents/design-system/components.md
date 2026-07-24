@@ -261,6 +261,25 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 ---
 
+## 14. WeeklyPlan
+
+**Page:** `20 · WeeklyPlan` (`85:2`)  
+**Docs:** [weekly-plan.md](./weekly-plan.md)
+
+| Asset | Node ID | Notes |
+|---|---|---|
+| `PlanWeekRow` set | `86:95` | Status = Done \| Current \| Upcoming \| Missed |
+| `Sticker/Plan/*` × 8 | `86:2` … `86:30` | 周目标达成奖励贴纸 |
+| Mid-fi screen | `88:5` | 8-week goal −4.0 kg · week list · sticker wall |
+
+**Goal sample:** 2 months · lose **8 jin (4.0 kg)** · AI weekly plan · sticker per achieved week.
+
+**Deep links:**  
+- Screen: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=88-5  
+- PlanWeekRow: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=86-95
+
+---
+
 ## Foundation Documentation Frames
 
 | Page | Node ID | Contents |

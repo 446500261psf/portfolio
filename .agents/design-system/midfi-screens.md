@@ -20,6 +20,7 @@
 | 5 | Session Summary | `11:2` | 1720 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=11:2 |
 | 6 | Devices List | `11:68` | 2150 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=11:68 |
 | 7 | Device Detail / Connect | `11:127` | 2580 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=11:127 |
+| 8 | Weekly Weight Plan | `88:5` | page `20 · WeeklyPlan` | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=88:5 |
 
 ---
 
@@ -133,6 +134,17 @@
 - **Settings card** — 4 toggle rows (抬腕亮屏, 自动识别运动, 消息通知, 勿打扰模式) with ON/OFF pill toggles
 - **Disconnect button** — Outlined pill with red text "断开连接"
 
+### 08 · Weekly Weight Plan
+**Active tab:** Today · **Locale:** English · **Page:** `20 · WeeklyPlan`  
+**Node:** `88:5` · https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=88:5  
+**Docs:** [weekly-plan.md](./weekly-plan.md)  
+**Layout zones:**
+- **Header** — Weekly Plan · *AI · 8 weeks to −4.0 kg*
+- **GoalCard** — Lose 8 jin (4.0 kg) in 2 months · `70.2 → 66.2 kg` · Week 5/8 · −2.2 kg / 55%
+- **Week list** — 8 AI weeks with status chips (Achieved / Missed / In progress / Upcoming) + focus line + result
+- **StickerWall** — reward stickers for achieved weeks; dashed empty slots for missed/upcoming
+- **BottomNav** — Today active · scroll height ~2086
+
 ---
 
 ## Structural Patterns
@@ -167,6 +179,8 @@ All screenshots saved to `/opt/cursor/artifacts/`:
 - `midfi-05-session-summary.png` — 36 KB
 - `midfi-06-devices-list.png` — 42 KB
 - `midfi-07-device-detail.png` — 36 KB
+- `midfi-weekly-weight-plan.png` — Weekly Plan mid-fi
+- `component-plan-week-row.png` — PlanWeekRow variants
 
 ---
 
