@@ -302,7 +302,25 @@ Used on all L1 primary headers (top-right).
 
 ---
 
-## 16. WeekFocusCard
+## 16. SportTile
+
+**Page:** Page 27 (`43:151`)  
+**Component Set Node ID:** `114:692`  
+**Variants:** 12 (`Sport` × `State`)  
+**Master:** `Sport_Run` (`113:1358`)  
+**Docs:** [sport-tile.md](./sport-tile.md)
+
+| Sport | Icon |
+|---|---|
+| Run / Bike / Swim / Walk / Strength / Yoga | `icon.run` … `icon.yoga` |
+
+Default = white tile · Selected = tinted fill + accent stroke.
+
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=114-692
+
+---
+
+## 17. WeekFocusCard
 
 **Page:** Page 27 (`43:151`) · master from `91:240`  
 **Component Set Node ID:** `106:1085`  

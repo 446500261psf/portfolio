@@ -29,6 +29,8 @@
 | **L1 Health / Exercise / Devices** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=111-518 |
 | L1 primary screens docs | [`.agents/design-system/l1-primary-screens.md`](./design-system/l1-primary-screens.md) |
 | **Avatar** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=104-798 |
+| **SportTile** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=114-692 |
+| SportTile docs | [`.agents/design-system/sport-tile.md`](./design-system/sport-tile.md) |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |
