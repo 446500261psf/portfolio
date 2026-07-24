@@ -12,7 +12,8 @@
 
 | # | Screen | Node ID | Canvas X | Deep Link |
 |---|--------|---------|----------|-----------|
-| 1 | Today Home | `8:2` | 0 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=8:2 |
+| 1 | Today Home (EN · P0) | `45:2` | 0 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=45:2 |
+| — | Today Home · Legacy | `8:2` | 430 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=8:2 |
 | 2 | Health Hub | `8:81` | 430 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=8:81 |
 | 3 | Metric Detail (Heart Rate) | `10:2` | 860 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=10:2 |
 | 4 | Exercise Hub | `10:90` | 1290 | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=10:90 |
@@ -62,15 +63,16 @@
 ## Screen Descriptions
 
 ### 01 · Today Home
-**Active tab:** Today  
+**Active tab:** Today · **Locale:** English  
+**Node:** `45:2` · https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/?node-id=45:2  
 **Layout zones:**
-- **Status bar** — 9:41, signal dots, battery indicator
-- **Header band** — "今天 · Today" greeting + user avatar
-- **Activity Card** (358×196) — Three concentric arc rings (Move=red 78%, Exercise=green 45%, Stand=blue 62%) with legend and progress labels. Uses `arcData` on EllipseNode for true partial arcs.
-- **Stats chips row** — Steps / Heart Rate / Sleep in 106×84 cards with colored top accent bars
-- **Upcoming Workout** — Single event card with icon, title, time and distance goal
-- **Health Insights** — 2-up cards (步数目标, 睡眠质量) with value + short description
-- **BottomNav** — Today tab highlighted (pill highlight + accent color)
+- **Status bar** — 9:41, signal, battery
+- **Header** — “Good morning” + “Today · Thu, Jul 24” + avatar
+- **Today’s Plan (motivation)** — eyebrow `TODAY'S PLAN` + line: *Stay in your calorie deficit, protect last night's sleep win, and close the cardio gap.*
+- **P0 stack** — `TodayP0Card` instances: WeightTrend (2pr) → DietGap + SleepScore (1pr row) → AerobicGap (1pr)
+- **BottomNav** — Today active
+
+**Legacy:** `8:2` kept for reference (mixed ZH activity rings layout).
 
 ### 02 · Health Hub
 **Active tab:** Health  

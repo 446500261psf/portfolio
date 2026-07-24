@@ -211,19 +211,21 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 | Kind | Node ID | Span | Size | Visual |
 |---|---|---|---|---|
-| WeightTrend | `37:5` | 2pr | 358×200 | 近 7 日体重折线 + 当前 kg + 周降幅 |
-| DietGap | `38:2` | 1pr | 168×168 | 卡路里缺口（目标 − 摄入）+ 摄入进度条 |
-| SleepScore | `38:12` | 1pr | 168×168 | 昨晚睡眠得分 /100 + 时长摘要 |
-| AerobicGap | `38:24` | 1pr | 168×168 | 今日有氧目标缺口（剩余 min）+ 完成进度条 |
+| WeightTrend | `37:5` | 2pr | 358×200 | 7-day weight line + current kg + weekly change |
+| DietGap | `38:2` | 1pr | 168×168 | Calorie deficit (goal − intake) + intake bar |
+| SleepScore | `38:12` | 1pr | 168×168 | Last-night sleep score /100 + duration note |
+| AerobicGap | `38:24` | 1pr | 168×168 | Minutes remaining to today’s cardio goal |
 
-### 示例数据（Mid-fi）
+**Locale:** English UI copy (product language).
+
+### Sample data (Mid-fi)
 
 | Kind | Primary | Secondary |
 |---|---|---|
-| WeightTrend | 68.4 kg | ↓ 0.6 kg · 7天 |
-| DietGap | −420 kcal 缺口 | 摄入 1,580 / 目标 2,000 |
-| SleepScore | 82 /100 | 7h 12m · 深睡良好 |
-| AerobicGap | 18 min 目标缺口 | 已完成 12 / 目标 30 |
+| WeightTrend | 68.4 kg | ↓ 0.6 kg · 7 days |
+| DietGap | −420 kcal deficit | In 1,580 / Goal 2,000 |
+| SleepScore | 82 /100 | 7h 12m · solid deep sleep |
+| AerobicGap | 18 min to goal | Done 12 / Goal 30 |
 
 **Tokens bound:** color/surface/elevated, color/surface/subtle, color/text/primary·secondary·tertiary·success·warning, color/brand/default, color/feedback/success·warning, radius/xl·full  
 **Grid:** 与 MetricTile 一致 — `content=358` · `gap=22` · `1pr=168` · `2pr=358`  
