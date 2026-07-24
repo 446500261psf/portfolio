@@ -22,6 +22,8 @@
 | WeightCard docs | [`.agents/design-system/weight-card.md`](./design-system/weight-card.md) |
 | **Weekly Weight Plan** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=88-5 |
 | WeeklyPlan docs | [`.agents/design-system/weekly-plan.md`](./design-system/weekly-plan.md) |
+| **WeekFocusCard (−5 kg / 7 w)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=95-343 |
+| WeekFocusCard docs | [`.agents/design-system/week-focus-card.md`](./design-system/week-focus-card.md) |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |

@@ -280,6 +280,25 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 ---
 
+## 15. WeekFocusCard
+
+**Page:** `20 · WeeklyPlan` (`85:2`)  
+**Component Set Node ID:** `95:343`  
+**Variants:** 7 (`Week` = 1…7)  
+**Docs:** [week-focus-card.md](./week-focus-card.md)
+
+| Zone | Content |
+|---|---|
+| Title + subtitle | Week N · purpose · how to train |
+| Targets | 3 metrics + fat-loss kg + reward sticker |
+| Recommended | 1 course + 1 meditation |
+
+**Goal:** lose **5.0 kg** fat in **7 weeks** (progressive intensity).
+
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=95-343
+
+---
+
 ## Foundation Documentation Frames
 
 | Page | Node ID | Contents |
