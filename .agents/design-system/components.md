@@ -244,6 +244,23 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 
 ---
 
+## 13. WeightCard
+
+**Page:** 19 · WeightCard  
+**Component Set Node ID:** `75:122`  
+**Variants:** 3 (`Period` = Day | Week | Month)  
+**Docs:** [weight-card.md](./weight-card.md)
+
+| Period | Content |
+|---|---|
+| Day | Today kg + 12 smart-scale metrics + AI tip |
+| Week | 7-day line + composition deltas + AI tip |
+| Month | 30-day line + start/now summary + AI tip |
+
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=75-122
+
+---
+
 ## Foundation Documentation Frames
 
 | Page | Node ID | Contents |

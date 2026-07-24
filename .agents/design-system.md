@@ -76,6 +76,7 @@
 | 15 | 13 · Badge | Component | Badge component set (8 variants) |
 | — | 17 · TodayP0Card | Component | Today P0 insight cards (4 Kind · 减肥画像) |
 | — | 18 · Icons | Foundation | Phosphor Icons · 30 feature components (sports & health) |
+| — | 19 · WeightCard | Component | Weight Day/Week/Month + smart-scale metrics + AI tip |
 | 16 | ──── Product ──── | Separator | — |
 | 17 | 05 · IA / UX | Product | 4-tab IA document frame |
 | 18 | 06 · Screens | Product | (reserved) |
