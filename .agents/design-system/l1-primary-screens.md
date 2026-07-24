@@ -68,6 +68,13 @@ All four L1 headers use `Avatar` / `Face=B` instance (top-right).
 
 ---
 
+## Avatar → Profile Modal
+
+Tap header **Avatar** opens fullscreen modal with close ✕ top-right.  
+See [profile-modal.md](./profile-modal.md) · https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=118-620
+
+---
+
 ## Artifacts
 
 - `/opt/cursor/artifacts/l1-today-home.png`
