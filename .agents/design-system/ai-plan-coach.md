@@ -14,7 +14,7 @@
 
 | Step | Screen | Purpose |
 |------|--------|---------|
-| 1 | **Meet** | 角色亮相 · ✦ 大星星 · CTA `Start briefing` |
+| 1 | **Meet** | 先问候 `Hi {name},` · `How can I help you?` · 小字说明一句话目标+时限 → **然后**出现输入框 |
 | 2 | **Goal** | 引导问答 · 主目标 chips |
 | 3 | **Capacity** | 引导问答 · 每周训练天数 |
 | 4 | **Brief** | 锁定 horizon + Brief 卡 · CTA `Open chat` |
@@ -25,7 +25,9 @@
 ## Persona copy (English UI)
 
 - Voice: short, direct, no fluff  
-- Meet: *Precise. Concise. Your plan, built fast.*  
+- Meet greeting: *Hi {name},* / *How can I help you?*  
+- Meet tip (small): *In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.*  
+- Meet composer (after greeting): placeholder `e.g. Lose 5 kg in 7 weeks`  
 - Chat opening: locks brief, asks hard constraints, drafts Week 1  
 
 ---
@@ -34,7 +36,7 @@
 
 - 390×844 · bg `#F8F7F6` · SF Compact Rounded  
 - TopBar: Back ← · ✦ Plan Coach  
-- Meet: centered star gradient + Start briefing  
+- Meet: centered ✦ → greeting copy → **then** composer (no free chat until greeting shown)  
 - Guide steps: AI bubble (✦ avatar) + choice chips · progress 3 bars  
 - Chat: thread + suggestion chips + composer (`Message Plan Coach…` + send)
 
