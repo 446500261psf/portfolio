@@ -10,7 +10,6 @@
 ## Interaction
 
 - **Swipe** between pages 1–3（无 Continue / Next）
-- **Back** ← 左上角（替代关闭 �1–3（无 Continue / Next）
 - **Back** ← 左上角（替代关闭 ✕）；返回 Profile Free
 - **仅第 4 页**出现开通 CTA：`Start Premium`
 - Dots 指示当前页；pages 1–3 footer 文案：`Swipe to explore`
