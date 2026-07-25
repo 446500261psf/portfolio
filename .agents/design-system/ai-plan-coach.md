@@ -28,6 +28,7 @@
 - Meet greeting: *Hi {name},* / *How can I help you?*  
 - Meet tip (small): *In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.*  
 - Meet composer (after greeting): placeholder `e.g. Lose 5 kg in 7 weeks`  
+- Meet quick examples (above input): `I want to lose fat` · `Build muscle` · `Build an exercise habit` · `High-intensity training plan` · `I'm a serious runner`  
 - Chat opening: locks brief, asks hard constraints, drafts Week 1  
 
 ---
