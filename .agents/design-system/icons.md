@@ -44,6 +44,9 @@ Total: **31 sets × 4 = 124 components**（含 `icon.edit`）
 ### Body & Devices
 `icon.weight` · `icon.watch` · `icon.battery` · `icon.trend`
 
+### Actions
+`icon.edit` — Phosphor `pencil-simple` · Profile 编辑个人信息
+
 ## Feature → icon mapping
 
 | Feature | Preferred icon |
@@ -52,6 +55,7 @@ Total: **31 sets × 4 = 124 components**（含 `icon.edit`）
 | **BottomNav · Health** | `icon.heart` |
 | **BottomNav · Exercise** | `icon.run` |
 | **BottomNav · Devices** | `icon.watch` |
+| **Profile · Edit** | `icon.edit` |
 | Weight / WeightTrend | `icon.weight` |
 | Nutrition / DietGap | `icon.nutrition` or `icon.calories` |
 | Sleep score | `icon.sleep` |
