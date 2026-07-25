@@ -35,6 +35,8 @@
 | Profile Modal docs | [`.agents/design-system/profile-modal.md`](./design-system/profile-modal.md) |
 | **Premium Onboarding (4 pages)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=122-988 |
 | Premium onboarding docs | [`.agents/design-system/premium-onboarding.md`](./design-system/premium-onboarding.md) |
+| **AiPlanCoach (✦ generative chat)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=124-861 |
+| AiPlanCoach docs | [`.agents/design-system/ai-plan-coach.md`](./design-system/ai-plan-coach.md) |
 | **icon.edit (pencil)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=122-16 |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |

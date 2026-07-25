@@ -355,6 +355,26 @@ Layout: padding L/R 14 · icon 36 · gap 6 · label 20 Semibold LEFT（勿居中
 
 ---
 
+## 18. AiPlanCoach
+
+**Page:** Page 27 (`43:151`)  
+**Component Set Node ID:** `124:861`  
+**Variants:** `Step=Meet | Goal | Capacity | Brief | Chat`  
+**Icon:** `✦` (star from `119:962`)  
+**Docs:** [ai-plan-coach.md](./ai-plan-coach.md)
+
+Guided briefing **before** free-form generative chat. Persona: precise, concise plan coach.
+
+| Step | Role |
+|---|---|
+| Meet | Role intro · Start briefing |
+| Goal / Capacity / Brief | Guided Q&A chips · lock brief |
+| Chat | Generative dialog + composer |
+
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=124-861
+
+---
+
 ## Foundation Documentation Frames
 
 | Page | Node ID | Contents |
