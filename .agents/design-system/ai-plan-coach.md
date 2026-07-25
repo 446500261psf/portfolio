@@ -1,56 +1,60 @@
 # AiPlanCoach · AI 生成式计划对话
 
-**Role:** Plan Coach — precise, concise plan maker（精准、干练的计划制定师）  
-**Icon:** `✦`（参考 [119:962](https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=119-962) 页面星星）  
-**Component set:** `AiPlanCoach` (`124:861`) · `Step=Meet|Goal|Capacity|Brief|Chat`  
+**Role:** Plan Coach — precise, concise plan maker  
+**Icon:** `✦`（参考 [119:962](https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=119-962)）  
+**Component set:** `AiPlanCoach` (`124:861`)  
+**Variants:** `Step=Meet | Typing | Thinking | Reply | FollowUp | Process | Plan`  
 **Page:** Page 27  
 **Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=124-861
 
 ---
 
+## Visual shell（全步骤统一）
+
+- 390×844 · **浅蓝渐变** bg（Meet 同款）  
+- TopBar: Back ← · ✦ Plan Coach  
+- SF Compact Rounded · Accent `#007AFF`  
+- Composer: 白色胶囊输入框 + 蓝色圆形发送
+
+---
+
 ## Flow
 
-引导简报完成前，**不上自由对话框**。顺序：
-
-| Step | Screen | Purpose |
-|------|--------|---------|
-| 1 | **Meet** | 先问候 `Hi {name},` · `How can I help you?` · 小字说明一句话目标+时限 → **然后**出现输入框 |
-| 2 | **Goal** | 引导问答 · 主目标 chips |
-| 3 | **Capacity** | 引导问答 · 每周训练天数 |
-| 4 | **Brief** | 锁定 horizon + Brief 卡 · CTA `Open chat` |
-| 5 | **Chat** | 生成式对话 · 输入框 + 快捷建议 |
-
----
-
-## Persona copy (English UI)
-
-- Voice: short, direct, no fluff  
-- Meet greeting: *Hi {name},* / *How can I help you?*  
-- Meet tip (small): *In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.*  
-- Meet composer (after greeting): placeholder `e.g. Lose 5 kg in 7 weeks`  
-- Meet quick examples (above input): `I want to lose fat` · `Build muscle` · `Build an exercise habit` · `High-intensity training plan` · `I'm a serious runner`  
-- Chat opening: locks brief, asks hard constraints, drafts Week 1  
+| # | Step | 内容 |
+|---|------|------|
+| 1 | **Meet** | 问候 `Hi Sifan,` · How can I help you? · 小字说明 → 快速示例 chips → 输入框 |
+| 2 | **Typing** | 拉起 **iOS 键盘** · 用户正在输入 `Lose 5 kg in 7 weeks|` |
+| 3 | **Thinking** | Coach 思考态 · ✦ **高光闪过**（radial flash · motion note） |
+| 4 | **Reply** | Coach 反馈 + **主动追问**（天数 / 冲击限制） |
+| 5 | **FollowUp** | 用户再反馈（3 days · home gym · knees） |
+| 6 | **Process** | 思考过程文字列表 · **向上滚动 + fade**（motion note） |
+| 7 | **Plan** | 计划框架卡 · 底部 **✗ Revise / ✓ Approve** |
 
 ---
 
-## Shell
+## Meet details
 
-- 390×844 · bg `#F8F7F6` · SF Compact Rounded  
-- TopBar: Back ← · ✦ Plan Coach  
-- Meet: centered ✦ → greeting copy → **then** composer (no free chat until greeting shown)  
-- Guide steps: AI bubble (✦ avatar) + choice chips · progress 3 bars  
-- Chat: thread + suggestion chips + composer (`Message Plan Coach…` + send)
+- Greeting + tip，然后才出现对话框  
+- Quick examples: Lose fat · Build muscle · Exercise habit · High-intensity · Serious runner  
+- Placeholder: `e.g. Lose 5 kg in 7 weeks`
+
+## Motion notes（实现）
+
+| State | Motion |
+|-------|--------|
+| Thinking | Highlight flash sweeps across ✦ |
+| Process | Process lines scroll up · opacity ramp |
+
+Keyboard: mid-fi iOS-style open component (`Keyboard/iOS`).
 
 ---
-
-## Entry
-
-Suggested: Premium Onboarding / Today plan CTA → **Meet** → briefing → **Chat**
 
 ## Artifacts
 
 - `/opt/cursor/artifacts/ai-plan-coach-meet.png`
-- `/opt/cursor/artifacts/ai-plan-coach-goal.png`
-- `/opt/cursor/artifacts/ai-plan-coach-capacity.png`
-- `/opt/cursor/artifacts/ai-plan-coach-brief.png`
-- `/opt/cursor/artifacts/ai-plan-coach-chat.png`
+- `/opt/cursor/artifacts/ai-plan-coach-typing.png`
+- `/opt/cursor/artifacts/ai-plan-coach-thinking.png`
+- `/opt/cursor/artifacts/ai-plan-coach-reply.png`
+- `/opt/cursor/artifacts/ai-plan-coach-followup.png`
+- `/opt/cursor/artifacts/ai-plan-coach-process.png`
+- `/opt/cursor/artifacts/ai-plan-coach-plan.png`
