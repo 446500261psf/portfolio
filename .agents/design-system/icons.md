@@ -25,9 +25,9 @@ Each feature icon is a **component set** named `icon.<feature>` with variants:
 
 **4 variants per icon** → `Style=Outline, Color=Black` | `Style=Outline, Color=White` | `Style=Fill, Color=Black` | `Style=Fill, Color=White`
 
-Total: **30 sets × 4 = 120 components**
+Total: **31 sets × 4 = 124 components**（含 `icon.edit`）
 
-## Inventory (30 sets)
+## Inventory (31 sets)
 
 ### Activity
 `icon.steps` · `icon.walk` · `icon.run` · `icon.bike` · `icon.swim` · `icon.hike` · `icon.sneaker` · `icon.strength` · `icon.yoga` · `icon.distance` · `icon.active-min` · `icon.person`
@@ -97,3 +97,4 @@ Total: **30 sets × 4 = 120 components**
 | watch | watch | watch-fill |
 | battery | battery-medium | battery-medium-fill |
 | trend | chart-line-up | chart-line-up-fill |
+| edit | pencil-simple | pencil-simple-fill |

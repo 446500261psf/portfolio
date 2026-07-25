@@ -33,6 +33,9 @@
 | SportTile docs | [`.agents/design-system/sport-tile.md`](./design-system/sport-tile.md) |
 | **Profile Modal Free/Premium** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=121-866 |
 | Profile Modal docs | [`.agents/design-system/profile-modal.md`](./design-system/profile-modal.md) |
+| **Premium Onboarding (4 pages)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=122-988 |
+| Premium onboarding docs | [`.agents/design-system/premium-onboarding.md`](./design-system/premium-onboarding.md) |
+| **icon.edit (pencil)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=122-16 |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |
 | **Scene Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-4 |

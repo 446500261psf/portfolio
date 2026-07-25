@@ -23,16 +23,18 @@ Close ✕ always top-right. Fullscreen · no BottomNav.
 | Zone | Content |
 |------|---------|
 | TopBar | `Profile` + Close ✕ |
-| ProfileHero | Avatar · Sifan Pan · email · goal chip |
+| ProfileHero | **Edit** (pencil `icon.edit` · top-right) · Avatar · Sifan Pan · email · goal chip |
 | GoalProgress | −2.5 / −5.0 kg · 50% |
 | Settings | Units · Notifications · Privacy · Connected apps · Help |
 | Sign out | Red |
+
+**Edit control:** 32×32 circle · top-right of avatar card · `icon.edit` Outline brand blue (`122:6`).
 
 ---
 
 ## Free only
 
-**Go Premium** card — short benefit copy + Upgrade CTA (brand).
+**Go Premium** card — short benefit copy + **Upgrade** CTA → [`PremiumOnboarding`](./premium-onboarding.md) 4-page funnel.
 
 ---
 

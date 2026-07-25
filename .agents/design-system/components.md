@@ -303,8 +303,14 @@ Used on all L1 primary headers (top-right). Tap → `ProfileModal`.
 ### ProfileModal
 
 **Set:** `121:866` · `Membership=Free | Premium`  
-Premium shows: Premium time · Targets · My stickers.  
-**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=121-866
+- Hero **Edit** (`icon.edit`) top-right  
+- Free **Upgrade** → `PremiumOnboarding` (`122:988`)  
+- Premium shows: Premium time · Targets · My stickers  
+
+**Deep links:**  
+- ProfileModal: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=121-866  
+- Onboarding: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=122-988  
+- icon.edit: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=122-16
 
 ---
 
