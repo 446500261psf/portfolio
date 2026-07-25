@@ -28,7 +28,7 @@
 | 4 | **Reply** | Coach 反馈 + **主动追问**（天数 / 冲击限制） |
 | 5 | **FollowUp** | 用户再反馈（3 days · home gym · knees） |
 | 6 | **Process** | 思考过程文字列表 · **向上滚动 + fade**（motion note） |
-| 7 | **Plan** | 计划框架卡 · 底部 **✗ Revise / ✓ Approve** |
+| 7 | **Plan** | 计划框架卡 · 卡下 **☺ i feel good / ☹ i don't like it** · **保留输入框** |
 
 ---
 

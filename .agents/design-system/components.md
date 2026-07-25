@@ -373,7 +373,7 @@ Meet-style light blue gradient shell. Persona: precise, concise plan coach.
 | Reply | Coach feedback + proactive ask |
 | FollowUp | User replies again |
 | Process | Scrolling thinking lines |
-| Plan | Framework card · ✗ / ✓ |
+| Plan | Framework card · ☺ / ☹ under card · composer kept |
 
 **Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=124-861
 
