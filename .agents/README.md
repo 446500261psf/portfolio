@@ -31,7 +31,7 @@
 | **Avatar** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=104-798 |
 | **SportTile** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=115-692 |
 | SportTile docs | [`.agents/design-system/sport-tile.md`](./design-system/sport-tile.md) |
-| **Profile Modal (Avatar)** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=118-620 |
+| **Profile Modal Free/Premium** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=121-866 |
 | Profile Modal docs | [`.agents/design-system/profile-modal.md`](./design-system/profile-modal.md) |
 | **Medals & Illustrations** | https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=22-3 |
 | Medals/Illus docs | [`.agents/design-system/medals-illustrations.md`](./design-system/medals-illustrations.md) |

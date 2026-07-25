@@ -296,9 +296,15 @@ Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?nod
 **Component Set:** `Avatar` (`104:798`) · `Face=A` \| `Face=B` (52×52 photo)  
 **Related:** `AvatarBadge` (`104:884`) · `Face=C` \| `Face=D`  
 
-Used on all L1 primary headers (top-right).  
-**Docs:** [l1-primary-screens.md](./l1-primary-screens.md)  
+Used on all L1 primary headers (top-right). Tap → `ProfileModal`.  
+**Docs:** [l1-primary-screens.md](./l1-primary-screens.md) · [profile-modal.md](./profile-modal.md)  
 **Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=104-798
+
+### ProfileModal
+
+**Set:** `121:866` · `Membership=Free | Premium`  
+Premium shows: Premium time · Targets · My stickers.  
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=121-866
 
 ---
 

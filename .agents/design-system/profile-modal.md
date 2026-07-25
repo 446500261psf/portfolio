@@ -1,49 +1,65 @@
-# Profile Modal · Avatar 全屏模态
+# Profile Modal · Free / Premium
 
-**Trigger:** Tap **Avatar** in any L1 header  
-**Screen:** `05 · Profile Modal` (`118:620`)  
-**Flow preview:** `Flow · Avatar opens Profile Modal` (`118:701`) — Today dimmed + modal  
+**Trigger:** Tap **Avatar** in L1 header  
+**Component set:** `ProfileModal` (`121:866`) · `Membership=Free | Premium`  
 **Page:** Page 27 (`43:151`)  
-**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=118-620
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=121-866
 
 ---
 
-## Behavior
+## Variants
 
-1. User taps Avatar (header right)  
-2. Opens **fullscreen** modal (390 × ~844+, covers tab content; no BottomNav)  
-3. Tap **Close ✕** (top-right) dismisses → back to previous L1  
+| Membership | Node | Notes |
+|------------|------|-------|
+| **Free** | `121:709` | Baseline profile + **Go Premium** upgrade card |
+| **Premium** | `121:865` | + Premium time · Targets · My stickers |
+
+Close ✕ always top-right. Fullscreen · no BottomNav.
 
 ---
 
-## Anatomy
+## Shared
 
 | Zone | Content |
 |------|---------|
-| StatusBar | 9:41 · signal |
-| TopBar | Title `Profile` (left) · **Close** 36×36 circle + ✕ (**right**) |
-| ProfileHero | Avatar 80 · name · email · goal chip |
-| GoalProgress | −2.5 / −5.0 kg · 50% bar |
-| Settings list | Units · Notifications · Privacy · Connected apps · Help |
-| Sign out | Destructive text row |
-
-**Style:** bg `#F8F7F6` · cards radius 24 · SF Compact Rounded · brand `#007AFF`  
-**Avatar:** `Avatar` / `Face=B` (`104:796`)
+| TopBar | `Profile` + Close ✕ |
+| ProfileHero | Avatar · Sifan Pan · email · goal chip |
+| GoalProgress | −2.5 / −5.0 kg · 50% |
+| Settings | Units · Notifications · Privacy · Connected apps · Help |
+| Sign out | Red |
 
 ---
 
-## Close button
+## Free only
 
-| Spec | Value |
-|------|-------|
-| Position | TopBar **trailing** (x≈338 in 390 frame) |
-| Size | 36×36 · radius 18 |
-| Fill | White · 1px `#E5E5E5` stroke |
-| Glyph | ✕ · 16 Medium · `#111827` |
+**Go Premium** card — short benefit copy + Upgrade CTA (brand).
+
+---
+
+## Premium only
+
+### 1. Premium time
+Gold-tint badge under hero:
+- `★ Premium`
+- `Active · expires in 200 days`
+- `Renews Jan 10, 2027`
+
+### 2. Targets
+Daily targets with progress bars:
+| Target | Sample |
+|--------|--------|
+| Steps | 8,521 / 10,000 |
+| Water | 6 / 8 cups |
+| Calories | 1,580 / 2,000 |
+| Active min | 28 / 40 |
+
+### 3. My stickers
+Earned sticker wall (6): FirstStart · Hydration · Day3 · SleepTried · Insight · EarlyBird  
+Instances from `Sticker` Kind set (`106:317`).
 
 ---
 
 ## Artifacts
 
-- `/opt/cursor/artifacts/profile-modal.png`
-- `/opt/cursor/artifacts/profile-modal-flow.png`
+- `/opt/cursor/artifacts/profile-modal-free.png`
+- `/opt/cursor/artifacts/profile-modal-premium.png`
