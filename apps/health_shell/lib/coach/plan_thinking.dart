@@ -15,7 +15,7 @@ class PlanThinkingLineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 2, top: 4, bottom: 20),
+      padding: const EdgeInsets.only(top: 2, bottom: 2),
       child: Opacity(
         opacity: opacity.clamp(0.0, 1.0),
         child: Text(

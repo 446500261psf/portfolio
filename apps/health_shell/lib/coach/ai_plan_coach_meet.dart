@@ -16,7 +16,7 @@ import 'demo_script.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v12';
+  static const buildMarker = 'meet-v13';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -49,7 +49,6 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
 
   late final AnimationController _intro;
   late final AnimationController _kb;
-  late final AnimationController _sweep;
   final _focus = FocusNode();
   final _controller = TextEditingController();
   final _scroll = ScrollController();
@@ -79,18 +78,12 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     _intro = AnimationController(vsync: this, duration: _introDuration)
       ..forward();
     _kb = AnimationController(vsync: this, duration: _kbDuration);
-    // Highlight sweep across ✦ Coach while thinking (~2 flashes / sec).
-    _sweep = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 520),
-    );
   }
 
   @override
   void dispose() {
     _intro.dispose();
     _kb.dispose();
-    _sweep.dispose();
     _focus.dispose();
     _controller.dispose();
     _scroll.dispose();
@@ -209,9 +202,6 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     }
 
     if (!mounted || seq != _sendSeq) return;
-    _sweep
-      ..stop()
-      ..reset();
     setState(() {
       _planThinking = false;
       _planThinkingLine = null;
@@ -242,7 +232,6 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
       _planThinkingOpacity = 0;
     });
     _scrollToEnd();
-    _sweep.repeat();
     await _runPlanThinkingCycle(seq);
   }
 
@@ -274,15 +263,11 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
       _turn = ChatTurnState.generating;
     });
     _scrollToEnd();
-    _sweep.repeat();
 
     await Future<void>.delayed(const Duration(milliseconds: 850));
     if (!mounted || seq != _sendSeq) return;
 
     final beat = WeightLoss15DayScript.beatForUserTurn(userTurn, text);
-    _sweep
-      ..stop()
-      ..reset();
 
     setState(() {
       _turn = ChatTurnState.streaming;
@@ -347,7 +332,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
         child: SafeArea(
           bottom: false,
           child: AnimatedBuilder(
-            animation: Listenable.merge([_intro, _kb, _sweep]),
+            animation: Listenable.merge([_intro, _kb]),
             builder: (context, _) {
               final t = _intro.value;
               final k = _kb.value;
@@ -405,7 +390,6 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                   planThinkingLine: _planThinkingLine,
                                   planThinkingOpacity: _planThinkingOpacity,
                                   weeks: _weeks,
-                                  sweep: _sweep,
                                   scrollController: _scroll,
                                 )
                               : LayoutBuilder(

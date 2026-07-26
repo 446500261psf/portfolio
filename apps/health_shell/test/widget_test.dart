@@ -69,7 +69,8 @@ void main() {
     await tester.pump();
 
     expect(find.text(WeightLoss15DayScript.goalChip), findsWidgets);
-    expect(find.text('Coach'), findsOneWidget);
+    // Thinking: white bubble with Plan Coach + rotating star.
+    expect(find.text('Plan Coach'), findsOneWidget);
     expect(find.text('Generating…'), findsNothing);
 
     await pumpUntil(tester, chip('3 days / week · Home only'));

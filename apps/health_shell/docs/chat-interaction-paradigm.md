@@ -27,13 +27,13 @@ Meet
        │
        ▼  send(chip | text)
 Chat
-  ├─ Generating    ✦ Coach 高光扫过
-  ├─ Streaming     AI 气泡逐字出现
+  ├─ Generating    白气泡内 `Plan Coach` + 右侧旋转星星（每圈稍停）
+  ├─ Streaming     AI 气泡逐字出现（流式时星星可继续转）
   ├─ AwaitingUser  回复完成，可再发 / 点 follow-up chips
   │
   ▼  confirm（同意 / generate my plan）
 PlanGenerating
-  ├─ Coach 高光（正在生成计划）
+  ├─ 白气泡内 `Plan Coach` + 旋转星星
   └─ 思考文案逐行渐隐：fade in → hold → fade out → 下一行
        │
        ▼
@@ -57,7 +57,7 @@ PlanReady
 | 0–80 ms | chip 轻 scale；Meet 问候区收起 |
 | 80–200 ms | **用户蓝气泡**右上滑入 |
 | 200 ms | chips 隐藏（或换成 follow-up）；composer 留底 |
-| 200–900 ms | **Generating**（✦ Coach 高光） |
+| 200–900 ms | **Generating**（白气泡 · Plan Coach + 旋转星星） |
 | 900 ms+ | AI 气泡出现，**流式打字**（约 28–40 字/秒） |
 | 结束 | 若剧本有追问 → 底部出现 follow-up chips |
 
@@ -67,7 +67,7 @@ PlanReady
 
 - **User**：右对齐 · 蓝底 `#007AFF` · 白字 · 圆角 18  
 - **AI**：左对齐 · 白底浅描边 · 深字 · 上方可带小 ✦  
-- **Generating / PlanThinking**：仅左对齐 `✦ Coach`，高光扫过（无 Generating 文案，无大星星）  
+- **Generating / PlanThinking**：白色对话框内 `Plan Coach`（蓝字）右侧旋转星星；每转一圈稍停顿  
 - **Plan thinking lines**：一行文案渐隐切换  
 - **Week cards**：折叠摘要；详情在**同一卡片宽度**内纵向展开（不铺满全屏），圆角/描边连续过渡  
 
@@ -90,7 +90,7 @@ PlanReady
 **Follow-up：** `Yes, generate my plan` · `同意，生成计划` · `Make it easier first`
 
 ### Confirm → PlanGenerating
-Coach 高光 + 思考文案（例）：
+白气泡 `Plan Coach` + 旋转星星，思考文案（例）：
 1. 正在考虑每周训练天数…  
 2. 正在安排合适的训练课程…  
 3. 正在平衡力量与有氧…  
@@ -117,7 +117,7 @@ Week 1 / Week 2 / Week 3 折叠卡 → 点击后在原卡片宽度内展开详�
 ## 7. 验收
 
 1. 点「Lose 3 kg in 15 days」→ 立刻出用户气泡  
-2. Coach 高光 → AI 流式回复  
+2. 白气泡 Plan Coach + 旋转星星 → AI 流式回复  
 3. 约束 chip → 框架回复 + 确认 chips  
 4. 点确认 → 思考文案渐隐 → 出现 Week 折叠卡  
 5. 点 Week 卡 → 同宽纵向展开详情（再点收起）  
