@@ -16,7 +16,7 @@ import 'demo_script.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v17';
+  static const buildMarker = 'meet-v18';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -29,19 +29,21 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
   static const _tipFull =
       'In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.';
 
-  static const _introDuration = Duration(milliseconds: 4400);
+  // 1s hold → ~2.1s star (2 turns + fade + glints) → typewriter → chrome
+  static const _introDuration = Duration(milliseconds: 6800);
   static const _kbDuration = Duration(milliseconds: 450);
   static const _kbLift = 202.0;
 
-  // Intro fractions (4.4s)
-  static const _starEnd = 0.125;
-  static const _hiStart = 0.14773;
-  static const _hiEnd = 0.32955;
-  static const _coachStart = 0.35227;
-  static const _coachEnd = 0.57955;
-  static const _tipStart = 0.60227;
-  static const _chromeStart = 0.76136;
-  static const _chromeEnd = 0.89773;
+  // Intro fractions (6.8s)
+  static const _starStart = 0.147; // ~1000ms delay before spin
+  static const _starEnd = 0.456; // ~3100ms — slow 2-turn fade
+  static const _hiStart = 0.470;
+  static const _hiEnd = 0.590;
+  static const _coachStart = 0.605;
+  static const _coachEnd = 0.735;
+  static const _tipStart = 0.750;
+  static const _chromeStart = 0.850;
+  static const _chromeEnd = 0.940;
 
   // Keyboard focus fractions (0.45s) from Figma motion
   static const _kbChipCut = 0.22222; // ~100ms — chips vanish (step)
@@ -338,7 +340,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
               final k = _kb.value;
               final inChat = _phase != CoachPhase.meet;
 
-              final star = _ramp(t, 0, _starEnd);
+              final star = _ramp(t, _starStart, _starEnd);
               final hiP = _ramp(t, _hiStart, _hiEnd);
               final coachP = _ramp(t, _coachStart, _coachEnd);
               final tip = _ramp(t, _tipStart, _tipStart + 0.136);
@@ -410,12 +412,13 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                                 MainAxisAlignment.center,
                                             children: [
                                               SizedBox(
-                                                height: 96,
+                                                height: 120,
                                                 child: Builder(
                                                   builder: (context) {
-                                                    // Fade in while spinning exactly 2 turns.
+                                                    // After 1s delay: fade in
+                                                    // across exactly 2 slow turns.
                                                     final eased = Curves
-                                                        .easeOutCubic
+                                                        .easeInOutCubic
                                                         .transform(star);
                                                     return Opacity(
                                                       opacity: eased,
@@ -425,14 +428,10 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                                           0,
                                                           28 * (1 - eased),
                                                         ),
-                                                        child: Transform.rotate(
-                                                          angle: (1 - eased) *
-                                                              math.pi *
-                                                              4,
-                                                          child: const Center(
-                                                            child: _SparkleStar(
-                                                              size: 64,
-                                                            ),
+                                                        child: Center(
+                                                          child: _StarEntrance(
+                                                            progress: eased,
+                                                            size: 64,
                                                           ),
                                                         ),
                                                       ),
@@ -613,6 +612,86 @@ class _SparkleStar extends StatelessWidget {
       child: CustomPaint(painter: _SparklePainter()),
     );
   }
+}
+
+/// Hero / thinking entrance: 2 turns + fade, with orbiting glint dots.
+class _StarEntrance extends StatelessWidget {
+  const _StarEntrance({required this.progress, required this.size});
+
+  final double progress;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final box = size * 1.85;
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CustomPaint(
+            size: Size(box, box),
+            painter: _GlintFieldPainter(progress: progress),
+          ),
+          Transform.rotate(
+            angle: progress * math.pi * 4,
+            child: _SparkleStar(size: size),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlintFieldPainter extends CustomPainter {
+  _GlintFieldPainter({required this.progress});
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final baseR = size.width * 0.34;
+
+    for (var i = 0; i < 8; i++) {
+      final phase = i * (math.pi * 2 / 8);
+      // Orbit with the 2-turn entrance.
+      final a = phase + progress * math.pi * 4 * 0.85;
+      final pulse = 0.55 + 0.45 * math.sin(progress * math.pi * 6 + i * 1.7);
+      final r = baseR * (0.92 + 0.18 * math.sin(progress * math.pi * 4 + i));
+      final x = cx + r * math.cos(a);
+      final y = cy + r * math.sin(a);
+      final opacity = (pulse * progress).clamp(0.0, 1.0);
+      final dot = 1.2 + (i.isEven ? 1.6 : 0.8) * pulse;
+
+      final paint = Paint()
+        ..isAntiAlias = true
+        ..color = Color.fromRGBO(
+          125,
+          211,
+          252,
+          opacity * (i.isEven ? 0.95 : 0.65),
+        );
+      canvas.drawCircle(Offset(x, y), dot, paint);
+
+      // Tiny cross sparkle on alternate dots.
+      if (i.isOdd) {
+        final arm = 2.2 + 1.5 * pulse;
+        paint.strokeWidth = 1.1;
+        paint.style = PaintingStyle.stroke;
+        canvas.drawLine(Offset(x - arm, y), Offset(x + arm, y), paint);
+        canvas.drawLine(Offset(x, y - arm), Offset(x, y + arm), paint);
+        paint.style = PaintingStyle.fill;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _GlintFieldPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }
 
 class _SparklePainter extends CustomPainter {

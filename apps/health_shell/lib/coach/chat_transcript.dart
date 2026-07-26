@@ -271,7 +271,7 @@ class _ShimmerPlanCoachLabelState extends State<_ShimmerPlanCoachLabel>
   }
 }
 
-/// Thinking-only star: fade in across exactly 2 turns, then spin with pauses.
+/// Thinking-only star: wait 1s → fade in over 2 slow turns + glints → pause loop.
 class _PausingRotatingStar extends StatefulWidget {
   const _PausingRotatingStar({required this.size});
 
@@ -286,20 +286,26 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
   late final AnimationController _enter;
   late final AnimationController _spin;
   Timer? _pause;
+  Timer? _delay;
   bool _entered = false;
+  bool _started = false;
 
   @override
   void initState() {
     super.initState();
     _enter = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1100),
+      duration: const Duration(milliseconds: 2100),
     );
     _spin = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 750),
+      duration: const Duration(milliseconds: 900),
     )..addStatusListener(_onSpinStatus);
-    unawaited(_runEnter());
+    _delay = Timer(const Duration(seconds: 1), () {
+      if (!mounted) return;
+      setState(() => _started = true);
+      unawaited(_runEnter());
+    });
   }
 
   Future<void> _runEnter() async {
@@ -320,6 +326,7 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
 
   @override
   void dispose() {
+    _delay?.cancel();
     _pause?.cancel();
     _spin.removeStatusListener(_onSpinStatus);
     _enter.dispose();
@@ -329,23 +336,40 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
 
   @override
   Widget build(BuildContext context) {
+    final box = widget.size * 2.2;
     final star = SizedBox(
       width: widget.size,
       height: widget.size,
       child: CustomPaint(painter: _CyanSparklePainter()),
     );
 
+    if (!_started) {
+      return SizedBox(width: box, height: box);
+    }
+
     if (!_entered) {
       return AnimatedBuilder(
         animation: _enter,
         builder: (context, child) {
-          final t = Curves.easeOutCubic.transform(_enter.value);
-          return Opacity(
-            opacity: t,
-            child: Transform.rotate(
-              // Exactly 2 turns while fading in.
-              angle: t * math.pi * 4,
-              child: child,
+          final t = Curves.easeInOutCubic.transform(_enter.value);
+          return SizedBox(
+            width: box,
+            height: box,
+            child: Opacity(
+              opacity: t,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: Size(box, box),
+                    painter: _ThinkingGlintPainter(progress: t),
+                  ),
+                  Transform.rotate(
+                    angle: t * math.pi * 4,
+                    child: child,
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -353,18 +377,65 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
       );
     }
 
-    return AnimatedBuilder(
-      animation: _spin,
-      builder: (context, child) {
-        final t = Curves.easeInOutCubic.transform(_spin.value);
-        return Transform.rotate(
-          angle: t * math.pi * 2,
-          child: child,
-        );
-      },
-      child: star,
+    return SizedBox(
+      width: box,
+      height: box,
+      child: Center(
+        child: AnimatedBuilder(
+          animation: _spin,
+          builder: (context, child) {
+            final t = Curves.easeInOutCubic.transform(_spin.value);
+            return Transform.rotate(
+              angle: t * math.pi * 2,
+              child: child,
+            );
+          },
+          child: star,
+        ),
+      ),
     );
   }
+}
+
+class _ThinkingGlintPainter extends CustomPainter {
+  _ThinkingGlintPainter({required this.progress});
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final baseR = size.width * 0.36;
+
+    for (var i = 0; i < 6; i++) {
+      final phase = i * (math.pi * 2 / 6);
+      final a = phase + progress * math.pi * 4 * 0.9;
+      final pulse = 0.5 + 0.5 * math.sin(progress * math.pi * 5 + i * 1.4);
+      final r = baseR * (0.9 + 0.2 * math.sin(progress * math.pi * 3 + i));
+      final x = cx + r * math.cos(a);
+      final y = cy + r * math.sin(a);
+      final opacity = (pulse * progress).clamp(0.0, 1.0);
+      final paint = Paint()
+        ..isAntiAlias = true
+        ..color = Color.fromRGBO(125, 211, 252, opacity * 0.9);
+      canvas.drawCircle(Offset(x, y), 1.0 + pulse, paint);
+      if (i.isOdd) {
+        final arm = 1.8 + pulse;
+        paint
+          ..strokeWidth = 1
+          ..style = PaintingStyle.stroke;
+        canvas.drawLine(Offset(x - arm, y), Offset(x + arm, y), paint);
+        canvas.drawLine(Offset(x, y - arm), Offset(x, y + arm), paint);
+        paint.style = PaintingStyle.fill;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ThinkingGlintPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }
 
 class _CyanSparklePainter extends CustomPainter {
@@ -373,24 +444,39 @@ class _CyanSparklePainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final outer = size.width * 0.48;
-    final inner = size.width * 0.16;
+    final inner = size.width * 0.20;
+    const tipSoft = 0.62;
     final path = Path();
     for (var i = 0; i < 4; i++) {
       final aOuter = -math.pi / 2 + i * math.pi / 2;
       final aInner = aOuter + math.pi / 4;
-      final ox = cx + outer * math.cos(aOuter);
-      final oy = cy + outer * math.sin(aOuter);
-      final ix = cx + inner * math.cos(aInner);
-      final iy = cy + inner * math.sin(aInner);
+      final aPrevInner = aOuter - math.pi / 4;
+      final tip = Offset(
+        cx + outer * math.cos(aOuter),
+        cy + outer * math.sin(aOuter),
+      );
+      final prevInner = Offset(
+        cx + inner * math.cos(aPrevInner),
+        cy + inner * math.sin(aPrevInner),
+      );
+      final nextInner = Offset(
+        cx + inner * math.cos(aInner),
+        cy + inner * math.sin(aInner),
+      );
+      final nearIn = Offset.lerp(tip, prevInner, 1 - tipSoft)!;
+      final nearOut = Offset.lerp(tip, nextInner, 1 - tipSoft)!;
       if (i == 0) {
-        path.moveTo(ox, oy);
+        path.moveTo(prevInner.dx, prevInner.dy);
       } else {
-        path.lineTo(ox, oy);
+        path.lineTo(prevInner.dx, prevInner.dy);
       }
-      path.lineTo(ix, iy);
+      path.lineTo(nearIn.dx, nearIn.dy);
+      path.quadraticBezierTo(tip.dx, tip.dy, nearOut.dx, nearOut.dy);
+      path.lineTo(nextInner.dx, nextInner.dy);
     }
     path.close();
     final paint = Paint()
+      ..isAntiAlias = true
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

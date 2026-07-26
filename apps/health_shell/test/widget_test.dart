@@ -29,7 +29,7 @@ void main() {
 
     await tester.pumpWidget(const HealthShellApp());
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 4500));
+    await tester.pump(const Duration(milliseconds: 7200));
 
     expect(find.text(AiPlanCoachMeetPage.buildMarker), findsOneWidget);
     expect(find.text('Hi Sifan,'), findsWidgets);
@@ -63,7 +63,7 @@ void main() {
 
     await tester.pumpWidget(const HealthShellApp());
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 4500));
+    await tester.pump(const Duration(milliseconds: 7200));
 
     await tester.tap(chip(WeightLoss15DayScript.goalChip));
     await tester.pump();
@@ -85,7 +85,7 @@ void main() {
 
     await tester.pumpWidget(const HealthShellApp());
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 4500));
+    await tester.pump(const Duration(milliseconds: 7200));
 
     await tester.tap(chip(WeightLoss15DayScript.goalChip));
     await pumpUntil(tester, chip('3 days / week · Home only'));
