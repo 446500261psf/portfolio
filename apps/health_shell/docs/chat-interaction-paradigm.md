@@ -77,7 +77,7 @@ PlanReady
 ## 5. 示例剧本：15 天减重 3 公斤
 
 ### Turn 1 — User
-`Lose 3 kg in 15 days` / `15天减重3公斤`
+`Lose 3 kg in 15 days`
 
 ### Turn 1 — AI
 确认目标，追问训练天数 / 场地。
@@ -88,18 +88,21 @@ PlanReady
 ### Turn 2 — AI（框架）
 给出 Week shape + daily non-negotiables，并请用户确认生成完整周卡。
 
-**Follow-up：** `Yes, generate my plan` · `同意，生成计划` · `Make it easier first`
+**Follow-up：** `Yes, generate my plan` · `Looks good — generate it` · `Make it easier first`
 
 ### Confirm → PlanGenerating
 白气泡 `Plan Coach` + 旋转星星，思考文案（例）：
-1. 正在考虑每周训练天数…  
-2. 正在安排合适的训练课程…  
-3. 正在平衡力量与有氧…  
-4. 正在创造奖励 sticker…  
-5. 正在锁定 15 天计划框架…  
+1. Considering your weekly training days…  
+2. Arranging the right training sessions…  
+3. Balancing strength and cardio…  
+4. Creating reward stickers…  
+5. Locking your 15-day plan framework…  
 
 ### PlanReady
 Week 1 / Week 2 / Week 3 折叠卡 → 点击后在原卡片宽度内展开详情（可再点收起）。
+
+收尾对话（卡片下方）：  
+> I’ve added your generated plan to the Today page. I’ll adjust it anytime based on your status. Let’s get started!
 
 ---
 

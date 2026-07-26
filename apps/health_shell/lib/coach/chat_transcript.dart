@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'chat_models.dart';
+import 'demo_script.dart';
 import 'plan_thinking.dart';
 import 'week_plan_cards.dart';
 
@@ -41,7 +42,16 @@ class ChatTranscript extends StatelessWidget {
             opacity: planThinkingOpacity,
           ),
         ),
-      if (showWeeks) WeekPlanCardList(weeks: weeks),
+      if (showWeeks)
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            WeekPlanCardList(weeks: weeks),
+            const _AssistantBubble(
+              text: WeightLoss15DayScript.planReadyMessage,
+            ),
+          ],
+        ),
     ];
 
     return ListView.builder(

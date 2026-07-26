@@ -107,6 +107,10 @@ void main() {
     expect(find.text('Your 15-day plan'), findsOneWidget);
     expect(find.text('Week 1'), findsOneWidget);
     expect(find.text('Week 2'), findsOneWidget);
+    expect(
+      find.textContaining('added your generated plan to the Today page'),
+      findsOneWidget,
+    );
 
     // Expand in-place (same card width) — detail appears without a new route.
     final week1 = find.byKey(const ValueKey('week-card-w1'));

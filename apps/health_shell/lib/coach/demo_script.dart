@@ -3,14 +3,11 @@ import 'chat_models.dart';
 /// Scripted Plan Coach demo: lose 3 kg in 15 days.
 class WeightLoss15DayScript {
   static const goalChip = 'Lose 3 kg in 15 days';
-  static const goalChipZh = '15天减重3公斤';
 
   static const confirmChip = 'Yes, generate my plan';
-  static const confirmChipZh = '同意，生成计划';
 
   static const chips = <String>[
     goalChip,
-    goalChipZh,
     'High-intensity training plan',
     "I'm a serious runner",
     'I want to lose fat',
@@ -18,27 +15,31 @@ class WeightLoss15DayScript {
 
   static const confirmChips = <String>[
     confirmChip,
-    confirmChipZh,
+    'Looks good — generate it',
     'Make it easier first',
   ];
 
   static const planThinkingLines = <String>[
-    '正在考虑每周训练天数…',
-    '正在安排合适的训练课程…',
-    '正在平衡力量与有氧…',
-    '正在创造奖励 sticker…',
-    '正在锁定 15 天计划框架…',
+    'Considering your weekly training days…',
+    'Arranging the right training sessions…',
+    'Balancing strength and cardio…',
+    'Creating reward stickers…',
+    'Locking your 15-day plan framework…',
   ];
+
+  /// Closing line shown under the weekly plan cards.
+  static const planReadyMessage =
+      'I’ve added your generated plan to the Today page. '
+      'I’ll adjust it anytime based on your status. Let’s get started!';
 
   /// User confirmed they want the full plan generated.
   static bool isPlanConfirm(String userText) {
     final t = userText.toLowerCase().trim();
-    if (t.contains('同意') && t.contains('生成')) return true;
     if (t.contains('generate my plan')) return true;
+    if (t.contains('generate it')) return true;
     if (t == 'yes' || t.startsWith('yes,')) return true;
     if (t.contains('looks good') && t.contains('generate')) return true;
     if (t == confirmChip.toLowerCase()) return true;
-    if (t == confirmChipZh) return true;
     return false;
   }
 
@@ -46,7 +47,7 @@ class WeightLoss15DayScript {
   static ScriptBeat beatForUserTurn(int userTurnIndex, String userText) {
     final t = userText.toLowerCase();
     if (userTurnIndex <= 1) return _goal;
-    if (t.contains('easier') || t.contains('轻松')) return _easier;
+    if (t.contains('easier')) return _easier;
     if (userTurnIndex == 2) return _framework;
     return _framework;
   }
