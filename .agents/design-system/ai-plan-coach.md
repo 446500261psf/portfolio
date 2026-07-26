@@ -70,8 +70,8 @@ Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-intro.mp4`
 
 | t | Action |
 |---|--------|
-| 0–0.35s | 静止：中间问候区 + 输入框可见，键盘隐藏在下方 |
-| 0.35–0.95s | 点击输入框：键盘上滑浮现 · **中间内容同时渐隐上移** |
+| 0–0.12s | 静止：中间问候区可见 · **chips+输入框在底部** · 键盘在屏外 |
+| 0.12–0.42s | 点击输入框（更快）：键盘上滑 · **Composer 整块被顶起** · 中间内容同时渐隐 |
 
 Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-keyboard.mp4`
 
