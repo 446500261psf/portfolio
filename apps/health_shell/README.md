@@ -1,17 +1,21 @@
 # health_shell
 
-Flutter simulator for Design System Meet Intro:
+Flutter simulator for Design System Meet + Chat:
 
 https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-728
 
+交互范式：`docs/chat-interaction-paradigm.md`
+
 ## What opens by default
 
-**AiPlanCoach Meet flow**
+**AiPlanCoach Meet → Chat flow**
 
 1. Intro Motion (`133:728`) — star → typewriter → tip → chips + input  
-2. Keyboard Focus (`136:695`) — tap input: chips vanish → middle fades → iOS keyboard slides up 202px in ~100ms  
+2. Keyboard Focus (`136:695`) — tap input: chips vanish → middle fades → iOS keyboard slides up 202px  
+3. Chip / ↑ send — user bubble → Generating → streamed Coach reply（Cursor 风格）  
+   Demo 剧本：`Lose 3 kg in 15 days` / `15天减重3公斤`
 
-Marker under tip: `meet-v7` — mock keyboard stays open while typing (return to dismiss)
+Marker: `meet-v8`
 
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 

@@ -1,15 +1,21 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Meet flow:
+import 'chat_models.dart';
+import 'chat_transcript.dart';
+import 'demo_script.dart';
+
+/// Meet + Chat flow:
 /// 1) Intro Motion — Figma `133:728`
-/// 2) Keyboard Focus — Figma `136:695` (tap input)
+/// 2) Keyboard Focus — Figma `136:695`
+/// 3) Chip/Send → user bubble → Generating → stream reply (Cursor-style)
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v7';
+  static const buildMarker = 'meet-v8';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -17,14 +23,6 @@ class AiPlanCoachMeetPage extends StatefulWidget {
 
 class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     with TickerProviderStateMixin {
-  static const _chips = <String>[
-    'High-intensity training plan',
-    "I'm a serious runner",
-    'I want to lose fat',
-    'Build muscle',
-    'Build an exercise habit',
-  ];
-
   static const _hiFull = 'Hi Sifan,';
   static const _coachFull = 'i am your personal coach';
   static const _tipFull =
@@ -50,14 +48,23 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
 
   late final AnimationController _intro;
   late final AnimationController _kb;
+  late final AnimationController _sweep;
   final _focus = FocusNode();
   final _controller = TextEditingController();
+  final _scroll = ScrollController();
 
   /// Keyboard stays up until return / explicit hide — not tied to FocusNode.
-  /// (Tapping mock keys would otherwise unfocus and dismiss the keyboard.)
   bool _kbOpen = false;
 
+  CoachPhase _phase = CoachPhase.meet;
+  ChatTurnState _turn = ChatTurnState.idle;
+  final List<ChatMessage> _messages = [];
+  List<String> _followUps = [];
+  int _sendSeq = 0;
+
   bool get _introDone => _intro.value >= _chromeEnd;
+  bool get _busy =>
+      _turn == ChatTurnState.generating || _turn == ChatTurnState.streaming;
 
   @override
   void initState() {
@@ -65,14 +72,20 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     _intro = AnimationController(vsync: this, duration: _introDuration)
       ..forward();
     _kb = AnimationController(vsync: this, duration: _kbDuration);
+    _sweep = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
   }
 
   @override
   void dispose() {
     _intro.dispose();
     _kb.dispose();
+    _sweep.dispose();
     _focus.dispose();
     _controller.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -140,6 +153,98 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     if (!_focus.hasFocus) _focus.requestFocus();
   }
 
+  void _scrollToEnd() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scroll.hasClients) return;
+      _scroll.animateTo(
+        _scroll.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void _onReturnKey() {
+    final t = _controller.text.trim();
+    if (t.isNotEmpty && !_busy) {
+      unawaited(_sendMessage(t));
+    } else {
+      _hideKeyboard();
+    }
+  }
+
+  Future<void> _sendMessage(String raw) async {
+    final text = raw.trim();
+    if (text.isEmpty || _busy) return;
+
+    final seq = ++_sendSeq;
+    _hideKeyboard();
+    _controller.clear();
+
+    final userTurn =
+        _messages.where((m) => m.role == ChatRole.user).length + 1;
+    final userId = 'u-$userTurn';
+    final assistantId = 'a-$userTurn';
+
+    setState(() {
+      _phase = CoachPhase.chat;
+      _followUps = [];
+      _messages.add(
+        ChatMessage(id: userId, role: ChatRole.user, text: text),
+      );
+      _turn = ChatTurnState.generating;
+    });
+    _scrollToEnd();
+    _sweep.repeat();
+
+    await Future<void>.delayed(const Duration(milliseconds: 850));
+    if (!mounted || seq != _sendSeq) return;
+
+    final beat = WeightLoss15DayScript.beatForUserTurn(userTurn, text);
+    _sweep
+      ..stop()
+      ..reset();
+
+    setState(() {
+      _turn = ChatTurnState.streaming;
+      _messages.add(
+        ChatMessage(
+          id: assistantId,
+          role: ChatRole.assistant,
+          text: '',
+          isStreaming: true,
+        ),
+      );
+    });
+    _scrollToEnd();
+
+    final full = beat.assistantFull;
+    // ~35 chars/sec — Cursor-like stream feel.
+    const tick = Duration(milliseconds: 28);
+    for (var i = 1; i <= full.length; i++) {
+      if (!mounted || seq != _sendSeq) return;
+      await Future<void>.delayed(tick);
+      setState(() {
+        final idx = _messages.indexWhere((m) => m.id == assistantId);
+        if (idx >= 0) {
+          _messages[idx] = _messages[idx].copyWith(text: full.substring(0, i));
+        }
+      });
+      if (i % 12 == 0 || i == full.length) _scrollToEnd();
+    }
+
+    if (!mounted || seq != _sendSeq) return;
+    setState(() {
+      final idx = _messages.indexWhere((m) => m.id == assistantId);
+      if (idx >= 0) {
+        _messages[idx] = _messages[idx].copyWith(isStreaming: false);
+      }
+      _turn = ChatTurnState.awaitingUser;
+      _followUps = List<String>.of(beat.followUps);
+    });
+    _scrollToEnd();
+  }
+
   @override
   Widget build(BuildContext context) {
     final titleStyle = GoogleFonts.nunito(
@@ -163,16 +268,17 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
         child: SafeArea(
           bottom: false,
           child: AnimatedBuilder(
-            animation: Listenable.merge([_intro, _kb]),
+            animation: Listenable.merge([_intro, _kb, _sweep]),
             builder: (context, _) {
               final t = _intro.value;
               final k = _kb.value;
+              final inChat = _phase == CoachPhase.chat;
 
               final star = _ramp(t, 0, _starEnd);
               final hiP = _ramp(t, _hiStart, _hiEnd);
               final coachP = _ramp(t, _coachStart, _coachEnd);
               final tip = _ramp(t, _tipStart, _tipStart + 0.136);
-              final chrome = _ramp(t, _chromeStart, _chromeEnd);
+              final chrome = inChat ? 1.0 : _ramp(t, _chromeStart, _chromeEnd);
 
               final hiText = t >= _hiEnd ? _hiFull : _typed(_hiFull, hiP);
               final coachText =
@@ -181,10 +287,20 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
               // Keyboard focus (136:695)
               final chipsGone = k >= _kbChipCut;
               final middleFade = _ramp(k, _kbChipCut, _kbSlideEnd); // 0→1 fade out
-              final middleOpacity = (1 - middleFade) * (1.0); // keep after intro
+              final middleOpacity = inChat ? 1.0 : (1 - middleFade);
               final lift = _kbLift * _ramp(k, _kbChipCut, _kbSlideEnd);
               final kbOpacity = k >= _kbChipCut ? 1.0 : 0.0;
               final kbDy = _kbLift * (1 - _ramp(k, _kbChipCut, _kbSlideEnd));
+
+              final composerChips = inChat
+                  ? _followUps
+                  : WeightLoss15DayScript.chips;
+              final showChips = !_busy &&
+                  composerChips.isNotEmpty &&
+                  !chipsGone &&
+                  (inChat
+                      ? _turn == ChatTurnState.awaitingUser
+                      : chrome > 0.5 && _introDone);
 
               return Stack(
                 children: [
@@ -200,83 +316,105 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                       ),
                       Expanded(
                         child: Opacity(
-                          opacity: chrome > 0 ? middleOpacity : 1,
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return SingleChildScrollView(
-                                physics: const NeverScrollableScrollPhysics(),
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: constraints.maxHeight,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 96,
-                                          child: Opacity(
-                                            opacity: star,
-                                            child: Transform.translate(
-                                              offset:
-                                                  Offset(0, 28 * (1 - star)),
-                                              child: const Center(
-                                                child: _SparkleStar(size: 64),
+                          opacity: chrome > 0 || inChat ? middleOpacity : 1,
+                          child: inChat
+                              ? ChatTranscript(
+                                  messages: _messages,
+                                  generating:
+                                      _turn == ChatTurnState.generating,
+                                  sweep: _sweep,
+                                  scrollController: _scroll,
+                                )
+                              : LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    return SingleChildScrollView(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      child: ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: constraints.maxHeight,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                height: 96,
+                                                child: Opacity(
+                                                  opacity: star,
+                                                  child: Transform.translate(
+                                                    offset: Offset(
+                                                      0,
+                                                      28 * (1 - star),
+                                                    ),
+                                                    child: const Center(
+                                                      child: _SparkleStar(
+                                                        size: 64,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        _ReservedLine(
-                                          reserve: _hiFull,
-                                          shown: hiText,
-                                          style: titleStyle,
-                                          visible: t >= _hiStart,
-                                        ),
-                                        const SizedBox(height: 12),
-                                        _ReservedLine(
-                                          reserve: _coachFull,
-                                          shown: coachText,
-                                          style: titleStyle,
-                                          visible: t >= _coachStart,
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Opacity(
-                                          opacity: tip,
-                                          child: Transform.translate(
-                                            offset: Offset(0, 18 * (1 - tip)),
-                                            child: Text(
-                                              _tipFull,
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.nunito(
-                                                fontSize: 14,
-                                                height: 1.45,
-                                                fontWeight: FontWeight.w500,
-                                                color: const Color(0xFF6B6B73),
+                                              const SizedBox(height: 16),
+                                              _ReservedLine(
+                                                reserve: _hiFull,
+                                                shown: hiText,
+                                                style: titleStyle,
+                                                visible: t >= _hiStart,
                                               ),
-                                            ),
+                                              const SizedBox(height: 12),
+                                              _ReservedLine(
+                                                reserve: _coachFull,
+                                                shown: coachText,
+                                                style: titleStyle,
+                                                visible: t >= _coachStart,
+                                              ),
+                                              const SizedBox(height: 12),
+                                              Opacity(
+                                                opacity: tip,
+                                                child: Transform.translate(
+                                                  offset: Offset(
+                                                    0,
+                                                    18 * (1 - tip),
+                                                  ),
+                                                  child: Text(
+                                                    _tipFull,
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 14,
+                                                      height: 1.45,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: const Color(
+                                                        0xFF6B6B73,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                AiPlanCoachMeetPage
+                                                    .buildMarker,
+                                                style: GoogleFonts.nunito(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color(
+                                                    0xFF9CA3AF,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          AiPlanCoachMeetPage.buildMarker,
-                                          style: GoogleFonts.nunito(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF9CA3AF),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
                         ),
                       ),
                       // Composer lifts with keyboard (translate -202), matching Figma.
@@ -289,22 +427,22 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                               bottom: 12 + MediaQuery.paddingOf(context).bottom,
                             ),
                             child: _Composer(
-                              chips: _chips,
-                              showChips: chrome > 0.5 && !chipsGone,
+                              chips: composerChips,
+                              showChips: showChips,
                               focusNode: _focus,
                               controller: _controller,
                               keyboardOpen: _kbOpen,
+                              canSend: !_busy,
                               onInputTap: _openKeyboard,
+                              onSend: () {
+                                if (!_introDone && !inChat) return;
+                                unawaited(_sendMessage(_controller.text));
+                              },
                               onChipTap: (label) {
-                                // Full chip→bubble→flash is 132:981; seed input for now.
-                                if (!_introDone) return;
-                                _controller.value = TextEditingValue(
-                                  text: label,
-                                  selection: TextSelection.collapsed(
-                                    offset: label.length,
-                                  ),
-                                );
-                                _openKeyboard();
+                                if (_busy) return;
+                                if (!_introDone && !inChat) return;
+                                // Chip = immediate send (Cursor-style quick reply).
+                                unawaited(_sendMessage(label));
                               },
                             ),
                           ),
@@ -326,7 +464,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                           child: _IosKeyboard(
                             onKey: _insertText,
                             onBackspace: _backspace,
-                            onHide: _hideKeyboard,
+                            onHide: _onReturnKey,
                           ),
                         ),
                       ),
@@ -525,8 +663,10 @@ class _Composer extends StatelessWidget {
     required this.focusNode,
     required this.controller,
     required this.keyboardOpen,
+    required this.canSend,
     required this.onInputTap,
     required this.onChipTap,
+    required this.onSend,
   });
 
   final List<String> chips;
@@ -534,8 +674,10 @@ class _Composer extends StatelessWidget {
   final FocusNode focusNode;
   final TextEditingController controller;
   final bool keyboardOpen;
+  final bool canSend;
   final VoidCallback onInputTap;
   final ValueChanged<String> onChipTap;
+  final VoidCallback onSend;
 
   @override
   Widget build(BuildContext context) {
@@ -598,18 +740,21 @@ class _Composer extends StatelessWidget {
                   child: TextField(
                     focusNode: focusNode,
                     controller: controller,
+                    enabled: canSend,
                     // Real typing: laptop keyboard + mock iOS keys both work.
                     readOnly: false,
                     autofocus: false,
                     showCursor: true,
                     cursorColor: const Color(0xFF007AFF),
                     keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.done,
+                    textInputAction: TextInputAction.send,
                     onTap: onInputTap,
                     onTapOutside: (_) {
-                      // Keep session open — only return key dismisses.
+                      // Keep session open — only return / send dismisses.
                     },
-                    onEditingComplete: onInputTap,
+                    onSubmitted: (_) {
+                      if (canSend) onSend();
+                    },
                     style: GoogleFonts.nunito(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -618,7 +763,7 @@ class _Composer extends StatelessWidget {
                     decoration: InputDecoration(
                       isCollapsed: true,
                       border: InputBorder.none,
-                      hintText: 'e.g. Lose 5 kg in 7 weeks',
+                      hintText: 'e.g. Lose 3 kg in 15 days',
                       hintStyle: GoogleFonts.nunito(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -628,20 +773,26 @@ class _Composer extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Container(
-                  width: 36,
-                  height: 36,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF007AFF),
-                    borderRadius: BorderRadius.all(Radius.circular(18)),
-                  ),
-                  child: Text(
-                    '↑',
-                    style: GoogleFonts.nunito(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                GestureDetector(
+                  onTap: canSend ? onSend : null,
+                  child: Opacity(
+                    opacity: canSend ? 1 : 0.4,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF007AFF),
+                        borderRadius: BorderRadius.all(Radius.circular(18)),
+                      ),
+                      child: Text(
+                        '↑',
+                        style: GoogleFonts.nunito(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
