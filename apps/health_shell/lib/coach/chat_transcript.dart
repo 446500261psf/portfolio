@@ -271,7 +271,7 @@ class _ShimmerPlanCoachLabelState extends State<_ShimmerPlanCoachLabel>
   }
 }
 
-/// 4-point star: one full turn, brief pause, repeat. Thinking-only.
+/// Thinking-only star: fade in across exactly 2 turns, then spin with pauses.
 class _PausingRotatingStar extends StatefulWidget {
   const _PausingRotatingStar({required this.size});
 
@@ -282,22 +282,35 @@ class _PausingRotatingStar extends StatefulWidget {
 }
 
 class _PausingRotatingStarState extends State<_PausingRotatingStar>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
+  late final AnimationController _enter;
   late final AnimationController _spin;
   Timer? _pause;
+  bool _entered = false;
 
   @override
   void initState() {
     super.initState();
+    _enter = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    );
     _spin = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 750),
-    )..addStatusListener(_onStatus);
-    unawaited(_spin.forward());
+    )..addStatusListener(_onSpinStatus);
+    unawaited(_runEnter());
   }
 
-  void _onStatus(AnimationStatus status) {
-    if (status != AnimationStatus.completed || !mounted) return;
+  Future<void> _runEnter() async {
+    await _enter.forward();
+    if (!mounted) return;
+    setState(() => _entered = true);
+    unawaited(_spin.forward(from: 0));
+  }
+
+  void _onSpinStatus(AnimationStatus status) {
+    if (!_entered || status != AnimationStatus.completed || !mounted) return;
     _pause?.cancel();
     _pause = Timer(const Duration(milliseconds: 320), () {
       if (!mounted) return;
@@ -308,13 +321,38 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
   @override
   void dispose() {
     _pause?.cancel();
-    _spin.removeStatusListener(_onStatus);
+    _spin.removeStatusListener(_onSpinStatus);
+    _enter.dispose();
     _spin.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final star = SizedBox(
+      width: widget.size,
+      height: widget.size,
+      child: CustomPaint(painter: _CyanSparklePainter()),
+    );
+
+    if (!_entered) {
+      return AnimatedBuilder(
+        animation: _enter,
+        builder: (context, child) {
+          final t = Curves.easeOutCubic.transform(_enter.value);
+          return Opacity(
+            opacity: t,
+            child: Transform.rotate(
+              // Exactly 2 turns while fading in.
+              angle: t * math.pi * 4,
+              child: child,
+            ),
+          );
+        },
+        child: star,
+      );
+    }
+
     return AnimatedBuilder(
       animation: _spin,
       builder: (context, child) {
@@ -324,11 +362,7 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
           child: child,
         );
       },
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: CustomPaint(painter: _CyanSparklePainter()),
-      ),
+      child: star,
     );
   }
 }

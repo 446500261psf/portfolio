@@ -16,7 +16,7 @@ import 'demo_script.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v16';
+  static const buildMarker = 'meet-v17';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -411,30 +411,33 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                             children: [
                                               SizedBox(
                                                 height: 96,
-                                                child: Opacity(
-                                                  opacity: star,
-                                                  child: Transform.translate(
-                                                    offset: Offset(
-                                                      0,
-                                                      28 * (1 - star),
-                                                    ),
-                                                    // Star spins in and settles as copy begins.
-                                                    child: Transform.rotate(
-                                                      angle: (1 -
-                                                              Curves
-                                                                  .easeOutCubic
-                                                                  .transform(
-                                                            star,
-                                                          )) *
-                                                          math.pi *
-                                                          2.2,
-                                                      child: const Center(
-                                                        child: _SparkleStar(
-                                                          size: 64,
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    // Fade in while spinning exactly 2 turns.
+                                                    final eased = Curves
+                                                        .easeOutCubic
+                                                        .transform(star);
+                                                    return Opacity(
+                                                      opacity: eased,
+                                                      child:
+                                                          Transform.translate(
+                                                        offset: Offset(
+                                                          0,
+                                                          28 * (1 - eased),
+                                                        ),
+                                                        child: Transform.rotate(
+                                                          angle: (1 - eased) *
+                                                              math.pi *
+                                                              4,
+                                                          child: const Center(
+                                                            child: _SparkleStar(
+                                                              size: 64,
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ),
+                                                    );
+                                                  },
                                                 ),
                                               ),
                                               const SizedBox(height: 16),
