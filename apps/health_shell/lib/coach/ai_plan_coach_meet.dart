@@ -106,90 +106,100 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                         offset: _greetingVisible
                             ? Offset.zero
                             : const Offset(0, -0.06),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Extra vertical room so star tips / glyph descenders aren't clipped.
-                              const SizedBox(height: 8),
-                              Opacity(
-                                opacity: star,
-                                child: Transform.translate(
-                                  offset: Offset(0, 28 * (1 - star)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                    ),
-                                    child: ShaderMask(
-                                      blendMode: BlendMode.srcIn,
-                                      shaderCallback: (bounds) =>
-                                          const LinearGradient(
-                                        begin: Alignment(-0.2, -1),
-                                        end: Alignment(0.4, 1),
-                                        colors: [
-                                          Color(0xFF40C4EC),
-                                          Color(0xFF17ACDA),
-                                          Color(0xFFE1F3F7),
-                                        ],
-                                        stops: [0.31, 0.49, 0.79],
-                                      ).createShader(bounds),
-                                      child: Text(
-                                        '✦',
-                                        style: GoogleFonts.inter(
-                                          fontSize: 64,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SingleChildScrollView(
+                              physics: const ClampingScrollPhysics(),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Opacity(
+                                        opacity: star,
+                                        child: Transform.translate(
+                                          offset: Offset(0, 28 * (1 - star)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: ShaderMask(
+                                              blendMode: BlendMode.srcIn,
+                                              shaderCallback: (bounds) =>
+                                                  const LinearGradient(
+                                                begin: Alignment(-0.2, -1),
+                                                end: Alignment(0.4, 1),
+                                                colors: [
+                                                  Color(0xFF40C4EC),
+                                                  Color(0xFF17ACDA),
+                                                  Color(0xFFE1F3F7),
+                                                ],
+                                                stops: [0.31, 0.49, 0.79],
+                                              ).createShader(bounds),
+                                              child: Text(
+                                                '✦',
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 64,
+                                                  fontWeight: FontWeight.w600,
+                                                  height: 1.2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      const SizedBox(height: 16),
+                                      _TypeReveal(
+                                        text: 'Hi Sifan,',
+                                        progress: hi,
+                                        visible: t >= _hiStart,
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w800,
+                                          color: const Color(0xFF111827),
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      _TypeReveal(
+                                        text: 'i am your personal coach',
+                                        progress: coach,
+                                        visible: t >= _coachStart,
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w800,
+                                          color: const Color(0xFF111827),
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Opacity(
+                                        opacity: tip,
+                                        child: Transform.translate(
+                                          offset: Offset(0, 18 * (1 - tip)),
+                                          child: Text(
+                                            'In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 14,
+                                              height: 1.45,
+                                              fontWeight: FontWeight.w500,
+                                              color: const Color(0xFF6B6B73),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              _TypeReveal(
-                                text: 'Hi Sifan,',
-                                progress: hi,
-                                visible: t >= _hiStart,
-                                style: GoogleFonts.nunito(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w800,
-                                  color: const Color(0xFF111827),
-                                  height: 1.25,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              _TypeReveal(
-                                text: 'i am your personal coach',
-                                progress: coach,
-                                visible: t >= _coachStart,
-                                style: GoogleFonts.nunito(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w800,
-                                  color: const Color(0xFF111827),
-                                  height: 1.25,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Opacity(
-                                opacity: tip,
-                                child: Transform.translate(
-                                  offset: Offset(0, 18 * (1 - tip)),
-                                  child: Text(
-                                    'In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.nunito(
-                                      fontSize: 14,
-                                      height: 1.45,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF6B6B73),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -353,11 +363,15 @@ class _TypeReveal extends StatelessWidget {
       opacity: visible ? 1 : 0,
       child: SizedBox(
         width: double.infinity,
-        child: Text(
-          shown.isEmpty ? ' ' : shown,
-          textAlign: TextAlign.center,
-          softWrap: true,
-          style: style,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            shown.isEmpty ? ' ' : shown,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            softWrap: false,
+            style: style,
+          ),
         ),
       ),
     );
