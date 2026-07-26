@@ -71,7 +71,8 @@ Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-intro.mp4`
 | t | Action |
 |---|--------|
 | 0–0.10s | 静止：中间问候区可见 · **chips+输入框在底部** · 键盘在屏外 |
-| 0.10–0.40s | 点击输入框：键盘 **上滑 ~300ms**（非瞬间）· Composer 同步被顶起 · 中间渐隐 |
+| 0.10s | 快速回复 chips **立刻消失** |
+| 0.10–0.20s | 键盘 **上滑 100ms** · 输入框同步被顶起 · 中间渐隐 |
 
 Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-keyboard.mp4`
 
