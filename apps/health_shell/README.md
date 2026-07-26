@@ -15,7 +15,7 @@ https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-72
 3. Chip / ↑ send — user bubble → Generating → streamed Coach reply（Cursor 风格）  
    Demo 剧本：`Lose 3 kg in 15 days` / `15天减重3公斤`
 
-Marker: `meet-v8`
+Marker: `meet-v9` — thinking = light sweep on ✦ Coach（无大星星）
 
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 

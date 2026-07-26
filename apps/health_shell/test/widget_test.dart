@@ -52,8 +52,9 @@ void main() {
     await tester.tap(find.text(WeightLoss15DayScript.goalChip));
     await tester.pump();
 
-    // Optimistic user bubble.
+    // Optimistic user bubble + compact Coach thinking (light sweep, no big star).
     expect(find.text(WeightLoss15DayScript.goalChip), findsWidgets);
+    expect(find.text('Coach'), findsOneWidget);
     expect(find.text('Generating…'), findsOneWidget);
 
     // Finish generating window.

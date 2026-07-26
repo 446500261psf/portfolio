@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -27,7 +25,7 @@ class ChatTranscript extends StatelessWidget {
       itemCount: messages.length + (generating ? 1 : 0),
       itemBuilder: (context, i) {
         if (generating && i == messages.length) {
-          return _GeneratingBlock(sweep: sweep);
+          return _CoachThinkingRow(sweep: sweep);
         }
         final m = messages[i];
         if (m.role == ChatRole.user) {
@@ -148,109 +146,107 @@ class _AssistantBubble extends StatelessWidget {
   }
 }
 
-class _GeneratingBlock extends StatelessWidget {
-  const _GeneratingBlock({required this.sweep});
+/// Thinking state: compact ✦ Coach row with a fast light sweep — no big star.
+class _CoachThinkingRow extends StatelessWidget {
+  const _CoachThinkingRow({required this.sweep});
 
   final Animation<double> sweep;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 16),
-      child: Column(
-        children: [
-          SizedBox(
-            width: 120,
-            height: 120,
-            child: AnimatedBuilder(
-              animation: sweep,
-              builder: (context, child) {
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    child!,
-                    ClipOval(
-                      child: SizedBox(
-                        width: 110,
-                        height: 110,
-                        child: Transform.translate(
-                          offset: Offset(-80 + 160 * sweep.value, 0),
-                          child: Transform.rotate(
-                            angle: -0.55,
-                            child: Container(
-                              width: 36,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.white.withValues(alpha: 0),
-                                    Colors.white.withValues(alpha: 0.9),
-                                    const Color(0xFF7DD3FC)
-                                        .withValues(alpha: 0.75),
-                                    Colors.white.withValues(alpha: 0),
-                                  ],
-                                ),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: AnimatedBuilder(
+          animation: sweep,
+          builder: (context, _) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 2,
+                          vertical: 4,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '✦',
+                              style: GoogleFonts.nunito(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF17ACDA),
                               ),
                             ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Coach',
+                              style: GoogleFonts.nunito(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF6B6B73),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Generating…',
+                              style: GoogleFonts.nunito(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF9CA3AF),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final w = constraints.maxWidth;
+                              // Fast diagonal flash across the Coach row.
+                              final x = -0.35 * w + 1.7 * w * sweep.value;
+                              return Transform.translate(
+                                offset: Offset(x, 0),
+                                child: Transform.rotate(
+                                  angle: -0.55,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      width: 22,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.white.withValues(alpha: 0),
+                                            Colors.white.withValues(alpha: 0.95),
+                                            const Color(0xFF7DD3FC)
+                                                .withValues(alpha: 0.85),
+                                            Colors.white.withValues(alpha: 0),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-              child: CustomPaint(
-                size: const Size(64, 64),
-                painter: _DarkSparklePainter(),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Generating…',
-            style: GoogleFonts.nunito(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B6B73),
-            ),
-          ),
-        ],
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
-}
-
-class _DarkSparklePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final outer = size.width * 0.48;
-    final inner = size.width * 0.16;
-    final path = Path();
-    for (var i = 0; i < 4; i++) {
-      final aOuter = -math.pi / 2 + i * math.pi / 2;
-      final aInner = aOuter + math.pi / 4;
-      final ox = cx + outer * math.cos(aOuter);
-      final oy = cy + outer * math.sin(aOuter);
-      final ix = cx + inner * math.cos(aInner);
-      final iy = cy + inner * math.sin(aInner);
-      if (i == 0) {
-        path.moveTo(ox, oy);
-      } else {
-        path.lineTo(ox, oy);
-      }
-      path.lineTo(ix, iy);
-    }
-    path.close();
-    final paint = Paint()
-      ..shader = const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xFF11566C), Color(0xFFDDF2F8)],
-      ).createShader(Offset.zero & size);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

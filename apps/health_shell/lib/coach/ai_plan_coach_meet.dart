@@ -15,7 +15,7 @@ import 'demo_script.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v8';
+  static const buildMarker = 'meet-v9';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -72,9 +72,10 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     _intro = AnimationController(vsync: this, duration: _introDuration)
       ..forward();
     _kb = AnimationController(vsync: this, duration: _kbDuration);
+    // Fast light flash across ✦ Coach while thinking.
     _sweep = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 420),
     );
   }
 
