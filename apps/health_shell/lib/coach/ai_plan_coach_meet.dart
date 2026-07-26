@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v6';
+  static const buildMarker = 'meet-v7';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -53,6 +53,10 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
   final _focus = FocusNode();
   final _controller = TextEditingController();
 
+  /// Keyboard stays up until return / explicit hide — not tied to FocusNode.
+  /// (Tapping mock keys would otherwise unfocus and dismiss the keyboard.)
+  bool _kbOpen = false;
+
   bool get _introDone => _intro.value >= _chromeEnd;
 
   @override
@@ -61,15 +65,6 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     _intro = AnimationController(vsync: this, duration: _introDuration)
       ..forward();
     _kb = AnimationController(vsync: this, duration: _kbDuration);
-
-    _focus.addListener(() {
-      if (!_introDone) return;
-      if (_focus.hasFocus) {
-        _kb.forward();
-      } else {
-        _kb.reverse();
-      }
-    });
   }
 
   @override
@@ -94,10 +89,55 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     return full.substring(0, n);
   }
 
-  void _onInputTap() {
+  void _openKeyboard() {
     if (!_introDone) return;
+    setState(() => _kbOpen = true);
     _focus.requestFocus();
     _kb.forward();
+  }
+
+  void _hideKeyboard() {
+    setState(() => _kbOpen = false);
+    _focus.unfocus();
+    _kb.reverse();
+  }
+
+  void _insertText(String ch) {
+    final t0 = _controller.text;
+    final sel = _controller.selection;
+    final start = sel.isValid ? sel.start : t0.length;
+    final end = sel.isValid ? sel.end : t0.length;
+    final next = t0.replaceRange(start, end, ch);
+    _controller.value = TextEditingValue(
+      text: next,
+      selection: TextSelection.collapsed(offset: start + ch.length),
+    );
+    // Keep field focused after mock-key taps.
+    if (!_focus.hasFocus) _focus.requestFocus();
+  }
+
+  void _backspace() {
+    final t0 = _controller.text;
+    if (t0.isEmpty) return;
+    final sel = _controller.selection;
+    if (sel.isValid && !sel.isCollapsed) {
+      final next = t0.replaceRange(sel.start, sel.end, '');
+      _controller.value = TextEditingValue(
+        text: next,
+        selection: TextSelection.collapsed(offset: sel.start),
+      );
+    } else {
+      final pos = sel.isValid && sel.baseOffset > 0
+          ? sel.baseOffset
+          : t0.length;
+      if (pos <= 0) return;
+      final next = t0.replaceRange(pos - 1, pos, '');
+      _controller.value = TextEditingValue(
+        text: next,
+        selection: TextSelection.collapsed(offset: pos - 1),
+      );
+    }
+    if (!_focus.hasFocus) _focus.requestFocus();
   }
 
   @override
@@ -253,16 +293,18 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                               showChips: chrome > 0.5 && !chipsGone,
                               focusNode: _focus,
                               controller: _controller,
-                              onInputTap: _onInputTap,
+                              keyboardOpen: _kbOpen,
+                              onInputTap: _openKeyboard,
                               onChipTap: (label) {
                                 // Full chip→bubble→flash is 132:981; seed input for now.
                                 if (!_introDone) return;
-                                _controller.text = label;
-                                _controller.selection =
-                                    TextSelection.collapsed(
-                                  offset: label.length,
+                                _controller.value = TextEditingValue(
+                                  text: label,
+                                  selection: TextSelection.collapsed(
+                                    offset: label.length,
+                                  ),
                                 );
-                                _onInputTap();
+                                _openKeyboard();
                               },
                             ),
                           ),
@@ -270,60 +312,21 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                       ),
                     ],
                   ),
-                  // Mock iOS keyboard — slides up 202px in ~100ms after chip cut.
+                  // Mock iOS keyboard — stays up while _kbOpen (not tied to focus).
                   Positioned(
                     left: 0,
                     right: 0,
                     bottom: 0,
                     child: IgnorePointer(
-                      ignoring: kbOpacity < 1,
+                      ignoring: kbOpacity < 0.5,
                       child: Opacity(
                         opacity: kbOpacity,
                         child: Transform.translate(
                           offset: Offset(0, kbDy),
                           child: _IosKeyboard(
-                            onKey: (ch) {
-                              final t0 = _controller.text;
-                              final sel = _controller.selection;
-                              final start = sel.start >= 0 ? sel.start : t0.length;
-                              final end = sel.end >= 0 ? sel.end : t0.length;
-                              final next = t0.replaceRange(start, end, ch);
-                              _controller.value = TextEditingValue(
-                                text: next,
-                                selection: TextSelection.collapsed(
-                                  offset: start + ch.length,
-                                ),
-                              );
-                            },
-                            onBackspace: () {
-                              final t0 = _controller.text;
-                              if (t0.isEmpty) return;
-                              final sel = _controller.selection;
-                              if (sel.isValid && !sel.isCollapsed) {
-                                final next =
-                                    t0.replaceRange(sel.start, sel.end, '');
-                                _controller.value = TextEditingValue(
-                                  text: next,
-                                  selection: TextSelection.collapsed(
-                                    offset: sel.start,
-                                  ),
-                                );
-                              } else {
-                                final pos =
-                                    sel.baseOffset > 0 ? sel.baseOffset : t0.length;
-                                if (pos <= 0) return;
-                                final next = t0.replaceRange(pos - 1, pos, '');
-                                _controller.value = TextEditingValue(
-                                  text: next,
-                                  selection:
-                                      TextSelection.collapsed(offset: pos - 1),
-                                );
-                              }
-                            },
-                            onHide: () {
-                              _focus.unfocus();
-                              _kb.reverse();
-                            },
+                            onKey: _insertText,
+                            onBackspace: _backspace,
+                            onHide: _hideKeyboard,
                           ),
                         ),
                       ),
@@ -521,6 +524,7 @@ class _Composer extends StatelessWidget {
     required this.showChips,
     required this.focusNode,
     required this.controller,
+    required this.keyboardOpen,
     required this.onInputTap,
     required this.onChipTap,
   });
@@ -529,6 +533,7 @@ class _Composer extends StatelessWidget {
   final bool showChips;
   final FocusNode focusNode;
   final TextEditingController controller;
+  final bool keyboardOpen;
   final VoidCallback onInputTap;
   final ValueChanged<String> onChipTap;
 
@@ -539,7 +544,6 @@ class _Composer extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Chips collapse instantly (Figma step-end at ~100ms).
           if (showChips)
             SizedBox(
               height: 40,
@@ -576,61 +580,72 @@ class _Composer extends StatelessWidget {
               ),
             ),
           if (showChips) const SizedBox(height: 8),
-          GestureDetector(
-            onTap: onInputTap,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: const Color(0xFFE5E5EB)),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: keyboardOpen
+                    ? const Color(0xFF007AFF)
+                    : const Color(0xFFE5E5EB),
+                width: keyboardOpen ? 1.5 : 1,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      focusNode: focusNode,
-                      controller: controller,
-                      readOnly: true, // typing via mock iOS keyboard
-                      showCursor: true,
-                      onTap: onInputTap,
-                      style: GoogleFonts.nunito(
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    focusNode: focusNode,
+                    controller: controller,
+                    // Real typing: laptop keyboard + mock iOS keys both work.
+                    readOnly: false,
+                    autofocus: false,
+                    showCursor: true,
+                    cursorColor: const Color(0xFF007AFF),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    onTap: onInputTap,
+                    onTapOutside: (_) {
+                      // Keep session open — only return key dismisses.
+                    },
+                    onEditingComplete: onInputTap,
+                    style: GoogleFonts.nunito(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF111827),
+                    ),
+                    decoration: InputDecoration(
+                      isCollapsed: true,
+                      border: InputBorder.none,
+                      hintText: 'e.g. Lose 5 kg in 7 weeks',
+                      hintStyle: GoogleFonts.nunito(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF111827),
-                      ),
-                      decoration: InputDecoration(
-                        isCollapsed: true,
-                        border: InputBorder.none,
-                        hintText: 'e.g. Lose 5 kg in 7 weeks',
-                        hintStyle: GoogleFonts.nunito(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF6B6B73),
-                        ),
+                        color: const Color(0xFF6B6B73),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF007AFF),
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
-                    ),
-                    child: Text(
-                      '↑',
-                      style: GoogleFonts.nunito(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF007AFF),
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                  ),
+                  child: Text(
+                    '↑',
+                    style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -734,6 +749,8 @@ class _IosKeyboard extends StatelessWidget {
       color: fill,
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
+        // Use onTapDown so the key feels instant and doesn't steal a frame
+        // that would clear TextField selection oddly.
         onTap: onTap,
         borderRadius: BorderRadius.circular(5),
         child: SizedBox(

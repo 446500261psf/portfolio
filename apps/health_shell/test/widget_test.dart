@@ -28,5 +28,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 350));
     expect(find.text('return'), findsOneWidget);
     expect(find.text('Q'), findsOneWidget);
+
+    // Typing a letter must NOT dismiss the keyboard.
+    await tester.tap(find.text('L'));
+    await tester.pump();
+    await tester.tap(find.text('O'));
+    await tester.pump();
+    expect(find.text('return'), findsOneWidget);
+    expect(find.text('lo'), findsOneWidget);
   });
 }
