@@ -161,65 +161,81 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                       Expanded(
                         child: Opacity(
                           opacity: chrome > 0 ? middleOpacity : 1,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 96,
-                                  child: Opacity(
-                                    opacity: star,
-                                    child: Transform.translate(
-                                      offset: Offset(0, 28 * (1 - star)),
-                                      child: const Center(
-                                        child: _SparkleStar(size: 64),
-                                      ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return SingleChildScrollView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          height: 96,
+                                          child: Opacity(
+                                            opacity: star,
+                                            child: Transform.translate(
+                                              offset:
+                                                  Offset(0, 28 * (1 - star)),
+                                              child: const Center(
+                                                child: _SparkleStar(size: 64),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        _ReservedLine(
+                                          reserve: _hiFull,
+                                          shown: hiText,
+                                          style: titleStyle,
+                                          visible: t >= _hiStart,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _ReservedLine(
+                                          reserve: _coachFull,
+                                          shown: coachText,
+                                          style: titleStyle,
+                                          visible: t >= _coachStart,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Opacity(
+                                          opacity: tip,
+                                          child: Transform.translate(
+                                            offset: Offset(0, 18 * (1 - tip)),
+                                            child: Text(
+                                              _tipFull,
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 14,
+                                                height: 1.45,
+                                                fontWeight: FontWeight.w500,
+                                                color: const Color(0xFF6B6B73),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          AiPlanCoachMeetPage.buildMarker,
+                                          style: GoogleFonts.nunito(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF9CA3AF),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
-                                _ReservedLine(
-                                  reserve: _hiFull,
-                                  shown: hiText,
-                                  style: titleStyle,
-                                  visible: t >= _hiStart,
-                                ),
-                                const SizedBox(height: 12),
-                                _ReservedLine(
-                                  reserve: _coachFull,
-                                  shown: coachText,
-                                  style: titleStyle,
-                                  visible: t >= _coachStart,
-                                ),
-                                const SizedBox(height: 12),
-                                Opacity(
-                                  opacity: tip,
-                                  child: Transform.translate(
-                                    offset: Offset(0, 18 * (1 - tip)),
-                                    child: Text(
-                                      _tipFull,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 14,
-                                        height: 1.45,
-                                        fontWeight: FontWeight.w500,
-                                        color: const Color(0xFF6B6B73),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  AiPlanCoachMeetPage.buildMarker,
-                                  style: GoogleFonts.nunito(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF9CA3AF),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                         ),
                       ),
