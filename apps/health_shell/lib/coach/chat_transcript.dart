@@ -31,9 +31,9 @@ class ChatTranscript extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showWeeks = weeks.isNotEmpty && !planThinking;
+    // Thinking only = reply not produced yet (generating / planThinking).
     final extras = <Widget>[
-      if (generating)
-        const _ThinkingBubble(),
+      if (generating) const _ThinkingBubble(),
       if (planThinking)
         _ThinkingBubble(
           body: PlanThinkingLineView(
@@ -54,7 +54,7 @@ class ChatTranscript extends StatelessWidget {
           if (m.role == ChatRole.user) {
             return _UserBubble(text: m.text);
           }
-          return _AssistantBubble(text: m.text, streaming: m.isStreaming);
+          return _AssistantBubble(text: m.text);
         }
         return extras[i - messages.length];
       },
@@ -95,11 +95,11 @@ class _UserBubble extends StatelessWidget {
   }
 }
 
+/// Reply bubble — no star / shimmer (content already exists).
 class _AssistantBubble extends StatelessWidget {
-  const _AssistantBubble({required this.text, required this.streaming});
+  const _AssistantBubble({required this.text});
 
   final String text;
-  final bool streaming;
 
   @override
   Widget build(BuildContext context) {
@@ -117,16 +117,7 @@ class _AssistantBubble extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const _PlanCoachLabel(),
-                  if (streaming) ...[
-                    const SizedBox(width: 8),
-                    const _PausingRotatingStar(size: 14),
-                  ],
-                ],
-              ),
+              const _PlanCoachLabel(),
               const SizedBox(height: 8),
               Text(
                 text.isEmpty ? '…' : text,
@@ -145,7 +136,7 @@ class _AssistantBubble extends StatelessWidget {
   }
 }
 
-/// White reply shell used while Coach is thinking.
+/// Pre-reply thinking shell: Plan Coach shimmer + rotating star.
 class _ThinkingBubble extends StatelessWidget {
   const _ThinkingBubble({this.body});
 
@@ -170,7 +161,7 @@ class _ThinkingBubble extends StatelessWidget {
               const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _PlanCoachLabel(),
+                  _ShimmerPlanCoachLabel(),
                   SizedBox(width: 8),
                   _PausingRotatingStar(size: 14),
                 ],
@@ -203,7 +194,74 @@ class _PlanCoachLabel extends StatelessWidget {
   }
 }
 
-/// 4-point star: one full turn, brief pause, repeat.
+/// Thinking-only: highlight band racing across “Plan Coach”.
+class _ShimmerPlanCoachLabel extends StatefulWidget {
+  const _ShimmerPlanCoachLabel();
+
+  @override
+  State<_ShimmerPlanCoachLabel> createState() => _ShimmerPlanCoachLabelState();
+}
+
+class _ShimmerPlanCoachLabelState extends State<_ShimmerPlanCoachLabel>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _sweep;
+
+  @override
+  void initState() {
+    super.initState();
+    _sweep = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1100),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _sweep.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _sweep,
+      builder: (context, child) {
+        final t = Curves.easeInOut.transform(_sweep.value);
+        return ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) {
+            final start = -1.2 + 2.8 * t;
+            return LinearGradient(
+              begin: Alignment(start, -0.35),
+              end: Alignment(start + 0.9, 0.35),
+              colors: const [
+                Color(0xFF007AFF),
+                Color(0xFF007AFF),
+                Color(0xFF7DD3FC),
+                Color(0xFFFFFFFF),
+                Color(0xFF7DD3FC),
+                Color(0xFF007AFF),
+                Color(0xFF007AFF),
+              ],
+              stops: const [0.0, 0.30, 0.44, 0.50, 0.56, 0.70, 1.0],
+            ).createShader(bounds);
+          },
+          child: child,
+        );
+      },
+      child: Text(
+        'Plan Coach',
+        style: GoogleFonts.nunito(
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+/// 4-point star: one full turn, brief pause, repeat. Thinking-only.
 class _PausingRotatingStar extends StatefulWidget {
   const _PausingRotatingStar({required this.size});
 
@@ -250,7 +308,6 @@ class _PausingRotatingStarState extends State<_PausingRotatingStar>
     return AnimatedBuilder(
       animation: _spin,
       builder: (context, child) {
-        // Ease the turn; hold at rest during the pause between forwards.
         final t = Curves.easeInOutCubic.transform(_spin.value);
         return Transform.rotate(
           angle: t * math.pi * 2,

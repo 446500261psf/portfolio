@@ -27,13 +27,13 @@ Meet
        │
        ▼  send(chip | text)
 Chat
-  ├─ Generating    白气泡内 `Plan Coach` + 右侧旋转星星（每圈稍停）
-  ├─ Streaming     AI 气泡逐字出现（流式时星星可继续转）
+  ├─ Generating    白气泡 · `Plan Coach` 高光闪过 + 右侧旋转星星（对话尚未产生）
+  ├─ Streaming     AI 气泡逐字出现（无星星、无高光）
   ├─ AwaitingUser  回复完成，可再发 / 点 follow-up chips
   │
   ▼  confirm（同意 / generate my plan）
 PlanGenerating
-  ├─ 白气泡内 `Plan Coach` + 旋转星星
+  ├─ 白气泡 · `Plan Coach` 高光 + 旋转星星（计划正文尚未出现）
   └─ 思考文案逐行渐隐：fade in → hold → fade out → 下一行
        │
        ▼
@@ -67,7 +67,8 @@ PlanReady
 
 - **User**：右对齐 · 蓝底 `#007AFF` · 白字 · 圆角 18  
 - **AI**：左对齐 · 白底浅描边 · 深字 · 上方可带小 ✦  
-- **Generating / PlanThinking**：白色对话框内 `Plan Coach`（蓝字）右侧旋转星星；每转一圈稍停顿  
+- **Generating / PlanThinking（仅对话未产生时）**：白气泡内 `Plan Coach` 高光闪过 + 右侧旋转星星（每圈稍停）  
+- **Streaming / 已出字**：静态蓝色 `Plan Coach`，无星星、无高光  
 - **Plan thinking lines**：一行文案渐隐切换  
 - **Week cards**：折叠摘要；详情在**同一卡片宽度**内纵向展开（不铺满全屏），圆角/描边连续过渡  
 
