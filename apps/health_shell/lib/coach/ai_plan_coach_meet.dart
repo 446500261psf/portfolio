@@ -16,7 +16,7 @@ import 'sparkle_star.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v20';
+  static const buildMarker = 'meet-v21';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -352,7 +352,8 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
               final middleFade = _ramp(k, _kbChipCut, _kbSlideEnd); // 0→1 fade out
               final middleOpacity = inChat ? 1.0 : (1 - middleFade);
               final lift = _kbLift * _ramp(k, _kbChipCut, _kbSlideEnd);
-              final kbOpacity = k >= _kbChipCut ? 1.0 : 0.0;
+              // Follow controller so reverse fades out instead of staying solid.
+              final kbOpacity = k;
               final kbDy = _kbLift * (1 - _ramp(k, _kbChipCut, _kbSlideEnd));
 
               final composerChips = inChat
@@ -378,102 +379,119 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                         ),
                       ),
                       Expanded(
-                        child: Opacity(
-                          opacity: chrome > 0 || inChat ? middleOpacity : 1,
-                          child: inChat
-                              ? ChatTranscript(
-                                  messages: _messages,
-                                  generating:
-                                      _turn == ChatTurnState.generating,
-                                  planThinking: _planThinking,
-                                  planThinkingLine: _planThinkingLine,
-                                  planThinkingOpacity: _planThinkingOpacity,
-                                  weeks: _weeks,
-                                  scrollController: _scroll,
-                                )
-                              : LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return SingleChildScrollView(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minHeight: constraints.maxHeight,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 20,
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const SizedBox(
-                                                height: 120,
-                                                child: Center(
-                                                  // Delay 1s, then spin → pause → spin…
-                                                  child: LoopingSpinStar(
-                                                    size: 64,
-                                                    showGlints: true,
-                                                  ),
-                                                ),
+                        child: Stack(
+                          children: [
+                            Opacity(
+                              opacity: chrome > 0 || inChat ? middleOpacity : 1,
+                              child: inChat
+                                  ? ChatTranscript(
+                                      messages: _messages,
+                                      generating:
+                                          _turn == ChatTurnState.generating,
+                                      planThinking: _planThinking,
+                                      planThinkingLine: _planThinkingLine,
+                                      planThinkingOpacity:
+                                          _planThinkingOpacity,
+                                      weeks: _weeks,
+                                      scrollController: _scroll,
+                                    )
+                                  : LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        return SingleChildScrollView(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          child: ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              minHeight: constraints.maxHeight,
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 20,
                                               ),
-                                              const SizedBox(height: 16),
-                                              _ReservedLine(
-                                                reserve: _hiFull,
-                                                shown: hiText,
-                                                style: titleStyle,
-                                                visible: t >= _hiStart,
-                                              ),
-                                              const SizedBox(height: 12),
-                                              _ReservedLine(
-                                                reserve: _coachFull,
-                                                shown: coachText,
-                                                style: titleStyle,
-                                                visible: t >= _coachStart,
-                                              ),
-                                              const SizedBox(height: 12),
-                                              Opacity(
-                                                opacity: tip,
-                                                child: Transform.translate(
-                                                  offset: Offset(
-                                                    0,
-                                                    18 * (1 - tip),
-                                                  ),
-                                                  child: Text(
-                                                    _tipFull,
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.nunito(
-                                                      fontSize: 14,
-                                                      height: 1.45,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: const Color(
-                                                        0xFF6B6B73,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 120,
+                                                    child: Center(
+                                                      child: LoopingSpinStar(
+                                                        size: 64,
+                                                        showGlints: true,
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                AiPlanCoachMeetPage
-                                                    .buildMarker,
-                                                style: GoogleFonts.nunito(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color(
-                                                    0xFF9CA3AF,
+                                                  const SizedBox(height: 16),
+                                                  _ReservedLine(
+                                                    reserve: _hiFull,
+                                                    shown: hiText,
+                                                    style: titleStyle,
+                                                    visible: t >= _hiStart,
                                                   ),
-                                                ),
+                                                  const SizedBox(height: 12),
+                                                  _ReservedLine(
+                                                    reserve: _coachFull,
+                                                    shown: coachText,
+                                                    style: titleStyle,
+                                                    visible: t >= _coachStart,
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  Opacity(
+                                                    opacity: tip,
+                                                    child: Transform.translate(
+                                                      offset: Offset(
+                                                        0,
+                                                        18 * (1 - tip),
+                                                      ),
+                                                      child: Text(
+                                                        _tipFull,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style:
+                                                            GoogleFonts.nunito(
+                                                          fontSize: 14,
+                                                          height: 1.45,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: const Color(
+                                                            0xFF6B6B73,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    AiPlanCoachMeetPage
+                                                        .buildMarker,
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: const Color(
+                                                        0xFF9CA3AF,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                        );
+                                      },
+                                    ),
+                            ),
+                            // Blank tap target above the keyboard / composer.
+                            if (_kbOpen)
+                              Positioned.fill(
+                                child: GestureDetector(
+                                  key: const ValueKey('dismiss-keyboard-area'),
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: _hideKeyboard,
                                 ),
+                              ),
+                          ],
                         ),
                       ),
                       // Composer lifts with keyboard (translate -202), matching Figma.
@@ -497,6 +515,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                               keyboardOpen: _kbOpen,
                               canSend: !_busy,
                               onInputTap: _openKeyboard,
+                              onDismissKeyboard: _hideKeyboard,
                               onSend: () {
                                 if (!_introDone && !inChat) return;
                                 unawaited(_sendMessage(_controller.text));
@@ -514,20 +533,23 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                     ],
                   ),
                   // Mock iOS keyboard — stays up while _kbOpen (not tied to focus).
+                  // TextFieldTapRegion: key taps must NOT count as "outside" the field.
                   Positioned(
                     left: 0,
                     right: 0,
                     bottom: 0,
                     child: IgnorePointer(
-                      ignoring: kbOpacity < 0.5,
+                      ignoring: kbOpacity < 0.05,
                       child: Opacity(
-                        opacity: kbOpacity,
+                        opacity: kbOpacity.clamp(0.0, 1.0),
                         child: Transform.translate(
                           offset: Offset(0, kbDy),
-                          child: _IosKeyboard(
-                            onKey: _insertText,
-                            onBackspace: _backspace,
-                            onHide: _onReturnKey,
+                          child: TextFieldTapRegion(
+                            child: _IosKeyboard(
+                              onKey: _insertText,
+                              onBackspace: _backspace,
+                              onHide: _onReturnKey,
+                            ),
                           ),
                         ),
                       ),
@@ -674,6 +696,7 @@ class _Composer extends StatelessWidget {
     required this.keyboardOpen,
     required this.canSend,
     required this.onInputTap,
+    required this.onDismissKeyboard,
     required this.onChipTap,
     required this.onSend,
   });
@@ -686,6 +709,7 @@ class _Composer extends StatelessWidget {
   final bool keyboardOpen;
   final bool canSend;
   final VoidCallback onInputTap;
+  final VoidCallback onDismissKeyboard;
   final ValueChanged<String> onChipTap;
   final VoidCallback onSend;
 
@@ -768,7 +792,7 @@ class _Composer extends StatelessWidget {
                     textInputAction: TextInputAction.send,
                     onTap: onInputTap,
                     onTapOutside: (_) {
-                      // Keep session open — only return / send dismisses.
+                      if (keyboardOpen) onDismissKeyboard();
                     },
                     onSubmitted: (_) {
                       if (canSend) onSend();

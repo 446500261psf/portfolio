@@ -53,6 +53,17 @@ void main() {
     await tester.pump();
     expect(find.text('return'), findsOneWidget);
     expect(find.text('lo'), findsOneWidget);
+
+    // Tap blank content area (above the keyboard) dismisses it.
+    expect(find.byKey(const ValueKey('dismiss-keyboard-area')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('dismiss-keyboard-area')));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('dismiss-keyboard-area')), findsNothing);
+    await tester.pump(const Duration(milliseconds: 450));
+    // Keyboard finished closing — keys no longer hit-testable.
+    await tester.tap(find.text('Q'), warnIfMissed: false);
+    await tester.pump();
+    expect(find.text('lo'), findsOneWidget); // unchanged — Q did not type
   });
 
   testWidgets('Goal chip sends into chat then AI streams a reply', (
