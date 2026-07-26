@@ -17,7 +17,7 @@ https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-72
 
 Demo：`Lose 3 kg in 15 days` → `3 days / week · Home only` → `Yes, generate my plan`
 
-Marker: `meet-v19` — star loops forever: spin → pause → spin (+ glints)
+Marker: `meet-v20` — bg glints fixed + irregular twinkle (main star only spins)
 
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 

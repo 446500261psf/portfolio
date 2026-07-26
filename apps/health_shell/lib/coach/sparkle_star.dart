@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// Soft 4-point sparkle that loops: spin one turn → brief pause → repeat.
+/// Background glints stay fixed and twinkle irregularly (do not rotate).
 class LoopingSpinStar extends StatefulWidget {
   const LoopingSpinStar({
     super.key,
@@ -25,8 +26,9 @@ class LoopingSpinStar extends StatefulWidget {
 }
 
 class _LoopingSpinStarState extends State<LoopingSpinStar>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _spin;
+  late final AnimationController _twinkle;
   Timer? _delay;
   Timer? _pause;
   bool _started = false;
@@ -37,9 +39,15 @@ class _LoopingSpinStarState extends State<LoopingSpinStar>
     super.initState();
     _spin = AnimationController(vsync: this, duration: widget.turnDuration)
       ..addStatusListener(_onSpinStatus);
+    // Independent clock for irregular fixed-position twinkles.
+    _twinkle = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    );
     _delay = Timer(widget.delay, () {
       if (!mounted) return;
       setState(() => _started = true);
+      _twinkle.repeat();
       unawaited(_spin.forward(from: 0));
     });
   }
@@ -60,6 +68,7 @@ class _LoopingSpinStarState extends State<LoopingSpinStar>
     _pause?.cancel();
     _spin.removeStatusListener(_onSpinStatus);
     _spin.dispose();
+    _twinkle.dispose();
     super.dispose();
   }
 
@@ -71,14 +80,12 @@ class _LoopingSpinStarState extends State<LoopingSpinStar>
     }
 
     return AnimatedBuilder(
-      animation: _spin,
+      animation: Listenable.merge([_spin, _twinkle]),
       builder: (context, child) {
         final t = Curves.easeInOutCubic.transform(_spin.value);
         final opacity = _completedTurns >= 1
             ? 1.0
             : Curves.easeOutCubic.transform(_spin.value);
-        final glintProgress =
-            _completedTurns >= 1 ? (0.55 + 0.45 * t) : opacity;
 
         return SizedBox(
           width: box,
@@ -91,8 +98,9 @@ class _LoopingSpinStarState extends State<LoopingSpinStar>
                 if (widget.showGlints)
                   CustomPaint(
                     size: Size(box, box),
-                    painter: _GlintFieldPainter(progress: glintProgress),
+                    painter: _FixedTwinklePainter(time: _twinkle.value),
                   ),
+                // Only the main star rotates.
                 Transform.rotate(
                   angle: t * math.pi * 2,
                   child: child,
@@ -179,51 +187,90 @@ class SoftSparklePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class _GlintFieldPainter extends CustomPainter {
-  _GlintFieldPainter({required this.progress});
+/// Fixed-position dots / mini-stars that flicker irregularly (no orbit).
+class _FixedTwinklePainter extends CustomPainter {
+  _FixedTwinklePainter({required this.time});
 
-  final double progress;
+  final double time;
+
+  // Angle (turns), radius factor, isMiniStar, speed, phase.
+  static const _specs = <(double, double, bool, double, double)>[
+    (0.00, 0.36, false, 1.7, 0.1), // 12 o'clock dot
+    (0.08, 0.40, true, 2.3, 0.4), // ~1 o'clock star
+    (0.25, 0.35, false, 1.1, 0.8), // 3 o'clock dot
+    (0.33, 0.41, true, 2.9, 0.2), // ~4 o'clock star
+    (0.50, 0.36, false, 1.9, 0.55), // 6 o'clock dot
+    (0.67, 0.38, false, 2.5, 0.15), // 9-ish
+    (0.78, 0.42, true, 1.4, 0.9), // ~11 o'clock star
+    (0.90, 0.34, false, 3.1, 0.35), // upper-left dot
+  ];
+
+  double _flicker(double speed, double phase) {
+    // Two out-of-phase waves → irregular bright/dim, not a steady pulse.
+    final a = math.sin((time * speed + phase) * math.pi * 2);
+    final b = math.sin((time * speed * 1.73 + phase * 2.1) * math.pi * 2);
+    final c = math.sin((time * speed * 0.61 + phase * 0.7) * math.pi * 2);
+    final raw = (a * 0.55 + b * 0.35 + c * 0.25).clamp(-1.0, 1.0);
+    // Bias toward mostly dim with occasional brighter flashes.
+    return ((raw + 0.35) / 1.35).clamp(0.08, 1.0);
+  }
+
+  void _drawMiniStar(Canvas canvas, Offset c, double s, Color color) {
+    final path = Path();
+    final outer = s;
+    final inner = s * 0.38;
+    for (var i = 0; i < 4; i++) {
+      final aOuter = -math.pi / 2 + i * math.pi / 2;
+      final aInner = aOuter + math.pi / 4;
+      final ox = c.dx + outer * math.cos(aOuter);
+      final oy = c.dy + outer * math.sin(aOuter);
+      final ix = c.dx + inner * math.cos(aInner);
+      final iy = c.dy + inner * math.sin(aInner);
+      if (i == 0) {
+        path.moveTo(ox, oy);
+      } else {
+        path.lineTo(ox, oy);
+      }
+      path.lineTo(ix, iy);
+    }
+    path.close();
+    canvas.drawPath(
+      path,
+      Paint()
+        ..isAntiAlias = true
+        ..color = color,
+    );
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (progress <= 0) return;
     final cx = size.width / 2;
     final cy = size.height / 2;
-    final baseR = size.width * 0.34;
+    final baseR = size.width * 0.5;
 
-    for (var i = 0; i < 8; i++) {
-      final phase = i * (math.pi * 2 / 8);
-      final a = phase + progress * math.pi * 2;
-      final pulse = 0.55 + 0.45 * math.sin(progress * math.pi * 6 + i * 1.7);
-      final r = baseR * (0.92 + 0.18 * math.sin(progress * math.pi * 4 + i));
-      final x = cx + r * math.cos(a);
-      final y = cy + r * math.sin(a);
-      final opacity = (pulse * progress.clamp(0.0, 1.0)).clamp(0.0, 1.0);
-      final dot = 1.2 + (i.isEven ? 1.6 : 0.8) * pulse;
+    for (final spec in _specs) {
+      final (turn, rFactor, isStar, speed, phase) = spec;
+      final a = turn * math.pi * 2 - math.pi / 2;
+      final x = cx + baseR * rFactor * math.cos(a);
+      final y = cy + baseR * rFactor * math.sin(a);
+      final f = _flicker(speed, phase);
+      final color = Color.fromRGBO(125, 211, 252, f * 0.95);
 
-      final paint = Paint()
-        ..isAntiAlias = true
-        ..color = Color.fromRGBO(
-          125,
-          211,
-          252,
-          opacity * (i.isEven ? 0.95 : 0.65),
+      if (isStar) {
+        _drawMiniStar(canvas, Offset(x, y), 2.4 + 1.8 * f, color);
+      } else {
+        canvas.drawCircle(
+          Offset(x, y),
+          1.1 + 1.2 * f,
+          Paint()
+            ..isAntiAlias = true
+            ..color = color,
         );
-      canvas.drawCircle(Offset(x, y), dot, paint);
-
-      if (i.isOdd) {
-        final arm = 2.2 + 1.5 * pulse;
-        paint
-          ..strokeWidth = 1.1
-          ..style = PaintingStyle.stroke;
-        canvas.drawLine(Offset(x - arm, y), Offset(x + arm, y), paint);
-        canvas.drawLine(Offset(x, y - arm), Offset(x, y + arm), paint);
-        paint.style = PaintingStyle.fill;
       }
     }
   }
 
   @override
-  bool shouldRepaint(covariant _GlintFieldPainter oldDelegate) =>
-      oldDelegate.progress != progress;
+  bool shouldRepaint(covariant _FixedTwinklePainter oldDelegate) =>
+      oldDelegate.time != time;
 }
