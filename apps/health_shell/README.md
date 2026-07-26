@@ -6,12 +6,12 @@ https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-72
 
 ## What opens by default
 
-**AiPlanCoach · Meet · Intro Motion** (`133:728`)
+**AiPlanCoach Meet flow**
 
-- Cyan → warm page gradient `#D1F0F8 → #F8F7F6`
-- TopBar: white back tile + `✦ Premium`
-- 4.4s intro: star rise → typewriter lines → tip → chips + input
-- Composer chips / input bar match Figma sizing
+1. Intro Motion (`133:728`) — star → typewriter → tip → chips + input  
+2. Keyboard Focus (`136:695`) — tap input: chips vanish → middle fades → iOS keyboard slides up 202px in ~100ms  
+
+Marker under tip: `meet-v6`
 
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 
