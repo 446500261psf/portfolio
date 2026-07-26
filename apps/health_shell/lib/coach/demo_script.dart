@@ -19,6 +19,15 @@ class WeightLoss15DayScript {
     'Make it easier first',
   ];
 
+  /// Figma `131:695` mood chips under the generated plan.
+  static const likeChip = '☺ That’s it!';
+  static const dislikeChip = '☹ i don’t like it';
+
+  static const feedbackChips = <String>[
+    likeChip,
+    dislikeChip,
+  ];
+
   static const planThinkingLines = <String>[
     'Considering your weekly training days…',
     'Arranging the right training sessions…',
@@ -27,7 +36,7 @@ class WeightLoss15DayScript {
     'Locking your 15-day plan framework…',
   ];
 
-  /// Closing line shown under the weekly plan cards.
+  /// Closing line after the user taps a mood chip on the plan.
   static const planReadyMessage =
       'I’ve added your generated plan to the Today page. '
       'I’ll adjust it anytime based on your status. Let’s get started!';
@@ -40,6 +49,23 @@ class WeightLoss15DayScript {
     if (t == 'yes' || t.startsWith('yes,')) return true;
     if (t.contains('looks good') && t.contains('generate')) return true;
     if (t == confirmChip.toLowerCase()) return true;
+    return false;
+  }
+
+  /// Mood ack after weekly cards (Figma FeedbackRow).
+  static bool isPlanFeedback(String userText) {
+    final t = userText.trim();
+    if (t == likeChip || t == dislikeChip) return true;
+    final lower = t.toLowerCase();
+    if (lower.contains('☺') || lower.contains('☹')) return true;
+    if (lower.contains("that's it") || lower.contains('that’s it')) {
+      return true;
+    }
+    if (lower.contains("don't like") ||
+        lower.contains('dont like') ||
+        lower.contains('don’t like')) {
+      return true;
+    }
     return false;
   }
 

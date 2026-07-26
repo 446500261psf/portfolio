@@ -16,7 +16,7 @@ import 'sparkle_star.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v21';
+  static const buildMarker = 'meet-v22';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -209,7 +209,8 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
       _phase = CoachPhase.planReady;
       _turn = ChatTurnState.awaitingUser;
       _weeks = List<WeekPlan>.of(WeightLoss15DayScript.weeks);
-      _followUps = const [];
+      // Figma `131:695` — emoji mood chips before the Today closing line.
+      _followUps = List<String>.of(WeightLoss15DayScript.feedbackChips);
     });
     _scrollToEnd();
   }
@@ -235,6 +236,64 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     await _runPlanThinkingCycle(seq);
   }
 
+  /// Mood chip (or typed ack) after plan cards → stream Today closing line.
+  Future<void> _replyPlanReady({
+    required int seq,
+    required String userId,
+    required String text,
+  }) async {
+    setState(() {
+      _followUps = [];
+      _messages.add(
+        ChatMessage(id: userId, role: ChatRole.user, text: text),
+      );
+      _turn = ChatTurnState.generating;
+    });
+    _scrollToEnd();
+
+    await Future<void>.delayed(const Duration(milliseconds: 650));
+    if (!mounted || seq != _sendSeq) return;
+
+    final assistantId = 'a-plan-ready';
+    final full = WeightLoss15DayScript.planReadyMessage;
+    setState(() {
+      _turn = ChatTurnState.streaming;
+      _messages.add(
+        ChatMessage(
+          id: assistantId,
+          role: ChatRole.assistant,
+          text: '',
+          isStreaming: true,
+        ),
+      );
+    });
+    _scrollToEnd();
+
+    const tick = Duration(milliseconds: 28);
+    for (var i = 1; i <= full.length; i++) {
+      if (!mounted || seq != _sendSeq) return;
+      await Future<void>.delayed(tick);
+      setState(() {
+        final idx = _messages.indexWhere((m) => m.id == assistantId);
+        if (idx >= 0) {
+          _messages[idx] = _messages[idx].copyWith(text: full.substring(0, i));
+        }
+      });
+      if (i % 12 == 0 || i == full.length) _scrollToEnd();
+    }
+
+    if (!mounted || seq != _sendSeq) return;
+    setState(() {
+      final idx = _messages.indexWhere((m) => m.id == assistantId);
+      if (idx >= 0) {
+        _messages[idx] = _messages[idx].copyWith(isStreaming: false);
+      }
+      _turn = ChatTurnState.idle;
+      _followUps = const [];
+    });
+    _scrollToEnd();
+  }
+
   Future<void> _sendMessage(String raw) async {
     final text = raw.trim();
     if (text.isEmpty || _busy) return;
@@ -251,6 +310,12 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     // Confirm → plan generating (light on Coach + thinking lines).
     if (WeightLoss15DayScript.isPlanConfirm(text)) {
       await _startPlanGeneration(seq: seq, userId: userId, text: text);
+      return;
+    }
+
+    // After weekly cards: mood chip / typed ack → then Today closing reply.
+    if (_phase == CoachPhase.planReady && _weeks.isNotEmpty) {
+      await _replyPlanReady(seq: seq, userId: userId, text: text);
       return;
     }
 
@@ -323,10 +388,11 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
       resizeToAvoidBottomInset: false,
       body: DecoratedBox(
         decoration: const BoxDecoration(
+          // Figma `127:1000` — from-[#f1f9fb] to-[#f8f7f6]
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFD1F0F8), Color(0xFFF8F7F6)],
+            colors: [Color(0xFFF1F9FB), Color(0xFFF8F7F6)],
           ),
         ),
         child: SafeArea(
@@ -686,6 +752,49 @@ class _TopBar extends StatelessWidget {
   }
 }
 
+/// Figma FeedbackRow chip: colored ☺/☹ + label.
+class _MoodChipLabel extends StatelessWidget {
+  const _MoodChipLabel({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final like =
+        label == WeightLoss15DayScript.likeChip || label.contains('☺');
+    final emoji = like ? '☺' : '☹';
+    final emojiColor =
+        like ? const Color(0xFF33B873) : const Color(0xFFEB6659);
+    var text = label;
+    if (text.startsWith(emoji)) {
+      text = text.substring(emoji.length).trimLeft();
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          emoji,
+          style: GoogleFonts.nunito(
+            fontSize: 18,
+            height: 1,
+            color: emojiColor,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: GoogleFonts.nunito(
+            fontSize: 13,
+            height: 1.2,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF111827),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _Composer extends StatelessWidget {
   const _Composer({
     required this.chips,
@@ -731,32 +840,41 @@ class _Composer extends StatelessWidget {
                       separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (context, i) {
                         final label = chips[i];
+                        final mood = WeightLoss15DayScript.isPlanFeedback(
+                          label,
+                        );
                         return GestureDetector(
                           key: ValueKey('chip-$label'),
                           behavior: HitTestBehavior.opaque,
                           onTap: () => onChipTap(label),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                            padding: EdgeInsets.fromLTRB(
+                              mood ? 10 : 12,
+                              8,
+                              mood ? 12 : 12,
+                              8,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(
+                                mood ? 20 : 16,
+                              ),
                               border: Border.all(
                                 color: const Color(0xFFE5E5EB),
                               ),
                             ),
-                            child: Text(
-                              label,
-                              style: GoogleFonts.nunito(
-                                fontSize: 12,
-                                height: 16 / 12,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.012,
-                                color: const Color(0xFF6B7280),
-                              ),
-                            ),
+                            child: mood
+                                ? _MoodChipLabel(label: label)
+                                : Text(
+                                    label,
+                                    style: GoogleFonts.nunito(
+                                      fontSize: 12,
+                                      height: 16 / 12,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.012,
+                                      color: const Color(0xFF6B7280),
+                                    ),
+                                  ),
                           ),
                         );
                       },

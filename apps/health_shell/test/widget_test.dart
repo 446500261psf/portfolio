@@ -118,8 +118,27 @@ void main() {
     expect(find.text('Your 15-day plan'), findsOneWidget);
     expect(find.text('Week 1'), findsOneWidget);
     expect(find.text('Week 2'), findsOneWidget);
+
+    // Mood chips appear; Today closing line waits for a tap.
+    await pumpUntil(tester, chip(WeightLoss15DayScript.likeChip));
+    expect(chip(WeightLoss15DayScript.likeChip), findsOneWidget);
+    expect(chip(WeightLoss15DayScript.dislikeChip), findsOneWidget);
     expect(
       find.textContaining('added your generated plan to the Today page'),
+      findsNothing,
+    );
+
+    await tester.tap(chip(WeightLoss15DayScript.likeChip));
+    await tester.pump();
+    await pumpUntil(
+      tester,
+      find.text(WeightLoss15DayScript.planReadyMessage),
+      maxSteps: 120,
+    );
+    // Drain stream ticks so no FakeTimer is left pending.
+    await tester.pump(const Duration(milliseconds: 800));
+    expect(
+      find.text(WeightLoss15DayScript.planReadyMessage),
       findsOneWidget,
     );
 

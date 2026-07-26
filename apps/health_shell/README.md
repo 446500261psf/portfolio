@@ -14,10 +14,11 @@ https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-72
 2. Keyboard Focus (`136:695`) — tap input: chips vanish → middle fades → iOS keyboard slides up 202px  
 3. Chip / ↑ send — **仅思考态**白气泡：`Plan Coach` 高光 + 旋转星星 → 出字后静态标签  
 4. 确认生成计划 — 思考文案渐隐 → 每周折叠卡（同宽原位纵向展开详情）  
+5. 计划后 mood chips（☺ That’s it! / ☹ i don’t like it）→ 点击后再回复 Today 收尾  
 
-Demo：`Lose 3 kg in 15 days` → `3 days / week · Home only` → `Yes, generate my plan`
+Demo：`Lose 3 kg in 15 days` → `3 days / week · Home only` → `Yes, generate my plan` → `☺ That’s it!`
 
-Marker: `meet-v21` — tap blank area dismisses keyboard
+Marker: `meet-v22` — Figma `127:1000` bg + plan feedback chips before Today reply
 
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 
