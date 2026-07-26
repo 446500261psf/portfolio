@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'chat_models.dart';
 import 'chat_transcript.dart';
 import 'demo_script.dart';
+import 'sparkle_star.dart';
 
 /// Meet + Chat + Plan flow:
 /// 1) Intro Motion — Figma `133:728`
@@ -16,7 +16,7 @@ import 'demo_script.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v18';
+  static const buildMarker = 'meet-v19';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -34,9 +34,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
   static const _kbDuration = Duration(milliseconds: 450);
   static const _kbLift = 202.0;
 
-  // Intro fractions (6.8s)
-  static const _starStart = 0.147; // ~1000ms delay before spin
-  static const _starEnd = 0.456; // ~3100ms — slow 2-turn fade
+  // Intro fractions (6.8s) — hero star loops on its own timer
   static const _hiStart = 0.470;
   static const _hiEnd = 0.590;
   static const _coachStart = 0.605;
@@ -340,7 +338,6 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
               final k = _kb.value;
               final inChat = _phase != CoachPhase.meet;
 
-              final star = _ramp(t, _starStart, _starEnd);
               final hiP = _ramp(t, _hiStart, _hiEnd);
               final coachP = _ramp(t, _coachStart, _coachEnd);
               final tip = _ramp(t, _tipStart, _tipStart + 0.136);
@@ -411,32 +408,14 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 120,
-                                                child: Builder(
-                                                  builder: (context) {
-                                                    // After 1s delay: fade in
-                                                    // across exactly 2 slow turns.
-                                                    final eased = Curves
-                                                        .easeInOutCubic
-                                                        .transform(star);
-                                                    return Opacity(
-                                                      opacity: eased,
-                                                      child:
-                                                          Transform.translate(
-                                                        offset: Offset(
-                                                          0,
-                                                          28 * (1 - eased),
-                                                        ),
-                                                        child: Center(
-                                                          child: _StarEntrance(
-                                                            progress: eased,
-                                                            size: 64,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
+                                                child: Center(
+                                                  // Delay 1s, then spin → pause → spin…
+                                                  child: LoopingSpinStar(
+                                                    size: 64,
+                                                    showGlints: true,
+                                                  ),
                                                 ),
                                               ),
                                               const SizedBox(height: 16),
@@ -599,160 +578,6 @@ class _ReservedLine extends StatelessWidget {
   }
 }
 
-class _SparkleStar extends StatelessWidget {
-  const _SparkleStar({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: CustomPaint(painter: _SparklePainter()),
-    );
-  }
-}
-
-/// Hero / thinking entrance: 2 turns + fade, with orbiting glint dots.
-class _StarEntrance extends StatelessWidget {
-  const _StarEntrance({required this.progress, required this.size});
-
-  final double progress;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    final box = size * 1.85;
-    return SizedBox(
-      width: box,
-      height: box,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            size: Size(box, box),
-            painter: _GlintFieldPainter(progress: progress),
-          ),
-          Transform.rotate(
-            angle: progress * math.pi * 4,
-            child: _SparkleStar(size: size),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GlintFieldPainter extends CustomPainter {
-  _GlintFieldPainter({required this.progress});
-
-  final double progress;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (progress <= 0) return;
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final baseR = size.width * 0.34;
-
-    for (var i = 0; i < 8; i++) {
-      final phase = i * (math.pi * 2 / 8);
-      // Orbit with the 2-turn entrance.
-      final a = phase + progress * math.pi * 4 * 0.85;
-      final pulse = 0.55 + 0.45 * math.sin(progress * math.pi * 6 + i * 1.7);
-      final r = baseR * (0.92 + 0.18 * math.sin(progress * math.pi * 4 + i));
-      final x = cx + r * math.cos(a);
-      final y = cy + r * math.sin(a);
-      final opacity = (pulse * progress).clamp(0.0, 1.0);
-      final dot = 1.2 + (i.isEven ? 1.6 : 0.8) * pulse;
-
-      final paint = Paint()
-        ..isAntiAlias = true
-        ..color = Color.fromRGBO(
-          125,
-          211,
-          252,
-          opacity * (i.isEven ? 0.95 : 0.65),
-        );
-      canvas.drawCircle(Offset(x, y), dot, paint);
-
-      // Tiny cross sparkle on alternate dots.
-      if (i.isOdd) {
-        final arm = 2.2 + 1.5 * pulse;
-        paint.strokeWidth = 1.1;
-        paint.style = PaintingStyle.stroke;
-        canvas.drawLine(Offset(x - arm, y), Offset(x + arm, y), paint);
-        canvas.drawLine(Offset(x, y - arm), Offset(x, y + arm), paint);
-        paint.style = PaintingStyle.fill;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _GlintFieldPainter oldDelegate) =>
-      oldDelegate.progress != progress;
-}
-
-class _SparklePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final outer = size.width * 0.48;
-    final inner = size.width * 0.20;
-    // How far along tip→inner the rounded tip starts (lower = softer tips).
-    const tipSoft = 0.62;
-
-    final path = Path();
-    for (var i = 0; i < 4; i++) {
-      final aOuter = -math.pi / 2 + i * math.pi / 2;
-      final aInner = aOuter + math.pi / 4;
-      final aPrevInner = aOuter - math.pi / 4;
-
-      final tip = Offset(
-        cx + outer * math.cos(aOuter),
-        cy + outer * math.sin(aOuter),
-      );
-      final prevInner = Offset(
-        cx + inner * math.cos(aPrevInner),
-        cy + inner * math.sin(aPrevInner),
-      );
-      final nextInner = Offset(
-        cx + inner * math.cos(aInner),
-        cy + inner * math.sin(aInner),
-      );
-      final nearIn = Offset.lerp(tip, prevInner, 1 - tipSoft)!;
-      final nearOut = Offset.lerp(tip, nextInner, 1 - tipSoft)!;
-
-      if (i == 0) {
-        path.moveTo(prevInner.dx, prevInner.dy);
-      } else {
-        path.lineTo(prevInner.dx, prevInner.dy);
-      }
-      path.lineTo(nearIn.dx, nearIn.dy);
-      // Rounded tip instead of a sharp corner.
-      path.quadraticBezierTo(tip.dx, tip.dy, nearOut.dx, nearOut.dy);
-      path.lineTo(nextInner.dx, nextInner.dy);
-    }
-    path.close();
-
-    final paint = Paint()
-      ..isAntiAlias = true
-      ..shader = const LinearGradient(
-        begin: Alignment(-0.2, -1),
-        end: Alignment(0.4, 1),
-        colors: [Color(0xFF40C4EC), Color(0xFF17ACDA), Color(0xFFE1F3F7)],
-        stops: [0.31, 0.49, 0.79],
-      ).createShader(Offset.zero & size);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 class _StatusBar extends StatelessWidget {
   const _StatusBar();
 
@@ -818,7 +643,7 @@ class _TopBar extends StatelessWidget {
             const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _SparkleStar(size: 18),
+                SoftSparkleStar(size: 18),
                 SizedBox(width: 6),
                 Text(
                   'Premium',
