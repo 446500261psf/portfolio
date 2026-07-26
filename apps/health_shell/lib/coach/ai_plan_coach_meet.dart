@@ -107,62 +107,67 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                             ? Offset.zero
                             : const Offset(0, -0.06),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 28),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              // Extra vertical room so star tips / glyph descenders aren't clipped.
+                              const SizedBox(height: 8),
                               Opacity(
                                 opacity: star,
                                 child: Transform.translate(
                                   offset: Offset(0, 28 * (1 - star)),
-                                  child: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (bounds) =>
-                                        const LinearGradient(
-                                      begin: Alignment(-0.2, -1),
-                                      end: Alignment(0.4, 1),
-                                      colors: [
-                                        Color(0xFF40C4EC),
-                                        Color(0xFF17ACDA),
-                                        Color(0xFFE1F3F7),
-                                      ],
-                                      stops: [0.31, 0.49, 0.79],
-                                    ).createShader(bounds),
-                                    child: Text(
-                                      '✦',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 64,
-                                        fontWeight: FontWeight.w600,
-                                        height: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    child: ShaderMask(
+                                      blendMode: BlendMode.srcIn,
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                        begin: Alignment(-0.2, -1),
+                                        end: Alignment(0.4, 1),
+                                        colors: [
+                                          Color(0xFF40C4EC),
+                                          Color(0xFF17ACDA),
+                                          Color(0xFFE1F3F7),
+                                        ],
+                                        stops: [0.31, 0.49, 0.79],
+                                      ).createShader(bounds),
+                                      child: Text(
+                                        '✦',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 64,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 24),
-                              _TypeClip(
+                              const SizedBox(height: 16),
+                              _TypeReveal(
                                 text: 'Hi Sifan,',
                                 progress: hi,
                                 visible: t >= _hiStart,
-                                maxWidth: 111,
                                 style: GoogleFonts.nunito(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w800,
                                   color: const Color(0xFF111827),
-                                  height: 1.15,
+                                  height: 1.25,
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              _TypeClip(
+                              _TypeReveal(
                                 text: 'i am your personal coach',
                                 progress: coach,
                                 visible: t >= _coachStart,
-                                maxWidth: 324,
                                 style: GoogleFonts.nunito(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w800,
                                   color: const Color(0xFF111827),
-                                  height: 1.15,
+                                  height: 1.25,
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -175,13 +180,14 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.nunito(
                                       fontSize: 14,
-                                      height: 20 / 14,
+                                      height: 1.45,
                                       fontWeight: FontWeight.w500,
                                       color: const Color(0xFF6B6B73),
                                     ),
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 8),
                             ],
                           ),
                         ),
@@ -321,36 +327,37 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-class _TypeClip extends StatelessWidget {
-  const _TypeClip({
+/// Character reveal typewriter — avoids fixed Figma widths that clip
+/// when the runtime font (Nunito) is wider than SF Compact Rounded.
+class _TypeReveal extends StatelessWidget {
+  const _TypeReveal({
     required this.text,
     required this.progress,
     required this.visible,
-    required this.maxWidth,
     required this.style,
   });
 
   final String text;
   final double progress;
   final bool visible;
-  final double maxWidth;
   final TextStyle style;
 
   @override
   Widget build(BuildContext context) {
+    final count = visible
+        ? math.max(1, (text.length * progress.clamp(0.0, 1.0)).ceil())
+        : 0;
+    final shown = visible ? text.substring(0, count.clamp(0, text.length)) : '';
+
     return Opacity(
       opacity: visible ? 1 : 0,
-      child: Align(
-        alignment: Alignment.center,
-        child: ClipRect(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            widthFactor: math.max(0.01, progress),
-            child: SizedBox(
-              width: maxWidth,
-              child: Text(text, style: style, maxLines: 1, overflow: TextOverflow.clip),
-            ),
-          ),
+      child: SizedBox(
+        width: double.infinity,
+        child: Text(
+          shown.isEmpty ? ' ' : shown,
+          textAlign: TextAlign.center,
+          softWrap: true,
+          style: style,
         ),
       ),
     );
