@@ -1,23 +1,19 @@
 # health_shell
 
-Flutter mid-fi simulator for the **Design System** product shell:
+Flutter simulator for Design System Meet Intro:
 
-**Today · Health · Exercise · Devices**
+https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-728
 
-Figma: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System
+## What opens by default
 
-## Note on node `143:738`
+**AiPlanCoach · Meet · Intro Motion** (`133:728`)
 
-The linked node (`node-id=143-738`) is **not present** in the live Figma file
-(only the Cover page remains). This app reconstructs the documented L1 shell
-plus the AiPlanCoach **Meet** motion stack (closest “效果” work in that node
-range):
+- Cyan → warm page gradient `#D1F0F8 → #F8F7F6`
+- TopBar: white back tile + `✦ Premium`
+- 4.4s intro: star rise → typewriter lines → tip → chips + input
+- Composer chips / input bar match Figma sizing
 
-| Motion | Source node |
-|--------|-------------|
-| Intro (star + typewriter) | `133:728` |
-| Keyboard focus (chips hide · 100ms lift) | `136:695` |
-| Chip tap → user bubble → ✦ light sweep ×2 | `132:981` |
+Optional 4-tab shell: append `?shell=1` or open `/shell`.
 
 ## Run
 
@@ -25,12 +21,13 @@ range):
 cd apps/health_shell
 flutter pub get
 flutter run -d chrome
-# or
-flutter build web
 ```
 
-## Demo path
+After updates on this branch:
 
-1. Open **Today**
-2. Tap **✦ Plan Coach → Open Meet**
-3. Watch intro motion, then tap a quick-reply chip or focus the input field
+```bash
+git pull origin cursor/flutter-ds-shell-2578
+cd apps/health_shell
+flutter pub get
+flutter run -d chrome
+```

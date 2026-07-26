@@ -1,18 +1,10 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../theme/tokens.dart';
-
-/// Flutter port of AiPlanCoach · Meet motions from Design System:
-/// - Intro (`133:728`)
-/// - Keyboard focus (`136:695`)
-/// - Chip tap → AI light sweep (`132:981`)
-///
-/// Node `143:738` was missing from the live Figma file; this screen
-/// reconstructs the closest documented Meet “效果” stack.
+/// Pixel-closer Flutter port of Figma
+/// `AiPlanCoach · Meet · Intro Motion` (`133:728`).
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
@@ -21,150 +13,65 @@ class AiPlanCoachMeetPage extends StatefulWidget {
 }
 
 class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   static const _chips = <String>[
-    'Lose fat',
-    'Build muscle',
-    'Exercise habit',
     'High-intensity training plan',
-    'Serious runner',
+    "I'm a serious runner",
+    'I want to lose fat',
+    'Build muscle',
+    'Build an exercise habit',
   ];
 
-  late final AnimationController _intro;
-  late final AnimationController _chipPulse;
-  late final AnimationController _bubble;
-  late final AnimationController _sweep;
-  late final AnimationController _keyboard;
+  static const _duration = Duration(milliseconds: 4400);
 
+  late final AnimationController _timeline;
   final _focus = FocusNode();
   final _controller = TextEditingController();
 
-  String _line1 = '';
-  String _line2 = '';
-  bool _showTip = false;
-  bool _showChrome = false;
   bool _showChips = true;
   bool _greetingVisible = true;
-  bool _showBubble = false;
-  bool _showAi = false;
-  String? _bubbleText;
-  String? _pulsingChip;
-  bool _introDone = false;
+
+  // Timeline fractions from Figma motion (4.4s)
+  static const _starEnd = 0.125; // 550ms
+  static const _hiStart = 0.14773; // ~650ms
+  static const _hiEnd = 0.32955; // ~1450ms
+  static const _coachStart = 0.35227; // ~1550ms
+  static const _coachEnd = 0.57955; // ~2550ms
+  static const _tipStart = 0.60227; // ~2650ms
+  static const _tipEnd = 0.73864; // ~3250ms
+  static const _chromeStart = 0.76136; // ~3350ms
+  static const _chromeEnd = 0.89773; // ~3950ms
 
   @override
   void initState() {
     super.initState();
-    _intro = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4400),
-    );
-    _chipPulse = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 180),
-    );
-    _bubble = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    _sweep = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 950),
-    );
-    _keyboard = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-
-    _focus.addListener(_onFocus);
-    _runIntro();
-  }
-
-  Future<void> _runIntro() async {
-    _intro.forward();
-    // 0–550ms star handled by animation
-    await Future<void>.delayed(const Duration(milliseconds: 650));
-    if (!mounted) return;
-    await _typewrite('Hi Sifan,', (v) => setState(() => _line1 = v), 800);
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-    if (!mounted) return;
-    await _typewrite(
-      'i am your personal coach',
-      (v) => setState(() => _line2 = v),
-      1000,
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-    if (!mounted) return;
-    setState(() => _showTip = true);
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    setState(() {
-      _showChrome = true;
-      _introDone = true;
+    _timeline = AnimationController(vsync: this, duration: _duration)
+      ..forward();
+    _focus.addListener(() {
+      if (!_focus.hasFocus || _timeline.value < _chromeEnd) return;
+      setState(() {
+        _showChips = false;
+        _greetingVisible = false;
+      });
     });
-  }
-
-  Future<void> _typewrite(
-    String full,
-    ValueChanged<String> onTick,
-    int ms,
-  ) async {
-    final step = math.max(18, ms ~/ full.length);
-    for (var i = 1; i <= full.length; i++) {
-      onTick(full.substring(0, i));
-      await Future<void>.delayed(Duration(milliseconds: step));
-      if (!mounted) return;
-    }
-  }
-
-  void _onFocus() {
-    if (!_focus.hasFocus || !_introDone) return;
-    setState(() {
-      _showChips = false;
-      _greetingVisible = false;
-    });
-    _keyboard.forward();
-  }
-
-  Future<void> _onChipTap(String label) async {
-    if (!_introDone || _showAi) return;
-    setState(() {
-      _pulsingChip = label;
-      _bubbleText = label;
-      _showBubble = false;
-      _showAi = false;
-    });
-    await _chipPulse.forward(from: 0);
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-    if (!mounted) return;
-    setState(() => _showBubble = true);
-    await _bubble.forward(from: 0);
-    await Future<void>.delayed(const Duration(milliseconds: 70));
-    if (!mounted) return;
-    setState(() => _showAi = true);
-    // LightSweep ×2
-    await _sweep.forward(from: 0);
-    await Future<void>.delayed(const Duration(milliseconds: 120));
-    if (!mounted) return;
-    await _sweep.forward(from: 0);
   }
 
   @override
   void dispose() {
-    _intro.dispose();
-    _chipPulse.dispose();
-    _bubble.dispose();
-    _sweep.dispose();
-    _keyboard.dispose();
+    _timeline.dispose();
     _focus.dispose();
     _controller.dispose();
     super.dispose();
   }
 
+  double _seg(double t, double a, double b) {
+    if (t <= a) return 0;
+    if (t >= b) return 1;
+    return Curves.easeOut.transform((t - a) / (b - a));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    final keyboardOpen = bottomInset > 0 || _keyboard.value > 0;
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: DecoratedBox(
@@ -172,91 +79,166 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [DsTokens.coachTop, DsTokens.coachBottom],
+            colors: [Color(0xFFD1F0F8), Color(0xFFF8F7F6)],
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 280),
-                opacity: _showChrome ? 1 : 0,
-                child: _TopBar(onBack: () => Navigator.of(context).maybePop()),
-              ),
-              Expanded(
-                child: Stack(
-                  children: [
-                    AnimatedOpacity(
+          child: AnimatedBuilder(
+            animation: _timeline,
+            builder: (context, _) {
+              final t = _timeline.value;
+              final star = _seg(t, 0, _starEnd);
+              final hi = _seg(t, _hiStart, _hiEnd);
+              final coach = _seg(t, _coachStart, _coachEnd);
+              final tip = _seg(t, _tipStart, _tipEnd);
+              final chrome = _seg(t, _chromeStart, _chromeEnd);
+
+              return Column(
+                children: [
+                  const _StatusBar(),
+                  _TopBar(opacity: chrome, dy: 12 * (1 - chrome)),
+                  Expanded(
+                    child: AnimatedOpacity(
                       duration: const Duration(milliseconds: 180),
                       opacity: _greetingVisible ? 1 : 0,
                       child: AnimatedSlide(
                         duration: const Duration(milliseconds: 180),
                         offset: _greetingVisible
                             ? Offset.zero
-                            : const Offset(0, -0.08),
-                        child: _GreetingBlock(
-                          intro: _intro,
-                          line1: _line1,
-                          line2: _line2,
-                          showTip: _showTip,
-                          showAi: _showAi,
-                          sweep: _sweep,
+                            : const Offset(0, -0.06),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 28),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Opacity(
+                                opacity: star,
+                                child: Transform.translate(
+                                  offset: Offset(0, 28 * (1 - star)),
+                                  child: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      begin: Alignment(-0.2, -1),
+                                      end: Alignment(0.4, 1),
+                                      colors: [
+                                        Color(0xFF40C4EC),
+                                        Color(0xFF17ACDA),
+                                        Color(0xFFE1F3F7),
+                                      ],
+                                      stops: [0.31, 0.49, 0.79],
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      '✦',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 64,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              _TypeClip(
+                                text: 'Hi Sifan,',
+                                progress: hi,
+                                visible: t >= _hiStart,
+                                maxWidth: 111,
+                                style: GoogleFonts.nunito(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFF111827),
+                                  height: 1.15,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              _TypeClip(
+                                text: 'i am your personal coach',
+                                progress: coach,
+                                visible: t >= _coachStart,
+                                maxWidth: 324,
+                                style: GoogleFonts.nunito(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFF111827),
+                                  height: 1.15,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Opacity(
+                                opacity: tip,
+                                child: Transform.translate(
+                                  offset: Offset(0, 18 * (1 - tip)),
+                                  child: Text(
+                                    'In one sentence, tell me the goal and the timeframe — I’ll build a detailed plan for you.',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.nunito(
+                                      fontSize: 14,
+                                      height: 20 / 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF6B6B73),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    if (_showBubble && _bubbleText != null)
-                      Positioned(
-                        top: 12,
-                        right: 16,
-                        child: ScaleTransition(
-                          scale: CurvedAnimation(
-                            parent: _bubble,
-                            curve: Curves.easeOutBack,
-                          ),
-                          child: FadeTransition(
-                            opacity: _bubble,
-                            child: _UserBubble(text: _bubbleText!),
-                          ),
-                        ),
+                  ),
+                  Opacity(
+                    opacity: chrome,
+                    child: Transform.translate(
+                      offset: Offset(0, 12 * (1 - chrome)),
+                      child: _Composer(
+                        chips: _chips,
+                        showChips: _showChips,
+                        focusNode: _focus,
+                        controller: _controller,
                       ),
-                  ],
-                ),
-              ),
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 280),
-                opacity: _showChrome ? 1 : 0,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 100),
-                      curve: Curves.easeOut,
-                      child: _showChips && !keyboardOpen
-                          ? _ChipRow(
-                              chips: _chips,
-                              pulsing: _pulsingChip,
-                              pulse: _chipPulse,
-                              onTap: _onChipTap,
-                            )
-                          : const SizedBox(width: double.infinity, height: 0),
                     ),
-                    _Composer(
-                      focusNode: _focus,
-                      controller: _controller,
-                      onSend: () {
-                        final t = _controller.text.trim();
-                        if (t.isEmpty) return;
-                        _onChipTap(t);
-                        _controller.clear();
-                        _focus.unfocus();
-                      },
-                    ),
-                    SizedBox(height: keyboardOpen ? 8 : 12),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                ],
+              );
+            },
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusBar extends StatelessWidget {
+  const _StatusBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 44,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Row(
+          children: [
+            Text(
+              '9:41',
+              style: GoogleFonts.nunito(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF111827),
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '●●●  100%',
+              style: GoogleFonts.nunito(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF6B6B73),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -264,199 +246,74 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.onBack});
+  const _TopBar({required this.opacity, required this.dy});
 
-  final VoidCallback onBack;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 16, 4),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: onBack,
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          ),
-          Text(
-            '✦  Plan Coach',
-            style: GoogleFonts.nunito(
-              fontSize: 17,
-              fontWeight: FontWeight.w800,
-              color: DsTokens.textPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GreetingBlock extends StatelessWidget {
-  const _GreetingBlock({
-    required this.intro,
-    required this.line1,
-    required this.line2,
-    required this.showTip,
-    required this.showAi,
-    required this.sweep,
-  });
-
-  final AnimationController intro;
-  final String line1;
-  final String line2;
-  final bool showTip;
-  final bool showAi;
-  final AnimationController sweep;
+  final double opacity;
+  final double dy;
 
   @override
   Widget build(BuildContext context) {
-    final starT = CurvedAnimation(
-      parent: intro,
-      curve: const Interval(0.0, 0.125, curve: Curves.easeOut),
-    );
-
-    return Align(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            FadeTransition(
-              opacity: starT,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.35),
-                  end: Offset.zero,
-                ).animate(starT),
-                child: _StarBadge(sweep: sweep, active: showAi),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              line1.isEmpty ? ' ' : line1,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(
-                fontSize: 34,
-                fontWeight: FontWeight.w800,
-                height: 1.15,
-                color: DsTokens.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              line2.isEmpty ? ' ' : line2,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                height: 1.25,
-                color: DsTokens.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 14),
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 400),
-              opacity: showTip ? 1 : 0,
-              child: AnimatedSlide(
-                duration: const Duration(milliseconds: 400),
-                offset: showTip ? Offset.zero : const Offset(0, 0.2),
-                child: Text(
-                  'Tell me one goal and a timeframe —\nI’ll draft a precise plan.',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.nunito(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    height: 1.4,
-                    color: DsTokens.textSecondary,
-                  ),
-                ),
-              ),
-            ),
-            if (showAi) ...[
-              const SizedBox(height: 20),
-              Text(
-                'Generating…',
-                style: GoogleFonts.nunito(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: DsTokens.accent,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StarBadge extends StatelessWidget {
-  const _StarBadge({required this.sweep, required this.active});
-
-  final AnimationController sweep;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: sweep,
-      builder: (context, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            child!,
-            if (active)
-              ClipOval(
-                child: SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: Transform.translate(
-                    offset: Offset(-60 + 120 * sweep.value, 0),
-                    child: Transform.rotate(
-                      angle: -0.6,
-                      child: Container(
-                        width: 28,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withValues(alpha: 0),
-                              Colors.white.withValues(alpha: 0.95),
-                              const Color(0xFF7DD3FC).withValues(alpha: 0.85),
-                              Colors.white.withValues(alpha: 0),
-                            ],
-                          ),
-                        ),
+    return Opacity(
+      opacity: opacity,
+      child: Transform.translate(
+        offset: Offset(0, dy),
+        child: SizedBox(
+          height: 48,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Material(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => Navigator.of(context).maybePop(),
+                    child: const SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: Center(
+                        child: Text('←', style: TextStyle(fontSize: 18)),
                       ),
                     ),
                   ),
                 ),
-              ),
-          ],
-        );
-      },
-      child: Container(
-        width: 56,
-        height: 56,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white.withValues(alpha: 0.7),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x1A007AFF),
-              blurRadius: 16,
-              offset: Offset(0, 4),
+                const Spacer(),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ShaderMask(
+                      blendMode: BlendMode.srcIn,
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [
+                          Color(0xFF40C4EC),
+                          Color(0xFF17ACDA),
+                          Color(0xFFE1F3F7),
+                        ],
+                      ).createShader(bounds),
+                      child: Text(
+                        '✦',
+                        style: GoogleFonts.inter(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Premium',
+                      style: GoogleFonts.nunito(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                const SizedBox(width: 32),
+              ],
             ),
-          ],
-        ),
-        child: Text(
-          '✦',
-          style: GoogleFonts.nunito(
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-            color: DsTokens.accent,
           ),
         ),
       ),
@@ -464,92 +321,37 @@ class _StarBadge extends StatelessWidget {
   }
 }
 
-class _UserBubble extends StatelessWidget {
-  const _UserBubble({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 220),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: DsTokens.accent,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(18),
-          topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(18),
-          bottomRight: Radius.circular(6),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x33007AFF),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.nunito(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
-class _ChipRow extends StatelessWidget {
-  const _ChipRow({
-    required this.chips,
-    required this.pulsing,
-    required this.pulse,
-    required this.onTap,
+class _TypeClip extends StatelessWidget {
+  const _TypeClip({
+    required this.text,
+    required this.progress,
+    required this.visible,
+    required this.maxWidth,
+    required this.style,
   });
 
-  final List<String> chips;
-  final String? pulsing;
-  final AnimationController pulse;
-  final ValueChanged<String> onTap;
+  final String text;
+  final double progress;
+  final bool visible;
+  final double maxWidth;
+  final TextStyle style;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 44,
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-        scrollDirection: Axis.horizontal,
-        itemCount: chips.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (context, i) {
-          final label = chips[i];
-          final isPulse = pulsing == label;
-          return AnimatedBuilder(
-            animation: pulse,
-            builder: (context, child) {
-              final scale = isPulse
-                  ? 1 + 0.08 * math.sin(pulse.value * math.pi)
-                  : 1.0;
-              return Transform.scale(scale: scale, child: child);
-            },
-            child: ActionChip(
-              onPressed: () => onTap(label),
-              backgroundColor: Colors.white,
-              side: const BorderSide(color: DsTokens.border),
-              label: Text(
-                label,
-                style: GoogleFonts.nunito(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: DsTokens.textPrimary,
-                ),
-              ),
+    return Opacity(
+      opacity: visible ? 1 : 0,
+      child: Align(
+        alignment: Alignment.center,
+        child: ClipRect(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            widthFactor: math.max(0.01, progress),
+            child: SizedBox(
+              width: maxWidth,
+              child: Text(text, style: style, maxLines: 1, overflow: TextOverflow.clip),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -557,71 +359,110 @@ class _ChipRow extends StatelessWidget {
 
 class _Composer extends StatelessWidget {
   const _Composer({
+    required this.chips,
+    required this.showChips,
     required this.focusNode,
     required this.controller,
-    required this.onSend,
   });
 
+  final List<String> chips;
+  final bool showChips;
   final FocusNode focusNode;
   final TextEditingController controller;
-  final VoidCallback onSend;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Container(
-              height: 48,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x14000000),
-                    blurRadius: 10,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: TextField(
-                focusNode: focusNode,
-                controller: controller,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => onSend(),
-                style: GoogleFonts.nunito(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  border: InputBorder.none,
-                  hintText: 'e.g. Lose 5 kg in 7 weeks',
-                  hintStyle: GoogleFonts.nunito(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: DsTokens.textTertiary,
-                  ),
-                ),
-              ),
-            ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 100),
+            child: showChips
+                ? SizedBox(
+                    height: 40,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: chips.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (context, i) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFE5E5EB)),
+                          ),
+                          child: Text(
+                            chips[i],
+                            style: GoogleFonts.nunito(
+                              fontSize: 12,
+                              height: 16 / 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.012,
+                              color: const Color(0xFF6B7280),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : const SizedBox(width: double.infinity, height: 0),
           ),
-          const SizedBox(width: 10),
-          Material(
-            color: DsTokens.accent,
-            shape: const CircleBorder(),
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onSend,
-              child: const SizedBox(
-                width: 48,
-                height: 48,
-                child: Icon(Icons.arrow_upward_rounded, color: Colors.white),
-              ),
+          if (showChips) const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: const Color(0xFFE5E5EB)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    focusNode: focusNode,
+                    controller: controller,
+                    style: GoogleFonts.nunito(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF111827),
+                    ),
+                    decoration: InputDecoration(
+                      isCollapsed: true,
+                      border: InputBorder.none,
+                      hintText: 'e.g. Lose 5 kg in 7 weeks',
+                      hintStyle: GoogleFonts.nunito(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF6B6B73),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  width: 36,
+                  height: 36,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF007AFF),
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                  ),
+                  child: Text(
+                    '↑',
+                    style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
