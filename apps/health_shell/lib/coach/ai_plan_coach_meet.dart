@@ -16,7 +16,7 @@ import 'demo_script.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v15';
+  static const buildMarker = 'meet-v16';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -418,9 +418,20 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                                       0,
                                                       28 * (1 - star),
                                                     ),
-                                                    child: const Center(
-                                                      child: _SparkleStar(
-                                                        size: 64,
+                                                    // Star spins in and settles as copy begins.
+                                                    child: Transform.rotate(
+                                                      angle: (1 -
+                                                              Curves
+                                                                  .easeOutCubic
+                                                                  .transform(
+                                                            star,
+                                                          )) *
+                                                          math.pi *
+                                                          2.2,
+                                                      child: const Center(
+                                                        child: _SparkleStar(
+                                                          size: 64,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -496,6 +507,10 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                             child: _Composer(
                               chips: composerChips,
                               showChips: showChips,
+                              // Meet: reserve chip row before chips paint in, so
+                              // chrome fade-in doesn't grow composer and shove
+                              // the centered greeting upward.
+                              reserveChipSlot: !inChat && !chipsGone,
                               focusNode: _focus,
                               controller: _controller,
                               keyboardOpen: _kbOpen,
@@ -603,26 +618,45 @@ class _SparklePainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final outer = size.width * 0.48;
-    final inner = size.width * 0.16;
+    final inner = size.width * 0.20;
+    // How far along tip→inner the rounded tip starts (lower = softer tips).
+    const tipSoft = 0.62;
 
     final path = Path();
     for (var i = 0; i < 4; i++) {
       final aOuter = -math.pi / 2 + i * math.pi / 2;
       final aInner = aOuter + math.pi / 4;
-      final ox = cx + outer * math.cos(aOuter);
-      final oy = cy + outer * math.sin(aOuter);
-      final ix = cx + inner * math.cos(aInner);
-      final iy = cy + inner * math.sin(aInner);
+      final aPrevInner = aOuter - math.pi / 4;
+
+      final tip = Offset(
+        cx + outer * math.cos(aOuter),
+        cy + outer * math.sin(aOuter),
+      );
+      final prevInner = Offset(
+        cx + inner * math.cos(aPrevInner),
+        cy + inner * math.sin(aPrevInner),
+      );
+      final nextInner = Offset(
+        cx + inner * math.cos(aInner),
+        cy + inner * math.sin(aInner),
+      );
+      final nearIn = Offset.lerp(tip, prevInner, 1 - tipSoft)!;
+      final nearOut = Offset.lerp(tip, nextInner, 1 - tipSoft)!;
+
       if (i == 0) {
-        path.moveTo(ox, oy);
+        path.moveTo(prevInner.dx, prevInner.dy);
       } else {
-        path.lineTo(ox, oy);
+        path.lineTo(prevInner.dx, prevInner.dy);
       }
-      path.lineTo(ix, iy);
+      path.lineTo(nearIn.dx, nearIn.dy);
+      // Rounded tip instead of a sharp corner.
+      path.quadraticBezierTo(tip.dx, tip.dy, nearOut.dx, nearOut.dy);
+      path.lineTo(nextInner.dx, nextInner.dy);
     }
     path.close();
 
     final paint = Paint()
+      ..isAntiAlias = true
       ..shader = const LinearGradient(
         begin: Alignment(-0.2, -1),
         end: Alignment(0.4, 1),
@@ -727,6 +761,7 @@ class _Composer extends StatelessWidget {
   const _Composer({
     required this.chips,
     required this.showChips,
+    required this.reserveChipSlot,
     required this.focusNode,
     required this.controller,
     required this.keyboardOpen,
@@ -738,6 +773,7 @@ class _Composer extends StatelessWidget {
 
   final List<String> chips;
   final bool showChips;
+  final bool reserveChipSlot;
   final FocusNode focusNode;
   final TextEditingController controller;
   final bool keyboardOpen;
@@ -748,50 +784,55 @@ class _Composer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chipSlot = showChips || reserveChipSlot;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showChips)
+          if (chipSlot)
             SizedBox(
               height: 40,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: chips.length,
-                separatorBuilder: (_, _) => const SizedBox(width: 8),
-                itemBuilder: (context, i) {
-                  final label = chips[i];
-                  return GestureDetector(
-                    key: ValueKey('chip-$label'),
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => onChipTap(label),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFE5E5EB)),
-                      ),
-                      child: Text(
-                        label,
-                        style: GoogleFonts.nunito(
-                          fontSize: 12,
-                          height: 16 / 12,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.012,
-                          color: const Color(0xFF6B7280),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+              child: showChips
+                  ? ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: chips.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (context, i) {
+                        final label = chips[i];
+                        return GestureDetector(
+                          key: ValueKey('chip-$label'),
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => onChipTap(label),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFFE5E5EB),
+                              ),
+                            ),
+                            child: Text(
+                              label,
+                              style: GoogleFonts.nunito(
+                                fontSize: 12,
+                                height: 16 / 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.012,
+                                color: const Color(0xFF6B7280),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox.expand(),
             ),
-          if (showChips) const SizedBox(height: 8),
+          if (chipSlot) const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
             decoration: BoxDecoration(
