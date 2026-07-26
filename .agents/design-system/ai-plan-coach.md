@@ -47,6 +47,21 @@
 
 Keyboard: mid-fi iOS-style open component (`Keyboard/iOS`).
 
+### Meet · Intro Motion（Figma timeline）
+
+**Frame:** `AiPlanCoach · Meet · Intro Motion` (`133:728`)  
+（原 instance `132:701` 已 detach 以便打字机裁切）  
+**Duration:** 4.2s · Deep link: https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-728
+
+| t | Action |
+|---|--------|
+| 0.00–0.55 | ✦ 从下往上隐现（OPACITY + TRANSLATION_Y） |
+| 0.65–2.35 | 主标题打字机（TitleClip WIDTH 左→右） |
+| 2.45–3.05 | 副标题 tip 从下往上隐现 |
+| 3.15–3.75 | Back + QuickExamples + InputBar 同时出现 |
+
+Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-intro.mp4`
+
 ---
 
 ## Artifacts
