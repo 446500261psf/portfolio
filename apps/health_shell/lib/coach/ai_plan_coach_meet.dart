@@ -8,14 +8,15 @@ import 'chat_models.dart';
 import 'chat_transcript.dart';
 import 'demo_script.dart';
 
-/// Meet + Chat flow:
+/// Meet + Chat + Plan flow:
 /// 1) Intro Motion — Figma `133:728`
 /// 2) Keyboard Focus — Figma `136:695`
-/// 3) Chip/Send → user bubble → Generating → stream reply (Cursor-style)
+/// 3) Chip/Send → user bubble → Coach shimmer → stream reply
+/// 4) Confirm → plan thinking lines → weekly OpenContainer cards
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v10';
+  static const buildMarker = 'meet-v11';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -60,11 +61,17 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
   ChatTurnState _turn = ChatTurnState.idle;
   final List<ChatMessage> _messages = [];
   List<String> _followUps = [];
+  List<WeekPlan> _weeks = [];
+  bool _planThinking = false;
+  String? _planThinkingLine;
+  double _planThinkingOpacity = 0;
   int _sendSeq = 0;
 
   bool get _introDone => _intro.value >= _chromeEnd;
   bool get _busy =>
-      _turn == ChatTurnState.generating || _turn == ChatTurnState.streaming;
+      _turn == ChatTurnState.generating ||
+      _turn == ChatTurnState.streaming ||
+      _turn == ChatTurnState.planThinking;
 
   @override
   void initState() {
@@ -174,6 +181,71 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
     }
   }
 
+  Future<void> _runPlanThinkingCycle(int seq) async {
+    const fadeMs = 280;
+    const hold = Duration(milliseconds: 1100);
+    final lines = WeightLoss15DayScript.planThinkingLines;
+    const steps = 8;
+    final stepWait = Duration(milliseconds: fadeMs ~/ steps);
+
+    for (final line in lines) {
+      if (!mounted || seq != _sendSeq) return;
+      setState(() {
+        _planThinkingLine = line;
+        _planThinkingOpacity = 0;
+      });
+      for (var s = 1; s <= steps; s++) {
+        if (!mounted || seq != _sendSeq) return;
+        await Future<void>.delayed(stepWait);
+        setState(() => _planThinkingOpacity = s / steps);
+      }
+      await Future<void>.delayed(hold);
+      if (!mounted || seq != _sendSeq) return;
+      for (var s = steps - 1; s >= 0; s--) {
+        if (!mounted || seq != _sendSeq) return;
+        await Future<void>.delayed(stepWait);
+        setState(() => _planThinkingOpacity = s / steps);
+      }
+    }
+
+    if (!mounted || seq != _sendSeq) return;
+    _sweep
+      ..stop()
+      ..reset();
+    setState(() {
+      _planThinking = false;
+      _planThinkingLine = null;
+      _planThinkingOpacity = 0;
+      _phase = CoachPhase.planReady;
+      _turn = ChatTurnState.awaitingUser;
+      _weeks = List<WeekPlan>.of(WeightLoss15DayScript.weeks);
+      _followUps = const [];
+    });
+    _scrollToEnd();
+  }
+
+  Future<void> _startPlanGeneration({
+    required int seq,
+    required String userId,
+    required String text,
+  }) async {
+    setState(() {
+      _phase = CoachPhase.planGenerating;
+      _followUps = [];
+      _weeks = [];
+      _messages.add(
+        ChatMessage(id: userId, role: ChatRole.user, text: text),
+      );
+      _turn = ChatTurnState.planThinking;
+      _planThinking = true;
+      _planThinkingLine = WeightLoss15DayScript.planThinkingLines.first;
+      _planThinkingOpacity = 0;
+    });
+    _scrollToEnd();
+    _sweep.repeat();
+    await _runPlanThinkingCycle(seq);
+  }
+
   Future<void> _sendMessage(String raw) async {
     final text = raw.trim();
     if (text.isEmpty || _busy) return;
@@ -186,6 +258,12 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
         _messages.where((m) => m.role == ChatRole.user).length + 1;
     final userId = 'u-$userTurn';
     final assistantId = 'a-$userTurn';
+
+    // Confirm → plan generating (light on Coach + thinking lines).
+    if (WeightLoss15DayScript.isPlanConfirm(text)) {
+      await _startPlanGeneration(seq: seq, userId: userId, text: text);
+      return;
+    }
 
     setState(() {
       _phase = CoachPhase.chat;
@@ -273,7 +351,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
             builder: (context, _) {
               final t = _intro.value;
               final k = _kb.value;
-              final inChat = _phase == CoachPhase.chat;
+              final inChat = _phase != CoachPhase.meet;
 
               final star = _ramp(t, 0, _starEnd);
               final hiP = _ramp(t, _hiStart, _hiEnd);
@@ -323,6 +401,10 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                   messages: _messages,
                                   generating:
                                       _turn == ChatTurnState.generating,
+                                  planThinking: _planThinking,
+                                  planThinkingLine: _planThinkingLine,
+                                  planThinkingOpacity: _planThinkingOpacity,
+                                  weeks: _weeks,
                                   sweep: _sweep,
                                   scrollController: _scroll,
                                 )
@@ -695,8 +777,11 @@ class _Composer extends StatelessWidget {
                 itemCount: chips.length,
                 separatorBuilder: (_, _) => const SizedBox(width: 8),
                 itemBuilder: (context, i) {
+                  final label = chips[i];
                   return GestureDetector(
-                    onTap: () => onChipTap(chips[i]),
+                    key: ValueKey('chip-$label'),
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => onChipTap(label),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -708,7 +793,7 @@ class _Composer extends StatelessWidget {
                         border: Border.all(color: const Color(0xFFE5E5EB)),
                       ),
                       child: Text(
-                        chips[i],
+                        label,
                         style: GoogleFonts.nunito(
                           fontSize: 12,
                           height: 16 / 12,

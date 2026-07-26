@@ -8,14 +8,16 @@ https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=133-72
 
 ## What opens by default
 
-**AiPlanCoach Meet → Chat flow**
+**AiPlanCoach Meet → Chat → Plan flow**
 
 1. Intro Motion (`133:728`) — star → typewriter → tip → chips + input  
 2. Keyboard Focus (`136:695`) — tap input: chips vanish → middle fades → iOS keyboard slides up 202px  
-3. Chip / ↑ send — user bubble → Generating → streamed Coach reply（Cursor 风格）  
-   Demo 剧本：`Lose 3 kg in 15 days` / `15天减重3公斤`
+3. Chip / ↑ send — user bubble → Coach 高光 → streamed reply  
+4. 确认生成计划 — 思考文案渐隐 → 每周折叠卡 → OpenContainer 详情  
 
-Marker: `meet-v10` — thinking = ✦ Coach 高光扫过（无文案、无大星星）
+Demo：`Lose 3 kg in 15 days` → `3 days / week · Home only` → `Yes, generate my plan`
+
+Marker: `meet-v11`
 
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'chat_models.dart';
+import 'plan_thinking.dart';
+import 'week_plan_cards.dart';
 
 class ChatTranscript extends StatelessWidget {
   const ChatTranscript({
@@ -10,28 +12,53 @@ class ChatTranscript extends StatelessWidget {
     required this.generating,
     required this.sweep,
     required this.scrollController,
+    this.planThinking = false,
+    this.planThinkingLine,
+    this.planThinkingOpacity = 0,
+    this.weeks = const [],
   });
 
   final List<ChatMessage> messages;
   final bool generating;
   final Animation<double> sweep;
   final ScrollController scrollController;
+  final bool planThinking;
+  final String? planThinkingLine;
+  final double planThinkingOpacity;
+  final List<WeekPlan> weeks;
 
   @override
   Widget build(BuildContext context) {
+    final showWeeks = weeks.isNotEmpty && !planThinking;
+    final extras = <Widget>[
+      if (generating) CoachShimmerLabel(sweep: sweep),
+      if (planThinking)
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!generating) CoachShimmerLabel(sweep: sweep),
+            PlanThinkingLineView(
+              line: planThinkingLine ?? '',
+              opacity: planThinkingOpacity,
+            ),
+          ],
+        ),
+      if (showWeeks) WeekPlanCardList(weeks: weeks),
+    ];
+
     return ListView.builder(
       controller: scrollController,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      itemCount: messages.length + (generating ? 1 : 0),
+      itemCount: messages.length + extras.length,
       itemBuilder: (context, i) {
-        if (generating && i == messages.length) {
-          return _CoachThinkingRow(sweep: sweep);
+        if (i < messages.length) {
+          final m = messages[i];
+          if (m.role == ChatRole.user) {
+            return _UserBubble(text: m.text);
+          }
+          return _AssistantBubble(text: m.text, streaming: m.isStreaming);
         }
-        final m = messages[i];
-        if (m.role == ChatRole.user) {
-          return _UserBubble(text: m.text);
-        }
-        return _AssistantBubble(text: m.text, streaming: m.isStreaming);
+        return extras[i - messages.length];
       },
     );
   }
@@ -160,27 +187,25 @@ class _CoachLabel extends StatelessWidget {
   }
 }
 
-/// Thinking: only ✦ Coach, with a visible highlight sweep. No status copy.
-class _CoachThinkingRow extends StatelessWidget {
-  const _CoachThinkingRow({required this.sweep});
+/// ✦ Coach with a visible highlight sweep (reply thinking / plan generating).
+class CoachShimmerLabel extends StatelessWidget {
+  const CoachShimmerLabel({super.key, required this.sweep});
 
   final Animation<double> sweep;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Align(
         alignment: Alignment.centerLeft,
         child: AnimatedBuilder(
           animation: sweep,
           builder: (context, child) {
-            // Ease so the bright band spends less time idle at edges.
             final t = Curves.easeInOut.transform(sweep.value);
             return ShaderMask(
               blendMode: BlendMode.srcIn,
               shaderCallback: (bounds) {
-                // Narrow cyan→white band racing left→right across glyphs.
                 final start = -1.2 + 2.8 * t;
                 return LinearGradient(
                   begin: Alignment(start, -0.4),

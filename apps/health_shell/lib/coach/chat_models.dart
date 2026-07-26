@@ -3,6 +3,8 @@ enum ChatRole { user, assistant }
 enum CoachPhase {
   meet,
   chat,
+  planGenerating,
+  planReady,
 }
 
 enum ChatTurnState {
@@ -10,6 +12,7 @@ enum ChatTurnState {
   generating,
   streaming,
   awaitingUser,
+  planThinking,
 }
 
 class ChatMessage {
@@ -47,4 +50,38 @@ class ScriptBeat {
 
   /// Optional key to pick the next beat after a follow-up chip.
   final String? nextKey;
+}
+
+class DayPlan {
+  const DayPlan({
+    required this.label,
+    required this.focus,
+    required this.duration,
+    required this.moves,
+    this.note,
+  });
+
+  final String label;
+  final String focus;
+  final String duration;
+  final List<String> moves;
+  final String? note;
+}
+
+class WeekPlan {
+  const WeekPlan({
+    required this.id,
+    required this.title,
+    required this.dayRange,
+    required this.summary,
+    required this.sessions,
+    required this.days,
+  });
+
+  final String id;
+  final String title;
+  final String dayRange;
+  final String summary;
+  final int sessions;
+  final List<DayPlan> days;
 }

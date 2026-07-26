@@ -5,6 +5,9 @@ class WeightLoss15DayScript {
   static const goalChip = 'Lose 3 kg in 15 days';
   static const goalChipZh = '15天减重3公斤';
 
+  static const confirmChip = 'Yes, generate my plan';
+  static const confirmChipZh = '同意，生成计划';
+
   static const chips = <String>[
     goalChip,
     goalChipZh,
@@ -13,16 +16,39 @@ class WeightLoss15DayScript {
     'I want to lose fat',
   ];
 
+  static const confirmChips = <String>[
+    confirmChip,
+    confirmChipZh,
+    'Make it easier first',
+  ];
+
+  static const planThinkingLines = <String>[
+    '正在考虑每周训练天数…',
+    '正在安排合适的训练课程…',
+    '正在平衡力量与有氧…',
+    '正在创造奖励 sticker…',
+    '正在锁定 15 天计划框架…',
+  ];
+
+  /// User confirmed they want the full plan generated.
+  static bool isPlanConfirm(String userText) {
+    final t = userText.toLowerCase().trim();
+    if (t.contains('同意') && t.contains('生成')) return true;
+    if (t.contains('generate my plan')) return true;
+    if (t == 'yes' || t.startsWith('yes,')) return true;
+    if (t.contains('looks good') && t.contains('generate')) return true;
+    if (t == confirmChip.toLowerCase()) return true;
+    if (t == confirmChipZh) return true;
+    return false;
+  }
+
   /// After the Nth user message (1-based), return the coach beat.
   static ScriptBeat beatForUserTurn(int userTurnIndex, String userText) {
     final t = userText.toLowerCase();
     if (userTurnIndex <= 1) return _goal;
-    if (userTurnIndex == 2) {
-      if (t.contains('easier') || t.contains('轻松')) return _easier;
-      return _constraints;
-    }
-    if (t.contains('day b') || t.contains('show day b')) return _dayB;
-    return _expand;
+    if (t.contains('easier') || t.contains('轻松')) return _easier;
+    if (userTurnIndex == 2) return _framework;
+    return _framework;
   }
 
   static const _goal = ScriptBeat(
@@ -39,55 +65,140 @@ class WeightLoss15DayScript {
     ],
   );
 
-  static const _constraints = ScriptBeat(
+  /// End-of-chat framework — user must confirm before full plan cards.
+  static const _framework = ScriptBeat(
     assistantFull:
-        'Locked: 3 days/week · home · −3 kg / 15 days.\n\n'
-        'Week structure\n'
+        'Here’s a rough framework for −3 kg / 15 days · 3×/week · home:\n\n'
+        'Week shape\n'
         '• Day A — Full-body strength 35–40 min\n'
         '• Day B — Zone-2 cardio 30 min + core\n'
         '• Day C — Strength + finishers 40 min\n\n'
         'Daily non-negotiables\n'
         '• Protein ~1.6 g/kg · ~500 kcal deficit\n'
         '• 7k–9k steps · sleep 7h+\n\n'
-        'Want me to expand Day A into a set-by-set workout?',
-    followUps: [
-      'Expand Day A',
-      'Make it easier',
-      'Looks good',
-    ],
+        'This is only the skeleton. Confirm and I’ll generate '
+        'your weekly plan cards.',
+    followUps: confirmChips,
   );
 
   static const _easier = ScriptBeat(
     assistantFull:
-        'Softer version: still −3 kg / 15 days, but volume −20%.\n'
+        'Softer framework: still −3 kg / 15 days, but volume −20%.\n'
         '• Shorter finishers · deficit closer to 400 kcal\n'
         '• Add one full rest day if sleep <6.5h\n\n'
-        'Say “Expand Day A” when you want the detailed session.',
-    followUps: ['Expand Day A', 'Keep original plan'],
+        'Confirm when you want me to generate the weekly cards.',
+    followUps: confirmChips,
   );
 
-  static const _expand = ScriptBeat(
-    assistantFull:
-        'Day A — Home full-body (≈40 min)\n'
-        '1. Goblet squat 4×8\n'
-        '2. Push-up or knee push-up 3×10\n'
-        '3. Hip hinge (backpack RDL) 3×10\n'
-        '4. Reverse lunge 3×8/leg\n'
-        '5. Plank 3×40s\n\n'
-        'Rest 60–90s. If any set feels >8/10 hard, drop one set tomorrow.',
-    followUps: [
-      'Show Day B',
-      'Start tomorrow plan',
-    ],
-  );
-
-  static const _dayB = ScriptBeat(
-    assistantFull:
-        'Day B — Zone-2 + core (≈30 min)\n'
-        '• Brisk walk / easy bike 25 min (talk pace)\n'
-        '• Dead bug 3×8/side\n'
-        '• Side plank 2×30s/side\n\n'
-        'Keep heart rate conversational. Tomorrow is Day C.',
-    followUps: ['Start tomorrow plan'],
-  );
+  static const weeks = <WeekPlan>[
+    WeekPlan(
+      id: 'w1',
+      title: 'Week 1',
+      dayRange: 'Days 1–7',
+      summary: 'Build the habit · 3 home sessions',
+      sessions: 3,
+      days: [
+        DayPlan(
+          label: 'Day 1 · Mon',
+          focus: 'Day A — Full-body strength',
+          duration: '35–40 min',
+          moves: [
+            'Goblet squat 4×8',
+            'Push-up / knee push-up 3×10',
+            'Backpack RDL 3×10',
+            'Reverse lunge 3×8/leg',
+            'Plank 3×40s',
+          ],
+          note: 'Rest 60–90s. Keep effort ≤8/10.',
+        ),
+        DayPlan(
+          label: 'Day 3 · Wed',
+          focus: 'Day B — Zone-2 + core',
+          duration: '≈30 min',
+          moves: [
+            'Brisk walk / easy bike 25 min',
+            'Dead bug 3×8/side',
+            'Side plank 2×30s/side',
+          ],
+          note: 'Talk-pace heart rate only.',
+        ),
+        DayPlan(
+          label: 'Day 5 · Fri',
+          focus: 'Day C — Strength + finishers',
+          duration: '≈40 min',
+          moves: [
+            'Split squat 3×8/leg',
+            'Pike push-up 3×8',
+            'Hip thrust 3×12',
+            'Farmer carry 3×40s',
+            'Finisher: mountain climber 2×30s',
+          ],
+        ),
+      ],
+    ),
+    WeekPlan(
+      id: 'w2',
+      title: 'Week 2',
+      dayRange: 'Days 8–14',
+      summary: 'Add density · keep recovery honest',
+      sessions: 3,
+      days: [
+        DayPlan(
+          label: 'Day 8 · Mon',
+          focus: 'Day A — Strength (progress)',
+          duration: '40 min',
+          moves: [
+            'Goblet squat 4×10',
+            'Push-up 3×12',
+            'Backpack RDL 3×12',
+            'Reverse lunge 3×10/leg',
+            'Plank 3×45s',
+          ],
+        ),
+        DayPlan(
+          label: 'Day 10 · Wed',
+          focus: 'Day B — Zone-2 + core',
+          duration: '35 min',
+          moves: [
+            'Brisk walk / bike 28 min',
+            'Dead bug 3×10/side',
+            'Bird dog 3×8/side',
+          ],
+        ),
+        DayPlan(
+          label: 'Day 12 · Fri',
+          focus: 'Day C — Strength + finishers',
+          duration: '40 min',
+          moves: [
+            'Split squat 3×10/leg',
+            'Pike push-up 3×10',
+            'Hip thrust 3×12',
+            'Finisher: jump rope or high knees 3×40s',
+          ],
+          note: 'If sleep <6.5h, drop the finisher.',
+        ),
+      ],
+    ),
+    WeekPlan(
+      id: 'w3',
+      title: 'Week 3',
+      dayRange: 'Day 15',
+      summary: 'Lock-in day · measure & reward',
+      sessions: 1,
+      days: [
+        DayPlan(
+          label: 'Day 15',
+          focus: 'Check-in + light Day A',
+          duration: '30 min',
+          moves: [
+            'Weigh-in & waist note',
+            'Goblet squat 3×8',
+            'Push-up 2×10',
+            'Easy walk 15 min',
+          ],
+          note: 'Claim your reward sticker — you finished the block.',
+        ),
+      ],
+    ),
+  ];
 }
