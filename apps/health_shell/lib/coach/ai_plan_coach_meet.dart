@@ -12,11 +12,11 @@ import 'demo_script.dart';
 /// 1) Intro Motion — Figma `133:728`
 /// 2) Keyboard Focus — Figma `136:695`
 /// 3) Chip/Send → user bubble → Coach shimmer → stream reply
-/// 4) Confirm → plan thinking lines → weekly OpenContainer cards
+/// 4) Confirm → plan thinking lines → weekly cards (in-place expand)
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v11';
+  static const buildMarker = 'meet-v12';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();

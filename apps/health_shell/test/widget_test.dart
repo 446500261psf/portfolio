@@ -106,5 +106,14 @@ void main() {
     expect(find.text('Your 15-day plan'), findsOneWidget);
     expect(find.text('Week 1'), findsOneWidget);
     expect(find.text('Week 2'), findsOneWidget);
+
+    // Expand in-place (same card width) — detail appears without a new route.
+    final week1 = find.byKey(const ValueKey('week-card-w1'));
+    await tester.ensureVisible(week1);
+    await tester.pump();
+    await tester.tap(week1);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(find.text('Day 1 · Mon'), findsOneWidget);
   });
 }

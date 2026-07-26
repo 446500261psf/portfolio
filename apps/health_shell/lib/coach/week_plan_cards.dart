@@ -1,21 +1,27 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'chat_models.dart';
 
-/// Collapsed weekly plan cards — tap opens detail via OpenContainer.
-class WeekPlanCardList extends StatelessWidget {
+/// Collapsed weekly plan cards — tap expands detail in-place (same width).
+class WeekPlanCardList extends StatefulWidget {
   const WeekPlanCardList({super.key, required this.weeks});
 
   final List<WeekPlan> weeks;
+
+  @override
+  State<WeekPlanCardList> createState() => _WeekPlanCardListState();
+}
+
+class _WeekPlanCardListState extends State<WeekPlanCardList> {
+  String? _expandedId;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -28,9 +34,19 @@ class WeekPlanCardList extends StatelessWidget {
               ),
             ),
           ),
-          for (var i = 0; i < weeks.length; i++) ...[
+          for (var i = 0; i < widget.weeks.length; i++) ...[
             if (i > 0) const SizedBox(height: 10),
-            WeekPlanOpenCard(week: weeks[i]),
+            WeekPlanExpandCard(
+              key: ValueKey('week-card-${widget.weeks[i].id}'),
+              week: widget.weeks[i],
+              expanded: _expandedId == widget.weeks[i].id,
+              onToggle: () {
+                setState(() {
+                  final id = widget.weeks[i].id;
+                  _expandedId = _expandedId == id ? null : id;
+                });
+              },
+            ),
           ],
         ],
       ),
@@ -38,119 +54,58 @@ class WeekPlanCardList extends StatelessWidget {
   }
 }
 
-class WeekPlanOpenCard extends StatelessWidget {
-  const WeekPlanOpenCard({super.key, required this.week});
+class WeekPlanExpandCard extends StatelessWidget {
+  const WeekPlanExpandCard({
+    super.key,
+    required this.week,
+    required this.expanded,
+    required this.onToggle,
+  });
 
   final WeekPlan week;
+  final bool expanded;
+  final VoidCallback onToggle;
 
-  static const _closedRadius = 18.0;
+  static const _radius = 24.0;
   static const _surface = Color(0xFFFFFFFF);
-  static const _openSurface = Color(0xFFF8F7F6);
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
-      // Morph from closed card bounds → full page (radius/color/size continuous).
-      transitionType: ContainerTransitionType.fade,
-      transitionDuration: const Duration(milliseconds: 480),
-      closedElevation: 0,
-      openElevation: 0,
-      closedColor: _surface,
-      openColor: _openSurface,
-      middleColor: _surface,
-      closedShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(_closedRadius),
-        side: const BorderSide(color: Color(0xFFE5E5EB)),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeInOutCubic,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: BorderRadius.circular(_radius),
+        border: Border.all(
+          color: expanded
+              ? const Color(0xFFB7E4F3)
+              : const Color(0xFFE5E5EB),
+        ),
       ),
-      openShape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ),
-      tappable: false,
-      closedBuilder: (context, open) {
-        return _WeekClosedTile(week: week, onTap: open);
-      },
-      openBuilder: (context, close) {
-        return _WeekDetailPage(week: week, onClose: close);
-      },
-    );
-  }
-}
-
-class _WeekClosedTile extends StatelessWidget {
-  const _WeekClosedTile({required this.week, required this.onTap});
-
-  final WeekPlan week;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8F7FC),
-                  borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(_radius),
+        child: InkWell(
+          onTap: onToggle,
+          borderRadius: BorderRadius.circular(_radius),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _WeekHeader(week: week, expanded: expanded),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 320),
+                  curve: Curves.easeInOutCubic,
+                  alignment: Alignment.topCenter,
+                  child: expanded
+                      ? _WeekExpandedBody(week: week)
+                      : const SizedBox(width: double.infinity),
                 ),
-                child: Text(
-                  '✦',
-                  style: GoogleFonts.nunito(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF17ACDA),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      week.title,
-                      style: GoogleFonts.nunito(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${week.dayRange} · ${week.sessions} sessions',
-                      style: GoogleFonts.nunito(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF6B6B73),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      week.summary,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.nunito(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF9CA3AF),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: Color(0xFF9CA3AF),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -158,71 +113,105 @@ class _WeekClosedTile extends StatelessWidget {
   }
 }
 
-class _WeekDetailPage extends StatelessWidget {
-  const _WeekDetailPage({required this.week, required this.onClose});
+class _WeekHeader extends StatelessWidget {
+  const _WeekHeader({required this.week, required this.expanded});
 
   final WeekPlan week;
-  final VoidCallback onClose;
+  final bool expanded;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F6),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 16, 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: onClose,
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                  Expanded(
-                    child: Text(
-                      week.title,
-                      style: GoogleFonts.nunito(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    week.dayRange,
-                    style: GoogleFonts.nunito(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF6B6B73),
-                    ),
-                  ),
-                ],
-              ),
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8F7FC),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            '✦',
+            style: GoogleFonts.nunito(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF17ACDA),
             ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-                children: [
-                  Text(
-                    week.summary,
-                    style: GoogleFonts.nunito(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF6B6B73),
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  for (final day in week.days) ...[
-                    _DayDetailBlock(day: day),
-                    const SizedBox(height: 14),
-                  ],
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                week.title,
+                style: GoogleFonts.nunito(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF111827),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${week.dayRange} · ${week.sessions} sessions',
+                style: GoogleFonts.nunito(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF6B6B73),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                week.summary,
+                maxLines: expanded ? 3 : 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.nunito(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF9CA3AF),
+                ),
+              ),
+            ],
+          ),
+        ),
+        AnimatedRotation(
+          turns: expanded ? 0.25 : 0,
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeInOut,
+          child: const Icon(
+            Icons.chevron_right_rounded,
+            color: Color(0xFF9CA3AF),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _WeekExpandedBody extends StatelessWidget {
+  const _WeekExpandedBody({required this.week});
+
+  final WeekPlan week;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 1,
+            color: const Color(0xFFE8E8EE),
+          ),
+          const SizedBox(height: 14),
+          for (var i = 0; i < week.days.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            _DayDetailBlock(day: week.days[i]),
+          ],
+        ],
       ),
     );
   }
@@ -237,11 +226,10 @@ class _DayDetailBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE5E5EB)),
+        color: const Color(0xFFF7FBFD),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,7 +237,7 @@ class _DayDetailBlock extends StatelessWidget {
           Text(
             day.label,
             style: GoogleFonts.nunito(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w800,
               color: const Color(0xFF17ACDA),
             ),
@@ -258,7 +246,7 @@ class _DayDetailBlock extends StatelessWidget {
           Text(
             day.focus,
             style: GoogleFonts.nunito(
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.w800,
               color: const Color(0xFF111827),
             ),
@@ -272,14 +260,14 @@ class _DayDetailBlock extends StatelessWidget {
               color: const Color(0xFF9CA3AF),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           for (final move in day.moves)
             Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 3),
               child: Text(
                 '• $move',
                 style: GoogleFonts.nunito(
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF374151),
                   height: 1.35,
@@ -287,11 +275,11 @@ class _DayDetailBlock extends StatelessWidget {
               ),
             ),
           if (day.note != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               day.note!,
               style: GoogleFonts.nunito(
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 fontStyle: FontStyle.italic,
                 color: const Color(0xFF6B6B73),

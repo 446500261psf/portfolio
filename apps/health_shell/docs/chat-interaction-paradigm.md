@@ -38,7 +38,7 @@ PlanGenerating
        │
        ▼
 PlanReady
-  └─ 每周折叠卡（摘要）→ 点击 OpenContainer 放大进详情
+  └─ 每周折叠卡（摘要）→ 点击后在卡片同宽范围内纵向展开详情
 ```
 
 规则：
@@ -69,7 +69,7 @@ PlanReady
 - **AI**：左对齐 · 白底浅描边 · 深字 · 上方可带小 ✦  
 - **Generating / PlanThinking**：仅左对齐 `✦ Coach`，高光扫过（无 Generating 文案，无大星星）  
 - **Plan thinking lines**：一行文案渐隐切换  
-- **Week cards**：折叠摘要；详情用 OpenContainer 从原位原尺寸放大，圆角/颜色连续过渡  
+- **Week cards**：折叠摘要；详情在**同一卡片宽度**内纵向展开（不铺满全屏），圆角/描边连续过渡  
 
 ---
 
@@ -98,7 +98,7 @@ Coach 高光 + 思考文案（例）：
 5. 正在锁定 15 天计划框架…  
 
 ### PlanReady
-Week 1 / Week 2 / Week 3 折叠卡 → 点击展开详情。
+Week 1 / Week 2 / Week 3 折叠卡 → 点击后在原卡片宽度内展开详情（可再点收起）。
 
 ---
 
@@ -110,7 +110,7 @@ Week 1 / Week 2 / Week 3 折叠卡 → 点击展开详情。
 | Keyboard | `136:695` |
 | Chip → user bubble → Generating | `132:981` |
 | AI 流式回复 / 追问 | 扩展实现（Cursor 交互） |
-| Plan 卡 OpenContainer | 扩展实现 |
+| Plan 卡同宽展开 | 扩展实现 |
 
 ---
 
@@ -120,5 +120,5 @@ Week 1 / Week 2 / Week 3 折叠卡 → 点击展开详情。
 2. Coach 高光 → AI 流式回复  
 3. 约束 chip → 框架回复 + 确认 chips  
 4. 点确认 → 思考文案渐隐 → 出现 Week 折叠卡  
-5. 点 Week 卡 → OpenContainer 放大进详情  
+5. 点 Week 卡 → 同宽纵向展开详情（再点收起）  
 6. Generating / PlanThinking 期间点发送无效  
