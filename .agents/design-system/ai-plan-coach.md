@@ -76,6 +76,20 @@ Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-intro.mp4`
 
 Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-keyboard.mp4`
 
+### Meet · Chip Tap → AI Flash
+
+**Frame:** `AiPlanCoach · Meet · Chip Tap → AI Flash` (`132:981`)  
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=132-981
+
+| t | Action |
+|---|--------|
+| 0–0.15s | 静止 |
+| 0.15s | 点击 chip（scale pulse） |
+| 0.28–0.48s | 右上角生成用户对话气泡 |
+| 0.55–1.50s | AI Generating · ✦ **光线闪过**（LightSweep ×2） |
+
+Artifact: `/opt/cursor/artifacts/ai-plan-coach-chip-tap-flash.mp4`
+
 ---
 
 ## Artifacts
