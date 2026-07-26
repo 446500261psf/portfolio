@@ -63,6 +63,18 @@ Keyboard: mid-fi iOS-style open component (`Keyboard/iOS`).
 
 Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-intro.mp4`
 
+### Meet · Keyboard Focus Motion
+
+**Frame:** `AiPlanCoach · Meet · Keyboard Focus` (`136:695`)  
+**Deep link:** https://www.figma.com/design/1ibE2wPPDAauJKaj1ft6AC/Design-System?node-id=136-695
+
+| t | Action |
+|---|--------|
+| 0–0.35s | 静止：中间问候区 + 输入框可见，键盘隐藏在下方 |
+| 0.35–0.95s | 点击输入框：键盘上滑浮现 · **中间内容同时渐隐上移** |
+
+Artifact: `/opt/cursor/artifacts/ai-plan-coach-meet-keyboard.mp4`
+
 ---
 
 ## Artifacts
