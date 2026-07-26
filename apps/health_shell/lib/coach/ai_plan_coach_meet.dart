@@ -16,7 +16,7 @@ import 'sparkle_star.dart';
 class AiPlanCoachMeetPage extends StatefulWidget {
   const AiPlanCoachMeetPage({super.key});
 
-  static const buildMarker = 'meet-v22';
+  static const buildMarker = 'meet-v23';
 
   @override
   State<AiPlanCoachMeetPage> createState() => _AiPlanCoachMeetPageState();
@@ -61,6 +61,8 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
   final List<ChatMessage> _messages = [];
   List<String> _followUps = [];
   List<WeekPlan> _weeks = [];
+  /// Message count when week cards were inserted (keeps plan above mood/Today).
+  int? _weeksAfterMessageCount;
   bool _planThinking = false;
   String? _planThinkingLine;
   double _planThinkingOpacity = 0;
@@ -209,6 +211,8 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
       _phase = CoachPhase.planReady;
       _turn = ChatTurnState.awaitingUser;
       _weeks = List<WeekPlan>.of(WeightLoss15DayScript.weeks);
+      // Anchor cards here so later mood/Today messages render below the plan.
+      _weeksAfterMessageCount = _messages.length;
       // Figma `131:695` — emoji mood chips before the Today closing line.
       _followUps = List<String>.of(WeightLoss15DayScript.feedbackChips);
     });
@@ -224,6 +228,7 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
       _phase = CoachPhase.planGenerating;
       _followUps = [];
       _weeks = [];
+      _weeksAfterMessageCount = null;
       _messages.add(
         ChatMessage(id: userId, role: ChatRole.user, text: text),
       );
@@ -459,6 +464,8 @@ class _AiPlanCoachMeetPageState extends State<AiPlanCoachMeetPage>
                                       planThinkingOpacity:
                                           _planThinkingOpacity,
                                       weeks: _weeks,
+                                      weeksAfterMessageCount:
+                                          _weeksAfterMessageCount,
                                       scrollController: _scroll,
                                     )
                                   : LayoutBuilder(

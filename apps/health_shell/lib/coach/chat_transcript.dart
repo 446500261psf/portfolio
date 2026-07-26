@@ -16,6 +16,8 @@ class ChatTranscript extends StatelessWidget {
     this.planThinkingLine,
     this.planThinkingOpacity = 0,
     this.weeks = const [],
+    /// Insert week cards after this many messages (plan → mood → coach reply).
+    this.weeksAfterMessageCount,
   });
 
   final List<ChatMessage> messages;
@@ -25,12 +27,24 @@ class ChatTranscript extends StatelessWidget {
   final String? planThinkingLine;
   final double planThinkingOpacity;
   final List<WeekPlan> weeks;
+  final int? weeksAfterMessageCount;
+
+  Widget _bubbleFor(ChatMessage m) {
+    if (m.role == ChatRole.user) return _UserBubble(text: m.text);
+    return _AssistantBubble(text: m.text);
+  }
 
   @override
   Widget build(BuildContext context) {
     final showWeeks = weeks.isNotEmpty && !planThinking;
-    // Thinking only = reply not produced yet (generating / planThinking).
-    final extras = <Widget>[
+    final insertAt = (weeksAfterMessageCount ?? messages.length)
+        .clamp(0, messages.length);
+
+    // Order: earlier chat → plan cards → mood ack / Today reply → thinking.
+    final items = <Widget>[
+      for (var i = 0; i < insertAt; i++) _bubbleFor(messages[i]),
+      if (showWeeks) WeekPlanCardList(weeks: weeks),
+      for (var i = insertAt; i < messages.length; i++) _bubbleFor(messages[i]),
       if (generating) const _ThinkingBubble(),
       if (planThinking)
         _ThinkingBubble(
@@ -39,25 +53,13 @@ class ChatTranscript extends StatelessWidget {
             opacity: planThinkingOpacity,
           ),
         ),
-      // Closing Today line is streamed as a normal assistant message
-      // after the user taps a mood chip — not auto-appended under cards.
-      if (showWeeks) WeekPlanCardList(weeks: weeks),
     ];
 
     return ListView.builder(
       controller: scrollController,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      itemCount: messages.length + extras.length,
-      itemBuilder: (context, i) {
-        if (i < messages.length) {
-          final m = messages[i];
-          if (m.role == ChatRole.user) {
-            return _UserBubble(text: m.text);
-          }
-          return _AssistantBubble(text: m.text);
-        }
-        return extras[i - messages.length];
-      },
+      itemCount: items.length,
+      itemBuilder: (context, i) => items[i],
     );
   }
 }

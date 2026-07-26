@@ -142,6 +142,17 @@ void main() {
       findsOneWidget,
     );
 
+    // Order: plan cards → mood user bubble → Today coach reply.
+    final planY = tester.getTopLeft(find.text('Your 15-day plan')).dy;
+    final moodY = tester.getTopLeft(find.textContaining("That’s it!")).dy;
+    final todayY = tester
+        .getTopLeft(
+          find.textContaining('added your generated plan to the Today page'),
+        )
+        .dy;
+    expect(planY < moodY, isTrue);
+    expect(moodY < todayY, isTrue);
+
     // Expand in-place (same card width) — detail appears without a new route.
     final week1 = find.byKey(const ValueKey('week-card-w1'));
     await tester.ensureVisible(week1);
