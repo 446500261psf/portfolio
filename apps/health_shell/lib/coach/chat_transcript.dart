@@ -96,23 +96,7 @@ class _AssistantBubble extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '✦',
-                    style: GoogleFonts.nunito(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                      color: const Color(0xFF17ACDA),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Coach',
-                    style: GoogleFonts.nunito(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                      color: const Color(0xFF6B6B73),
-                    ),
-                  ),
+                  const _CoachLabel(),
                   if (streaming) ...[
                     const SizedBox(width: 6),
                     SizedBox(
@@ -146,7 +130,37 @@ class _AssistantBubble extends StatelessWidget {
   }
 }
 
-/// Thinking state: compact ✦ Coach row with a fast light sweep — no big star.
+class _CoachLabel extends StatelessWidget {
+  const _CoachLabel();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '✦',
+          style: GoogleFonts.nunito(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF17ACDA),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          'Coach',
+          style: GoogleFonts.nunito(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF6B6B73),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Thinking: only ✦ Coach, with a visible highlight sweep. No status copy.
 class _CoachThinkingRow extends StatelessWidget {
   const _CoachThinkingRow({required this.sweep});
 
@@ -160,91 +174,54 @@ class _CoachThinkingRow extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: AnimatedBuilder(
           animation: sweep,
-          builder: (context, _) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 2,
-                          vertical: 4,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '✦',
-                              style: GoogleFonts.nunito(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                color: const Color(0xFF17ACDA),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Coach',
-                              style: GoogleFonts.nunito(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                color: const Color(0xFF6B6B73),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Generating…',
-                              style: GoogleFonts.nunito(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF9CA3AF),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final w = constraints.maxWidth;
-                              // Fast diagonal flash across the Coach row.
-                              final x = -0.35 * w + 1.7 * w * sweep.value;
-                              return Transform.translate(
-                                offset: Offset(x, 0),
-                                child: Transform.rotate(
-                                  angle: -0.55,
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      width: 22,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.white.withValues(alpha: 0),
-                                            Colors.white.withValues(alpha: 0.95),
-                                            const Color(0xFF7DD3FC)
-                                                .withValues(alpha: 0.85),
-                                            Colors.white.withValues(alpha: 0),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          builder: (context, child) {
+            // Ease so the bright band spends less time idle at edges.
+            final t = Curves.easeInOut.transform(sweep.value);
+            return ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) {
+                // Narrow cyan→white band racing left→right across glyphs.
+                final start = -1.2 + 2.8 * t;
+                return LinearGradient(
+                  begin: Alignment(start, -0.4),
+                  end: Alignment(start + 0.85, 0.4),
+                  colors: const [
+                    Color(0xFF6B6B73),
+                    Color(0xFF6B6B73),
+                    Color(0xFF7DD3FC),
+                    Color(0xFFFFFFFF),
+                    Color(0xFF7DD3FC),
+                    Color(0xFF6B6B73),
+                    Color(0xFF6B6B73),
+                  ],
+                  stops: const [0.0, 0.32, 0.44, 0.50, 0.56, 0.68, 1.0],
+                ).createShader(bounds);
+              },
+              child: child,
             );
           },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '✦',
+                style: GoogleFonts.nunito(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Coach',
+                style: GoogleFonts.nunito(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

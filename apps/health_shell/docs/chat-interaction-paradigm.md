@@ -60,7 +60,7 @@ Chat
 
 - **User**：右对齐 · 蓝底 `#007AFF` · 白字 · 圆角 18  
 - **AI**：左对齐 · 白底浅描边 · 深字 · 上方可带小 ✦  
-- **Generating**：左对齐 `✦ Coach` + `Generating…`，光线在 Coach 行上快速扫过（不要突然跳出大星星）  
+- **Generating**：仅左对齐 `✦ Coach`，高光在字形上扫过（无 Generating/Thinking 文案，无大星星）  
 
 - 消息区可滚；新消息自动滚到底  
 - Composer 始终在底（键盘打开时上移，逻辑沿用 136:695）

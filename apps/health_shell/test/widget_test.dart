@@ -52,14 +52,13 @@ void main() {
     await tester.tap(find.text(WeightLoss15DayScript.goalChip));
     await tester.pump();
 
-    // Optimistic user bubble + compact Coach thinking (light sweep, no big star).
+    // Optimistic user bubble + ✦ Coach thinking shimmer (no status copy).
     expect(find.text(WeightLoss15DayScript.goalChip), findsWidgets);
     expect(find.text('Coach'), findsOneWidget);
-    expect(find.text('Generating…'), findsOneWidget);
-
-    // Finish generating window.
-    await tester.pump(const Duration(milliseconds: 900));
     expect(find.text('Generating…'), findsNothing);
+
+    // Finish generating window — Coach remains on the reply bubble.
+    await tester.pump(const Duration(milliseconds: 900));
     expect(find.text('Coach'), findsOneWidget);
 
     // Stream enough ticks for the first line to appear.
