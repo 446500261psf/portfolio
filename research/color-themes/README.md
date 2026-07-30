@@ -22,3 +22,6 @@
 
 ## 证据使用建议
 安全场景优先遵循 ISO 3864 / ANSI Z535；医疗与运动心理结论多为倾向性证据，落地前建议做目标用户测试。
+
+## 品牌 App 补充
+见 `summaries/05-主流Health-Fitness-App品牌色参考与逻辑.md` 与 `05-brand-apps/`。
