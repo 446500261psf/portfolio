@@ -14,6 +14,7 @@
 ## 方法
 
 - 拆解：`studies/玄鉴仙族-构书法拆解.md`  
+- **群像人物关系**：`studies/群像人物关系构建.md`  
 - Skill：`.cursor/skills/novel-architecture/SKILL.md`  
 
 ## 旧目录
