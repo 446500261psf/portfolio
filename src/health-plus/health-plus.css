@@ -5,8 +5,9 @@
   --hp-fg: #ffffff;
   --hp-ease: cubic-bezier(0.33, 0.1, 0.2, 1);
   --hp-font: 'Sora', 'HarmonyOS Sans', 'Segoe UI', sans-serif;
-  /* 卡宽 ≈ 100/800 */
-  --hp-card-w: clamp(88px, 12.5vw, 118px);
+  /* 卡片加大；圆角收小 */
+  --hp-card-w: clamp(148px, 18vw, 200px);
+  --hp-card-radius: 12px;
 }
 
 *,
@@ -107,12 +108,12 @@ body {
 }
 
 .hp-ticks-left {
-  left: 12.5%;
+  left: 6%;
 }
 
 .hp-ticks-right {
   left: auto;
-  right: 12.5%;
+  right: 6%;
 }
 
 .hp-ticks img {
@@ -126,8 +127,8 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  top: 22%;
-  bottom: 28%;
+  top: 18%;
+  bottom: 12%;
   z-index: 2;
 }
 
@@ -154,10 +155,10 @@ body {
   top: 50%;
   width: var(--hp-card-w);
   aspect-ratio: 9 / 19.5;
-  border-radius: 22px;
+  border-radius: var(--hp-card-radius);
   overflow: hidden;
   background: #f3f3f3;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
   will-change: transform, opacity, filter;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
@@ -165,7 +166,9 @@ body {
 }
 
 .hp-card.is-active {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.36);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 .hp-card img {
