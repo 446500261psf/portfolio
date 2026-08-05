@@ -1,0 +1,193 @@
+/* Explore Health+ — Figma 视觉：全视口 + 浅角扇形 */
+
+:root {
+  --hp-bg: #292929;
+  --hp-fg: #ffffff;
+  --hp-ease: cubic-bezier(0.33, 0.1, 0.2, 1);
+  --hp-font: 'Sora', 'HarmonyOS Sans', 'Segoe UI', sans-serif;
+  /* 卡片加大；圆角收小 */
+  --hp-card-w: clamp(148px, 18vw, 200px);
+  --hp-card-radius: 12px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  background: var(--hp-bg);
+  color: var(--hp-fg);
+  font-family: var(--hp-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow: hidden;
+}
+
+.hp {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  background: var(--hp-bg);
+  overflow: hidden;
+}
+
+.hp-artboard {
+  position: absolute;
+  inset: 0;
+  background: var(--hp-bg);
+  opacity: 0;
+  transition: opacity 0.4s var(--hp-ease);
+}
+
+.hp.is-ready .hp-artboard {
+  opacity: 1;
+}
+
+.hp-logo {
+  position: absolute;
+  left: 1.625%;
+  top: 1.82%;
+  width: min(106px, 13.25vw);
+  height: auto;
+  display: block;
+  z-index: 10;
+}
+
+.hp-title {
+  position: absolute;
+  top: 11.22%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  font-size: clamp(28px, 4.5vw, 36px);
+  font-weight: 700;
+  line-height: normal;
+  text-align: center;
+  white-space: nowrap;
+  color: #fff;
+  z-index: 10;
+}
+
+.hp-underline {
+  position: absolute;
+  left: 50%;
+  top: 15.7%;
+  width: min(271px, 33.875vw);
+  height: 5px;
+  transform: translateX(-50%);
+  display: block;
+  z-index: 10;
+}
+
+.hp-ticks {
+  position: absolute;
+  top: 26.5%;
+  width: min(29px, 3.6vw);
+  height: min(180px, 19.23vh);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  z-index: 12;
+  opacity: 0.7;
+}
+
+.hp-ticks:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.hp-ticks-left {
+  left: 6%;
+}
+
+.hp-ticks-right {
+  left: auto;
+  right: 6%;
+}
+
+.hp-ticks img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hp-carousel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18%;
+  bottom: 12%;
+  z-index: 2;
+}
+
+.hp-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.hp-stage-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.hp-card {
+  appearance: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 0;
+  border: 0;
+  width: var(--hp-card-w);
+  aspect-ratio: 9 / 19.5;
+  border-radius: var(--hp-card-radius);
+  overflow: hidden;
+  background: #f3f3f3;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  cursor: pointer;
+}
+
+.hp-card.is-active {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  opacity: 1 !important;
+  filter: none !important;
+  cursor: default;
+}
+
+.hp-card:disabled {
+  color: inherit;
+}
+
+.hp-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
