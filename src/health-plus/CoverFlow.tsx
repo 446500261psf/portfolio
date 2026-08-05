@@ -2,19 +2,27 @@ import type { HealthCard } from './cards'
 
 /** 中心卡始终居中正面；两侧扇开并渐隐 */
 export const STAGE_PERSPECTIVE = 1400
-export const CARD_ROTATE_Y = 14
+export const CARD_ROTATE_Y = 16
 export const STAGE_ROTATE_X = 4
-export const CARD_SPREAD = 88
-export const CARD_Z_STEP = 26
+export const CARD_SPREAD = 96
+export const CARD_Z_STEP = 78
 
 type Props = {
   cards: HealthCard[]
   activeIndex: number
   transitionMs: number
+  onNext: () => void
+  onPrev: () => void
 }
 
-export function CoverFlow({ cards, activeIndex, transitionMs }: Props) {
-  const ease = 'cubic-bezier(0.33, 0.1, 0.2, 1)'
+export function CoverFlow({
+  cards,
+  activeIndex,
+  transitionMs,
+  onNext,
+  onPrev,
+}: Props) {
+  const ease = 'cubic-bezier(0.22, 0.75, 0.2, 1)'
 
   return (
     <div className="hp-stage" style={{ perspective: `${STAGE_PERSPECTIVE}px` }}>
@@ -33,8 +41,8 @@ export function CoverFlow({ cards, activeIndex, transitionMs }: Props) {
           /* 当前卡永远在中心：tx/rotate 相对 activeIndex */
           const tx = rel * CARD_SPREAD
           const rotateY = rel === 0 ? 0 : rel * -CARD_ROTATE_Y
-          const tz = rel === 0 ? 48 : -depth * CARD_Z_STEP
-          const scale = rel === 0 ? 1 : Math.max(0.88, 1 - depth * 0.04)
+          const tz = rel === 0 ? 110 : -depth * CARD_Z_STEP
+          const scale = rel === 0 ? 1 : Math.max(0.8, 0.92 - (depth - 1) * 0.06)
 
           /* 中心不透明；两侧随距离递减 */
           const opacity =
@@ -51,9 +59,12 @@ export function CoverFlow({ cards, activeIndex, transitionMs }: Props) {
           ].join(' ')
 
           return (
-            <div
+            <button
+              type="button"
               key={card.id}
               className={`hp-card${rel === 0 ? ' is-active' : ''}`}
+              onClick={rel > 0 ? onNext : rel < 0 ? onPrev : undefined}
+              disabled={rel === 0}
               style={{
                 zIndex: 40 - depth,
                 opacity,
@@ -62,10 +73,12 @@ export function CoverFlow({ cards, activeIndex, transitionMs }: Props) {
                 transition: `transform ${transitionMs}ms ${ease}, opacity ${transitionMs}ms ${ease}, filter ${transitionMs}ms ${ease}`,
               }}
               aria-hidden={rel !== 0}
-              aria-label={card.title}
+              aria-label={
+                rel > 0 ? `Show next: ${card.title}` : rel < 0 ? `Show previous: ${card.title}` : card.title
+              }
             >
               <img src={card.flatSrc} alt="" draggable={false} />
-            </div>
+            </button>
           )
         })}
       </div>

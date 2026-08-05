@@ -4,7 +4,7 @@ import { healthAssets, healthCards } from './cards'
 
 /** Figma 默认居中卡：Build · Upper Body */
 const INITIAL_INDEX = 2
-const TRANSITION_MS = 520
+const TRANSITION_MS = 680
 
 export default function ExploreHealthPlus() {
   const rootRef = useRef<HTMLElement>(null)
@@ -136,7 +136,13 @@ export default function ExploreHealthPlus() {
         </button>
 
         <div className="hp-carousel" aria-hidden={false}>
-          <CoverFlow cards={healthCards} activeIndex={activeIndex} transitionMs={TRANSITION_MS} />
+          <CoverFlow
+            cards={healthCards}
+            activeIndex={activeIndex}
+            transitionMs={TRANSITION_MS}
+            onNext={goNext}
+            onPrev={goPrev}
+          />
         </div>
       </div>
     </main>

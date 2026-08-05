@@ -150,9 +150,12 @@ body {
 }
 
 .hp-card {
+  appearance: none;
   position: absolute;
   left: 50%;
   top: 50%;
+  padding: 0;
+  border: 0;
   width: var(--hp-card-w);
   aspect-ratio: 9 / 19.5;
   border-radius: var(--hp-card-radius);
@@ -163,12 +166,19 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
+  transform-origin: center center;
+  cursor: pointer;
 }
 
 .hp-card.is-active {
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
   opacity: 1 !important;
   filter: none !important;
+  cursor: default;
+}
+
+.hp-card:disabled {
+  color: inherit;
 }
 
 .hp-card img {
