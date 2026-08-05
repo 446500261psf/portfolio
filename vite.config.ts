@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         demo: 'demo.html',
+        'health-plus': 'health-plus.html',
       },
     },
   },
