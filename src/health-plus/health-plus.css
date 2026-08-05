@@ -1,12 +1,12 @@
-/* Explore Health+ — standalone prototype (does not affect portfolio styles) */
+/* Explore Health+ — Figma 视觉：全视口 + 浅角扇形 */
 
 :root {
   --hp-bg: #292929;
   --hp-fg: #ffffff;
-  --hp-muted: rgba(255, 255, 255, 0.45);
-  --hp-card-radius: 22px;
-  --hp-ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --hp-font: 'Sora', 'Segoe UI', sans-serif;
+  --hp-ease: cubic-bezier(0.33, 0.1, 0.2, 1);
+  --hp-font: 'Sora', 'HarmonyOS Sans', 'Segoe UI', sans-serif;
+  /* 卡宽 ≈ 100/800 */
+  --hp-card-w: clamp(88px, 12.5vw, 118px);
 }
 
 *,
@@ -19,7 +19,6 @@ html,
 body,
 #root {
   margin: 0;
-  min-height: 100%;
   height: 100%;
   background: var(--hp-bg);
   color: var(--hp-fg);
@@ -28,133 +27,114 @@ body,
 }
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .hp {
   position: relative;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: clamp(20px, 4vh, 36px) clamp(16px, 4vw, 48px) 28px;
-  background:
-    radial-gradient(120% 70% at 50% 0%, rgba(255, 140, 70, 0.08), transparent 55%),
-    radial-gradient(80% 50% at 80% 100%, rgba(140, 120, 255, 0.07), transparent 50%),
-    var(--hp-bg);
+  background: var(--hp-bg);
   overflow: hidden;
 }
 
-.hp-header {
+.hp-artboard {
   position: absolute;
-  top: clamp(16px, 3vh, 28px);
-  left: clamp(16px, 3vw, 32px);
-  z-index: 5;
+  inset: 0;
+  background: var(--hp-bg);
   opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity 0.7s var(--hp-ease) 0.05s, transform 0.7s var(--hp-ease) 0.05s;
+  transition: opacity 0.4s var(--hp-ease);
 }
 
-.hp.is-ready .hp-header {
+.hp.is-ready .hp-artboard {
   opacity: 1;
-  transform: none;
 }
 
 .hp-logo {
+  position: absolute;
+  left: 1.625%;
+  top: 1.82%;
+  width: min(106px, 13.25vw);
+  height: auto;
   display: block;
-  height: 23px;
-  width: auto;
-}
-
-.hp-title-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: clamp(48px, 9vh, 88px);
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.8s var(--hp-ease) 0.15s, transform 0.8s var(--hp-ease) 0.15s;
-}
-
-.hp.is-ready .hp-title-block {
-  opacity: 1;
-  transform: none;
+  z-index: 10;
 }
 
 .hp-title {
+  position: absolute;
+  top: 11.22%;
+  left: 0;
+  right: 0;
   margin: 0;
-  font-size: clamp(28px, 4.2vw, 36px);
+  font-size: clamp(28px, 4.5vw, 36px);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: normal;
   text-align: center;
   white-space: nowrap;
+  color: #fff;
+  z-index: 10;
 }
 
 .hp-underline {
-  display: block;
-  width: min(271px, 55vw);
+  position: absolute;
+  left: 50%;
+  top: 15.7%;
+  width: min(271px, 33.875vw);
   height: 5px;
+  transform: translateX(-50%);
+  display: block;
+  z-index: 10;
 }
 
-.hp-carousel {
-  position: relative;
-  flex: 1 1 auto;
-  width: min(100%, 920px);
-  display: grid;
-  grid-template-columns: 36px 1fr 36px;
-  align-items: center;
-  gap: clamp(4px, 1.5vw, 20px);
-  margin-top: clamp(12px, 3vh, 36px);
-  opacity: 0;
-  transform: translateY(24px) scale(0.96);
-  transition: opacity 0.9s var(--hp-ease) 0.28s, transform 0.9s var(--hp-ease) 0.28s;
-}
-
-.hp.is-ready .hp-carousel {
-  opacity: 1;
-  transform: none;
-}
-
-.hp-nav {
-  position: relative;
-  appearance: none;
+.hp-ticks {
+  position: absolute;
+  top: 26.5%;
+  width: min(29px, 3.6vw);
+  height: min(180px, 19.23vh);
+  padding: 0;
   border: 0;
   background: transparent;
-  padding: 0;
-  width: 29px;
-  height: 180px;
   cursor: pointer;
-  opacity: 0.85;
-  transition: opacity 0.25s var(--hp-ease);
+  appearance: none;
+  z-index: 12;
+  opacity: 0.7;
 }
 
-.hp-nav:disabled {
-  opacity: 0.35;
+.hp-ticks:disabled {
+  opacity: 0.28;
   cursor: default;
 }
 
-.hp-nav:not(:disabled):hover {
-  opacity: 1;
+.hp-ticks-left {
+  left: 12.5%;
 }
 
-.hp-nav img {
+.hp-ticks-right {
+  left: auto;
+  right: 12.5%;
+}
+
+.hp-ticks img {
   display: block;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
 
-.hp-ticks-active {
-  display: none;
+.hp-carousel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 22%;
+  bottom: 28%;
+  z-index: 2;
 }
 
 .hp-stage {
   position: relative;
   width: 100%;
-  height: min(58vh, 520px);
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,28 +145,27 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+  transform-style: preserve-3d;
 }
 
 .hp-card {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(118px, 18vw, 168px);
+  width: var(--hp-card-w);
   aspect-ratio: 9 / 19.5;
-  border-radius: var(--hp-card-radius);
+  border-radius: 22px;
   overflow: hidden;
-  background: #111;
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.45),
-    0 2px 0 rgba(255, 255, 255, 0.06) inset;
+  background: #f3f3f3;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
   will-change: transform, opacity, filter;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 .hp-card.is-active {
-  box-shadow:
-    0 24px 56px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.36);
 }
 
 .hp-card img {
@@ -198,69 +177,4 @@ body {
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
-}
-
-.hp-dots {
-  display: flex;
-  gap: 8px;
-  margin-top: clamp(8px, 2vh, 20px);
-  opacity: 0;
-  transition: opacity 0.6s var(--hp-ease) 0.55s;
-}
-
-.hp.is-ready .hp-dots {
-  opacity: 1;
-}
-
-.hp-dots button {
-  appearance: none;
-  border: 0;
-  padding: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.28);
-  cursor: pointer;
-  transition: transform 0.3s var(--hp-ease), background 0.3s var(--hp-ease);
-}
-
-.hp-dots button.is-active {
-  background: #fff;
-  transform: scale(1.25);
-}
-
-.hp-hint {
-  margin: 14px 0 0;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--hp-muted);
-  opacity: 0;
-  transition: opacity 0.6s var(--hp-ease) 0.7s;
-}
-
-.hp.is-ready .hp-hint {
-  opacity: 1;
-}
-
-@media (max-width: 640px) {
-  .hp-nav {
-    display: none;
-  }
-
-  .hp-carousel {
-    grid-template-columns: 1fr;
-  }
-
-  .hp-stage {
-    height: min(52vh, 440px);
-  }
-
-  .hp-card {
-    width: clamp(112px, 28vw, 148px);
-  }
-
-  .hp-title {
-    white-space: normal;
-  }
 }

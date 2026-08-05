@@ -2,10 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { CoverFlow } from './CoverFlow'
 import { healthAssets, healthCards } from './cards'
 
-const TICK_COUNT = 13
 /** Figma 默认居中卡：Build · Upper Body */
 const INITIAL_INDEX = 2
-const TRANSITION_MS = 550
+const TRANSITION_MS = 520
 
 export default function ExploreHealthPlus() {
   const rootRef = useRef<HTMLElement>(null)
@@ -13,16 +12,6 @@ export default function ExploreHealthPlus() {
   const touchStart = useRef<{ x: number; y: number } | null>(null)
   const [activeIndex, setActiveIndex] = useState(INITIAL_INDEX)
   const [ready, setReady] = useState(false)
-
-  const goTo = useCallback((index: number) => {
-    if (lockedRef.current) return
-    if (index < 0 || index >= healthCards.length) return
-    lockedRef.current = true
-    window.setTimeout(() => {
-      lockedRef.current = false
-    }, TRANSITION_MS)
-    setActiveIndex((prev) => (prev === index ? prev : index))
-  }, [])
 
   const goNext = useCallback(() => {
     setActiveIndex((prev) => {
@@ -117,69 +106,39 @@ export default function ExploreHealthPlus() {
     }
   }, [goNext, goPrev])
 
-  const tickActive = Math.round(
-    ((TICK_COUNT - 1) * activeIndex) / Math.max(1, healthCards.length - 1),
-  )
-
   return (
     <main ref={rootRef} className={`hp${ready ? ' is-ready' : ''}`}>
-      <header className="hp-header">
+      {/* Figma 画布 800×936，等比缩放铺满视口 */}
+      <div className="hp-artboard" role="img" aria-label="Explore Health+">
         <img className="hp-logo" src={healthAssets.logo} alt="HUAWEI Health" width={106} height={23} />
-      </header>
 
-      <div className="hp-title-block">
         <h1 className="hp-title">Explore Health+</h1>
         <img className="hp-underline" src={healthAssets.underline} alt="" aria-hidden />
-      </div>
 
-      <section className="hp-carousel" aria-label="Health+ feature cards">
         <button
           type="button"
-          className="hp-nav hp-nav-prev"
+          className="hp-ticks hp-ticks-left"
           onClick={goPrev}
           disabled={activeIndex <= 0}
-          aria-label="Previous card"
+          aria-label="Previous"
         >
           <img src={healthAssets.ticksLeft} alt="" />
-          <span className="hp-ticks-active" aria-hidden>
-            {Array.from({ length: TICK_COUNT }, (_, i) => (
-              <i key={i} className={i === tickActive ? 'is-on' : undefined} />
-            ))}
-          </span>
         </button>
-
-        <CoverFlow cards={healthCards} activeIndex={activeIndex} transitionMs={TRANSITION_MS} />
 
         <button
           type="button"
-          className="hp-nav hp-nav-next"
+          className="hp-ticks hp-ticks-right"
           onClick={goNext}
           disabled={activeIndex >= healthCards.length - 1}
-          aria-label="Next card"
+          aria-label="Next"
         >
           <img src={healthAssets.ticksRight} alt="" />
-          <span className="hp-ticks-active" aria-hidden>
-            {Array.from({ length: TICK_COUNT }, (_, i) => (
-              <i key={i} className={i === tickActive ? 'is-on' : undefined} />
-            ))}
-          </span>
         </button>
-      </section>
 
-      <nav className="hp-dots" aria-label="Card position">
-        {healthCards.map((card, i) => (
-          <button
-            key={card.id}
-            type="button"
-            className={i === activeIndex ? 'is-active' : undefined}
-            onClick={() => goTo(i)}
-            aria-label={card.title}
-            aria-current={i === activeIndex ? 'true' : undefined}
-          />
-        ))}
-      </nav>
-
-      <p className="hp-hint">Scroll · swipe · ← →</p>
+        <div className="hp-carousel" aria-hidden={false}>
+          <CoverFlow cards={healthCards} activeIndex={activeIndex} transitionMs={TRANSITION_MS} />
+        </div>
+      </div>
     </main>
   )
 }
