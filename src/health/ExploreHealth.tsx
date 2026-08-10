@@ -15,10 +15,10 @@ const PHONES = [
   { id: 'sleep', src: publicUrl('health/phone-sleep.png'), label: 'Sleep Music' },
 ] as const
 
-const SPREAD = 74
-const ROTATE_Y = 32
-const DEPTH_Z = 48
-const MAX_DEPTH = 2.35
+const SPREAD = 62
+const ROTATE_Y = 24
+const DEPTH_Z = 40
+const MAX_DEPTH = 2.2
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n))
@@ -29,15 +29,14 @@ function cardStyle(offset: number): CSSProperties {
   const tx = offset * SPREAD
   const ry = offset * -ROTATE_Y
   const tz = -depth * DEPTH_Z
-  const scale = Math.max(0.82, 1 - depth * 0.07)
-  const opacity = clamp(1 - depth * 0.22, 0.42, 1)
-  const blur = depth > 1.2 ? (depth - 1.2) * 0.6 : 0
+  const ty = depth * 4
+  const scale = Math.max(0.86, 1 - depth * 0.055)
+  const opacity = clamp(1 - depth * 0.18, 0.5, 1)
 
   return {
     zIndex: Math.round(40 - depth * 10),
     opacity,
-    filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
-    transform: `translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`,
+    transform: `translate(-50%, -50%) translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`,
   }
 }
 
