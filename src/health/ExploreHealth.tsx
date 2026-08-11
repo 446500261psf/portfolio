@@ -15,14 +15,58 @@ const CARD_COUNT = 5
 /** Always show this many cards on each side of center (2+1+2 with 5 phones). */
 const SIDE_COUNT = Math.floor((CARD_COUNT - 1) / 2)
 const TRANSITION_MS = 320
+const CLICK_MOVE_PX = 6
+
+type Phone = {
+  id: string
+  src: string
+  label: string
+  title: string
+  blurb: string
+}
 
 /** Left → right phone screens matching Figma Group 3 order */
-const PHONES = [
-  { id: 'plan', src: publicUrl('health/phone-plan.png'), label: 'My plan' },
-  { id: 'training', src: publicUrl('health/phone-training.png'), label: 'Smart Training Plan' },
-  { id: 'workout', src: publicUrl('health/phone-workout.png'), label: 'Build · Upper Body' },
-  { id: 'analysis', src: publicUrl('health/phone-analysis.png'), label: "Today's analysis" },
-  { id: 'sleep', src: publicUrl('health/phone-sleep.png'), label: 'Sleep Music' },
+const PHONES: readonly Phone[] = [
+  {
+    id: 'plan',
+    src: publicUrl('health/phone-plan.png'),
+    label: 'My plan',
+    title: '我的计划',
+    blurb:
+      '一眼看清今日热量缺口与营养配比。把燃烧、摄入和下一餐建议收进同一张卡片，让坚持变得轻而易举。',
+  },
+  {
+    id: 'training',
+    src: publicUrl('health/phone-training.png'),
+    label: 'Smart Training Plan',
+    title: '智能训练计划',
+    blurb:
+      '从日常慢跑到全马目标，训练节奏会跟着你走。目标、课表与恢复建议自动排好，开练只需按下开始。',
+  },
+  {
+    id: 'workout',
+    src: publicUrl('health/phone-workout.png'),
+    label: 'Build · Upper Body',
+    title: '上肢塑形训练',
+    blurb:
+      '半小时上肢力量课，动作示范与消耗预估同步呈现。跟练即刻开始，把每一次发力都变成可见进步。',
+  },
+  {
+    id: 'analysis',
+    src: publicUrl('health/phone-analysis.png'),
+    label: "Today's analysis",
+    title: '今日分析',
+    blurb:
+      '三餐与营养素拆解成清晰圆环。哪里超了、哪里刚好，一屏读懂，下一餐决策更有底气。',
+  },
+  {
+    id: 'sleep',
+    src: publicUrl('health/phone-sleep.png'),
+    label: 'Sleep Music',
+    title: '助眠音乐',
+    blurb:
+      '雨声、海浪与轻柔旋律按场景分好类。选一段喜欢的声音，让夜晚慢慢安静下来。',
+  },
 ] as const
 
 const SPREAD = 62
@@ -95,14 +139,20 @@ export default function ExploreHealth() {
   const [active, setActive] = useState(2)
   const [tick, setTick] = useState(2)
   const [scrubHot, setScrubHot] = useState(false)
+  const [detailPhone, setDetailPhone] = useState<number | null>(null)
   const scrubRef = useRef<HTMLDivElement>(null)
   const lastTick = useRef<number | null>(null)
   const activeRef = useRef(2)
   const tickRef = useRef(2)
+  const pointerDown = useRef<{ x: number; y: number } | null>(null)
+  const didDrag = useRef(false)
   /** Queued adjacent steps for slow one-tick moves only. */
   const pendingSteps = useRef(0)
   const animating = useRef(false)
   const queueTimer = useRef<number | null>(null)
+
+  const inDetail = detailPhone != null
+  const detail = inDetail ? PHONES[detailPhone] : null
 
   useEffect(() => {
     activeRef.current = active
@@ -203,12 +253,32 @@ export default function ExploreHealth() {
   )
 
   const stopScrub = useCallback(() => {
-    /* Pointer stopped — cancel backlog and lock to the current tick's image. */
     snapToTick(tickRef.current)
     lastTick.current = null
   }, [snapToTick])
 
+  const openDetail = useCallback((phoneIndex: number) => {
+    clearQueue()
+    setScrubHot(false)
+    lastTick.current = null
+    setDetailPhone(phoneIndex)
+  }, [clearQueue])
+
+  const closeDetail = useCallback(() => {
+    setDetailPhone(null)
+  }, [])
+
+  useEffect(() => {
+    if (!inDetail) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeDetail()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [inDetail, closeDetail])
+
   const onPointerEnter = (e: PointerEvent<HTMLDivElement>) => {
+    if (inDetail) return
     const el = scrubRef.current
     if (!el) return
     setScrubHot(true)
@@ -216,16 +286,27 @@ export default function ExploreHealth() {
   }
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (inDetail) return
     const el = scrubRef.current
     if (!el) return
     setScrubHot(true)
+    pointerDown.current = { x: e.clientX, y: e.clientY }
+    didDrag.current = false
     e.currentTarget.setPointerCapture(e.pointerId)
     applyTick(tickFromClientX(e.clientX, el), true)
   }
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (inDetail) return
     const el = scrubRef.current
     if (!el) return
+    if (pointerDown.current) {
+      const dx = e.clientX - pointerDown.current.x
+      const dy = e.clientY - pointerDown.current.y
+      if (dx * dx + dy * dy > CLICK_MOVE_PX * CLICK_MOVE_PX) {
+        didDrag.current = true
+      }
+    }
     setScrubHot(true)
     applyTick(tickFromClientX(e.clientX, el), true)
   }
@@ -234,10 +315,18 @@ export default function ExploreHealth() {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId)
     }
+    const wasClick = pointerDown.current != null && !didDrag.current
+    pointerDown.current = null
+    didDrag.current = false
     stopScrub()
+    if (wasClick && !inDetail) {
+      openDetail(phoneFromTick(tickRef.current))
+    }
   }
 
   const onPointerLeave = () => {
+    pointerDown.current = null
+    didDrag.current = false
     setScrubHot(false)
     stopScrub()
   }
@@ -247,7 +336,7 @@ export default function ExploreHealth() {
   return (
     <main className="eh-page">
       <section
-        className="eh-stage"
+        className={`eh-stage${inDetail ? ' is-detail' : ''}`}
         style={{ width: STAGE_W, height: STAGE_H }}
         aria-label="Explore Health+ showcase"
       >
@@ -260,99 +349,126 @@ export default function ExploreHealth() {
           draggable={false}
         />
 
-        <h1 className="eh-title">Explore Health+</h1>
-        <img
-          className="eh-underline"
-          src={publicUrl('health/underline.svg')}
-          alt=""
-          width={271}
-          height={5}
-          draggable={false}
-        />
+        <div className="eh-explore" aria-hidden={inDetail}>
+          <h1 className="eh-title">Explore Health+</h1>
+          <img
+            className="eh-underline"
+            src={publicUrl('health/underline.svg')}
+            alt=""
+            width={271}
+            height={5}
+            draggable={false}
+          />
 
-        <div className="eh-carousel" aria-live="polite">
-          <div className="eh-carousel-track">
-            {PHONES.map((phone, i) => {
-              const offset = wrappedOffset(i, active, CARD_COUNT)
-              if (Math.abs(offset) > SIDE_COUNT) return null
-              const isCenter = offset === 0
-              return (
-                <button
-                  key={phone.id}
-                  type="button"
-                  className={`eh-card${isCenter ? ' is-center' : ''}`}
-                  style={cardStyle(offset)}
-                  aria-label={phone.label}
-                  aria-current={isCenter ? 'true' : undefined}
-                  onClick={() => {
-                    const delta = wrappedOffset(i, active, CARD_COUNT)
-                    if (delta === 0) return
-                    pendingSteps.current += delta
-                    /* Keep tick highlight aligned with the looping phone index */
-                    setTick((t) => {
-                      const targetPhone = i
-                      let next = t
-                      while (phoneFromTick(next) !== targetPhone) {
-                        next += delta > 0 ? 1 : -1
-                        next = mod(next, TICK_COUNT)
+          <div className="eh-carousel" aria-live="polite">
+            <div className="eh-carousel-track">
+              {PHONES.map((phone, i) => {
+                const offset = wrappedOffset(i, active, CARD_COUNT)
+                if (Math.abs(offset) > SIDE_COUNT) return null
+                const isCenter = offset === 0
+                return (
+                  <button
+                    key={phone.id}
+                    type="button"
+                    className={`eh-card${isCenter ? ' is-center' : ''}`}
+                    style={cardStyle(offset)}
+                    aria-label={phone.label}
+                    aria-current={isCenter ? 'true' : undefined}
+                    tabIndex={inDetail ? -1 : 0}
+                    onClick={() => {
+                      if (inDetail) return
+                      const delta = wrappedOffset(i, active, CARD_COUNT)
+                      if (delta === 0) {
+                        openDetail(i)
+                        return
                       }
-                      lastTick.current = next
-                      return next
-                    })
-                    drainQueue()
-                  }}
-                >
-                  <img src={phone.src} alt="" draggable={false} />
-                </button>
-              )
+                      pendingSteps.current += delta
+                      setTick((t) => {
+                        let next = t
+                        while (phoneFromTick(next) !== i) {
+                          next += delta > 0 ? 1 : -1
+                          next = mod(next, TICK_COUNT)
+                        }
+                        lastTick.current = next
+                        return next
+                      })
+                      drainQueue()
+                    }}
+                  >
+                    <img src={phone.src} alt="" draggable={false} />
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          <div className="eh-edge-fade" aria-hidden />
+
+          <div
+            ref={scrubRef}
+            className={`eh-scrubber${scrubHot ? ' is-hot' : ''}`}
+            role="slider"
+            aria-label="Browse Health+ screens"
+            aria-valuemin={0}
+            aria-valuemax={TICK_COUNT - 1}
+            aria-valuenow={tick}
+            aria-valuetext={`${PHONES[phoneFromTick(tick)].label} (${tick + 1}/${TICK_COUNT})`}
+            tabIndex={inDetail ? -1 : 0}
+            onPointerEnter={onPointerEnter}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            onPointerLeave={onPointerLeave}
+            onKeyDown={(e) => {
+              if (inDetail) return
+              if (e.key === 'ArrowLeft') {
+                e.preventDefault()
+                applyTick(clamp(tick - 1, 0, TICK_COUNT - 1), true)
+              } else if (e.key === 'ArrowRight') {
+                e.preventDefault()
+                applyTick(clamp(tick + 1, 0, TICK_COUNT - 1), true)
+              } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                openDetail(phoneFromTick(tick))
+              } else if (e.key === 'Home') {
+                e.preventDefault()
+                applyTick(0, true)
+              } else if (e.key === 'End') {
+                e.preventDefault()
+                applyTick(TICK_COUNT - 1, true)
+              }
+            }}
+          >
+            <span
+              className="eh-cursor-dot"
+              style={{ left: `${dotLeftPct}%` }}
+              aria-hidden
+            />
+            {Array.from({ length: TICK_COUNT }, (_, i) => {
+              const dist = Math.abs(i - tick)
+              const cls =
+                dist === 0 ? 'eh-tick is-active' : dist <= 2 ? 'eh-tick is-near' : 'eh-tick'
+              return <span key={i} className={cls} aria-hidden />
             })}
           </div>
         </div>
-        <div className="eh-edge-fade" aria-hidden />
 
-        <div
-          ref={scrubRef}
-          className={`eh-scrubber${scrubHot ? ' is-hot' : ''}`}
-          role="slider"
-          aria-label="Browse Health+ screens"
-          aria-valuemin={0}
-          aria-valuemax={TICK_COUNT - 1}
-          aria-valuenow={tick}
-          aria-valuetext={`${PHONES[phoneFromTick(tick)].label} (${tick + 1}/${TICK_COUNT})`}
-          tabIndex={0}
-          onPointerEnter={onPointerEnter}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
-          onPointerLeave={onPointerLeave}
-          onKeyDown={(e) => {
-            if (e.key === 'ArrowLeft') {
-              e.preventDefault()
-              applyTick(clamp(tick - 1, 0, TICK_COUNT - 1), true)
-            } else if (e.key === 'ArrowRight') {
-              e.preventDefault()
-              applyTick(clamp(tick + 1, 0, TICK_COUNT - 1), true)
-            } else if (e.key === 'Home') {
-              e.preventDefault()
-              applyTick(0, true)
-            } else if (e.key === 'End') {
-              e.preventDefault()
-              applyTick(TICK_COUNT - 1, true)
-            }
-          }}
-        >
-          <span
-            className="eh-cursor-dot"
-            style={{ left: `${dotLeftPct}%` }}
-            aria-hidden
-          />
-          {Array.from({ length: TICK_COUNT }, (_, i) => {
-            const dist = Math.abs(i - tick)
-            const cls =
-              dist === 0 ? 'eh-tick is-active' : dist <= 2 ? 'eh-tick is-near' : 'eh-tick'
-            return <span key={i} className={cls} aria-hidden />
-          })}
+        <div className="eh-detail" aria-hidden={!inDetail}>
+          {detail && (
+            <>
+              <button type="button" className="eh-detail-back" onClick={closeDetail}>
+                返回
+              </button>
+              <div className="eh-detail-media">
+                <img src={detail.src} alt="" draggable={false} />
+              </div>
+              <div className="eh-detail-copy">
+                <p className="eh-detail-kicker">Health+</p>
+                <h2 className="eh-detail-title">{detail.title}</h2>
+                <p className="eh-detail-blurb">{detail.blurb}</p>
+              </div>
+            </>
+          )}
         </div>
       </section>
     </main>

@@ -83,6 +83,135 @@ body,
   user-select: none;
 }
 
+.eh-explore {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 360ms var(--eh-ease),
+    visibility 360ms var(--eh-ease);
+}
+
+.eh-stage.is-detail .eh-explore {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.eh-detail {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 36px;
+  padding: 72px 56px 48px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 420ms var(--eh-ease),
+    visibility 420ms var(--eh-ease);
+}
+
+.eh-stage.is-detail .eh-detail {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.eh-detail-back {
+  position: absolute;
+  top: 56px;
+  right: 56px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.eh-detail-back:hover {
+  color: #fff;
+}
+
+.eh-detail-media {
+  justify-self: end;
+  width: 196px;
+  height: 414px;
+  border-radius: 5pt;
+  overflow: hidden;
+  background: #f4f4f4;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  transform: translateY(12px);
+  opacity: 0;
+  transition:
+    transform 480ms var(--eh-ease),
+    opacity 480ms var(--eh-ease);
+}
+
+.eh-stage.is-detail .eh-detail-media {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.eh-detail-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.eh-detail-copy {
+  justify-self: start;
+  max-width: 280px;
+  transform: translateY(16px);
+  opacity: 0;
+  transition:
+    transform 520ms var(--eh-ease) 60ms,
+    opacity 520ms var(--eh-ease) 60ms;
+}
+
+.eh-stage.is-detail .eh-detail-copy {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.eh-detail-kicker {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.eh-detail-title {
+  margin: 0 0 18px;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.eh-detail-blurb {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .eh-carousel {
   position: absolute;
   left: 160px;
