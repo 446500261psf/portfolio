@@ -193,8 +193,6 @@ export default function ExploreHealth() {
     lastTick.current = null
   }
 
-  const nearest = mod(active, CARD_COUNT)
-
   return (
     <main className="eh-page">
       <section
