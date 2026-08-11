@@ -96,16 +96,43 @@ export default function ExploreHealth() {
   const [tick, setTick] = useState(2)
   const scrubRef = useRef<HTMLDivElement>(null)
   const lastTick = useRef<number | null>(null)
-  /** Queued adjacent steps; sign matches carousel direction. */
+  const activeRef = useRef(2)
+  /** Queued adjacent steps for slow one-tick moves only. */
   const pendingSteps = useRef(0)
   const animating = useRef(false)
   const queueTimer = useRef<number | null>(null)
+
+  useEffect(() => {
+    activeRef.current = active
+  }, [active])
 
   useEffect(
     () => () => {
       if (queueTimer.current != null) window.clearTimeout(queueTimer.current)
     },
     [],
+  )
+
+  const clearQueue = useCallback(() => {
+    if (queueTimer.current != null) {
+      window.clearTimeout(queueTimer.current)
+      queueTimer.current = null
+    }
+    pendingSteps.current = 0
+    animating.current = false
+  }, [])
+
+  /** Instantly sync carousel to a tick's looping phone; drop any catch-up queue. */
+  const snapToTick = useCallback(
+    (nextTick: number) => {
+      clearQueue()
+      const targetPhone = phoneFromTick(nextTick)
+      const delta = wrappedOffset(targetPhone, activeRef.current, CARD_COUNT)
+      if (delta !== 0) {
+        setActive((a) => a + delta)
+      }
+    },
+    [clearQueue],
   )
 
   const drainQueue = useCallback(() => {
@@ -132,18 +159,19 @@ export default function ExploreHealth() {
   }, [])
 
   /**
-   * Absolute tick under pointer → one tick = one image step (images loop: tick % 5).
-   * Moving across more ticks than phones cycles the same 5 screens.
+   * Absolute tick under pointer → one tick = one image (images loop: tick % 5).
+   * Slow adjacent moves keep the coverflow transition; fast scrub / stop snaps
+   * so the carousel never lags behind the pointer.
    */
   const applyTick = useCallback(
     (nextTick: number, animate: boolean) => {
       const prev = lastTick.current
+      tickRef.current = nextTick
       setTick(nextTick)
 
       if (prev == null) {
         lastTick.current = nextTick
-        /* Snap pose to this tick's looping phone without playing a long catch-up. */
-        setActive((a) => a + wrappedOffset(phoneFromTick(nextTick), a, CARD_COUNT))
+        snapToTick(nextTick)
         return
       }
 
@@ -151,18 +179,28 @@ export default function ExploreHealth() {
       lastTick.current = nextTick
       if (deltaTicks === 0) return
 
-      if (!animate) {
-        setActive((a) => a + wrappedOffset(phoneFromTick(nextTick), a, CARD_COUNT))
-        pendingSteps.current = 0
+      const canAnimateStep =
+        animate &&
+        Math.abs(deltaTicks) === 1 &&
+        !animating.current &&
+        pendingSteps.current === 0
+
+      if (!canAnimateStep) {
+        snapToTick(nextTick)
         return
       }
 
-      /* One pointer step → one card step, so 26 pointers cycle the 5 phones. */
       pendingSteps.current += deltaTicks
       drainQueue()
     },
-    [drainQueue],
+    [drainQueue, snapToTick],
   )
+
+  const stopScrub = useCallback(() => {
+    /* Pointer stopped — cancel backlog and lock to the current tick's image. */
+    snapToTick(tickRef.current)
+    lastTick.current = null
+  }, [snapToTick])
 
   const onPointerEnter = (e: PointerEvent<HTMLDivElement>) => {
     const el = scrubRef.current
@@ -187,10 +225,11 @@ export default function ExploreHealth() {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId)
     }
+    stopScrub()
   }
 
   const onPointerLeave = () => {
-    lastTick.current = null
+    stopScrub()
   }
 
   return (
