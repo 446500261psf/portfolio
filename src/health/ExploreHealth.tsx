@@ -50,11 +50,10 @@ function cardStyle(offset: number): CSSProperties {
   const tz = -depth * DEPTH_Z
   const ty = depth * 4
   const scale = Math.max(0.86, 1 - depth * 0.055)
-  const opacity = clamp(1 - depth * 0.18, 0.5, 1)
 
   return {
     zIndex: Math.round(40 - depth * 10),
-    opacity,
+    opacity: 1,
     transform: `translate(-50%, -50%) translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`,
   }
 }

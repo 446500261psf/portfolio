@@ -114,12 +114,10 @@ body,
   overflow: hidden;
   transform-origin: center center;
   transform-style: preserve-3d;
-  will-change: transform, opacity;
+  will-change: transform;
   cursor: pointer;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-  transition:
-    transform 110ms var(--eh-ease),
-    opacity 110ms var(--eh-ease);
+  transition: transform 110ms var(--eh-ease);
 }
 
 .eh-card img {
