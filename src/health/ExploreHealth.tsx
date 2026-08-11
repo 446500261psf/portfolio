@@ -14,8 +14,6 @@ const TICK_COUNT = 26
 const CARD_COUNT = 5
 /** Always show this many cards on each side of center (2+1+2 with 5 phones). */
 const SIDE_COUNT = Math.floor((CARD_COUNT - 1) / 2)
-/** How far the pointer must travel (as fraction of scrubber width) to step one card. */
-const STEP_THRESHOLD = 1 / TICK_COUNT
 const TRANSITION_MS = 320
 
 /** Left → right phone screens matching Figma Group 3 order */
@@ -36,11 +34,27 @@ function mod(n: number, m: number) {
   return ((n % m) + m) % m
 }
 
+function clamp(n: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, n))
+}
+
 /** Shortest signed distance on a circular ring of length `n`. */
 function wrappedOffset(index: number, active: number, n: number): number {
   let d = index - active
   d -= n * Math.round(d / n)
   return d
+}
+
+/** Each tick maps to a looping phone index. */
+function phoneFromTick(tick: number) {
+  return mod(tick, CARD_COUNT)
+}
+
+function tickFromClientX(clientX: number, el: HTMLElement) {
+  const rect = el.getBoundingClientRect()
+  if (rect.width <= 0) return 0
+  const ratio = clamp((clientX - rect.left) / rect.width, 0, 1)
+  return Math.round(ratio * (TICK_COUNT - 1))
 }
 
 function cardStyle(offset: number): CSSProperties {
@@ -57,7 +71,6 @@ function cardStyle(offset: number): CSSProperties {
     transform: `translate(-50%, -50%) translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`,
   }
 
-  /* Soften the outer vertical edge of the farthest phones */
   if (offset <= -SIDE_COUNT + 0.01) {
     const mask = 'linear-gradient(to right, transparent 0%, transparent 8%, #000 62%)'
     style.WebkitMaskImage = mask
@@ -74,11 +87,17 @@ function cardStyle(offset: number): CSSProperties {
 }
 
 export default function ExploreHealth() {
-  /** Discrete active card index only — never fractional mid poses. */
+  /**
+   * `active` = discrete carousel pose (unbounded).
+   * `tick` = which scrubber pointer is selected (0..TICK_COUNT-1).
+   * Mapping: phone index === tick % CARD_COUNT (images loop across ticks).
+   */
   const [active, setActive] = useState(2)
+  const [tick, setTick] = useState(2)
   const scrubRef = useRef<HTMLDivElement>(null)
-  const lastX = useRef<number | null>(null)
-  const pending = useRef(0)
+  const lastTick = useRef<number | null>(null)
+  /** Queued adjacent steps; sign matches carousel direction. */
+  const pendingSteps = useRef(0)
   const animating = useRef(false)
   const queueTimer = useRef<number | null>(null)
 
@@ -91,8 +110,8 @@ export default function ExploreHealth() {
 
   const drainQueue = useCallback(() => {
     if (animating.current) return
-    if (pending.current >= STEP_THRESHOLD) {
-      pending.current -= STEP_THRESHOLD
+    if (pendingSteps.current > 0) {
+      pendingSteps.current -= 1
       setActive((a) => a + 1)
       animating.current = true
       queueTimer.current = window.setTimeout(() => {
@@ -100,8 +119,8 @@ export default function ExploreHealth() {
         queueTimer.current = null
         drainQueue()
       }, TRANSITION_MS)
-    } else if (pending.current <= -STEP_THRESHOLD) {
-      pending.current += STEP_THRESHOLD
+    } else if (pendingSteps.current < 0) {
+      pendingSteps.current += 1
       setActive((a) => a - 1)
       animating.current = true
       queueTimer.current = window.setTimeout(() => {
@@ -113,65 +132,68 @@ export default function ExploreHealth() {
   }, [])
 
   /**
-   * Accumulate pointer delta; step one adjacent card at a time with CSS transition.
-   * mouse left → push left (active ↑); mouse right → push right (active ↓).
+   * Absolute tick under pointer → one tick = one image step (images loop: tick % 5).
+   * Moving across more ticks than phones cycles the same 5 screens.
    */
-  const scrubByClientX = useCallback(
-    (clientX: number) => {
-      const el = scrubRef.current
-      if (!el) return
-      const width = el.getBoundingClientRect().width
-      if (width <= 0) return
+  const applyTick = useCallback(
+    (nextTick: number, animate: boolean) => {
+      const prev = lastTick.current
+      setTick(nextTick)
 
-      if (lastX.current == null) {
-        lastX.current = clientX
+      if (prev == null) {
+        lastTick.current = nextTick
+        /* Snap pose to this tick's looping phone without playing a long catch-up. */
+        setActive((a) => a + wrappedOffset(phoneFromTick(nextTick), a, CARD_COUNT))
         return
       }
 
-      const dx = clientX - lastX.current
-      lastX.current = clientX
-      if (dx === 0) return
+      const deltaTicks = nextTick - prev
+      lastTick.current = nextTick
+      if (deltaTicks === 0) return
 
-      pending.current += -dx / width
-      drainQueue()
-    },
-    [drainQueue],
-  )
+      if (!animate) {
+        setActive((a) => a + wrappedOffset(phoneFromTick(nextTick), a, CARD_COUNT))
+        pendingSteps.current = 0
+        return
+      }
 
-  const stepOnce = useCallback(
-    (dir: 1 | -1) => {
-      pending.current += dir * STEP_THRESHOLD
+      /* One pointer step → one card step, so 26 pointers cycle the 5 phones. */
+      pendingSteps.current += deltaTicks
       drainQueue()
     },
     [drainQueue],
   )
 
   const onPointerEnter = (e: PointerEvent<HTMLDivElement>) => {
-    lastX.current = e.clientX
+    const el = scrubRef.current
+    if (!el) return
+    applyTick(tickFromClientX(e.clientX, el), false)
   }
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
-    lastX.current = e.clientX
+    const el = scrubRef.current
+    if (!el) return
     e.currentTarget.setPointerCapture(e.pointerId)
+    applyTick(tickFromClientX(e.clientX, el), true)
   }
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
-    scrubByClientX(e.clientX)
+    const el = scrubRef.current
+    if (!el) return
+    applyTick(tickFromClientX(e.clientX, el), true)
   }
 
   const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId)
     }
-    lastX.current = null
   }
 
   const onPointerLeave = () => {
-    lastX.current = null
+    lastTick.current = null
   }
 
   const nearest = mod(active, CARD_COUNT)
-  const activeTick = Math.round((nearest / CARD_COUNT) * (TICK_COUNT - 1)) % TICK_COUNT
 
   return (
     <main className="eh-page">
@@ -215,9 +237,19 @@ export default function ExploreHealth() {
                   aria-current={isCenter ? 'true' : undefined}
                   onClick={() => {
                     const delta = wrappedOffset(i, active, CARD_COUNT)
-                    if (delta === 0 || animating.current) return
-                    /* Queue adjacent steps so multi-card jumps still animate one-by-one */
-                    pending.current += delta * STEP_THRESHOLD
+                    if (delta === 0) return
+                    pendingSteps.current += delta
+                    /* Keep tick highlight aligned with the looping phone index */
+                    setTick((t) => {
+                      const targetPhone = i
+                      let next = t
+                      while (phoneFromTick(next) !== targetPhone) {
+                        next += delta > 0 ? 1 : -1
+                        next = mod(next, TICK_COUNT)
+                      }
+                      lastTick.current = next
+                      return next
+                    })
                     drainQueue()
                   }}
                 >
@@ -235,9 +267,9 @@ export default function ExploreHealth() {
           role="slider"
           aria-label="Browse Health+ screens"
           aria-valuemin={0}
-          aria-valuemax={CARD_COUNT - 1}
-          aria-valuenow={nearest}
-          aria-valuetext={PHONES[nearest].label}
+          aria-valuemax={TICK_COUNT - 1}
+          aria-valuenow={tick}
+          aria-valuetext={`${PHONES[phoneFromTick(tick)].label} (${tick + 1}/${TICK_COUNT})`}
           tabIndex={0}
           onPointerEnter={onPointerEnter}
           onPointerDown={onPointerDown}
@@ -248,26 +280,21 @@ export default function ExploreHealth() {
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
               e.preventDefault()
-              stepOnce(1)
+              applyTick(clamp(tick - 1, 0, TICK_COUNT - 1), true)
             } else if (e.key === 'ArrowRight') {
               e.preventDefault()
-              stepOnce(-1)
+              applyTick(clamp(tick + 1, 0, TICK_COUNT - 1), true)
             } else if (e.key === 'Home') {
               e.preventDefault()
-              pending.current += wrappedOffset(0, active, CARD_COUNT) * STEP_THRESHOLD
-              drainQueue()
+              applyTick(0, true)
             } else if (e.key === 'End') {
               e.preventDefault()
-              pending.current += wrappedOffset(CARD_COUNT - 1, active, CARD_COUNT) * STEP_THRESHOLD
-              drainQueue()
+              applyTick(TICK_COUNT - 1, true)
             }
           }}
         >
           {Array.from({ length: TICK_COUNT }, (_, i) => {
-            const dist = Math.min(
-              Math.abs(i - activeTick),
-              TICK_COUNT - Math.abs(i - activeTick),
-            )
+            const dist = Math.abs(i - tick)
             const cls =
               dist === 0 ? 'eh-tick is-active' : dist <= 2 ? 'eh-tick is-near' : 'eh-tick'
             return <span key={i} className={cls} aria-hidden />
