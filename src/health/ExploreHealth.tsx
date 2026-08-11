@@ -1,4 +1,11 @@
-import { useCallback, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from 'react'
 import { publicUrl } from '../publicUrl'
 
 const STAGE_W = 800
@@ -9,6 +16,7 @@ const CARD_COUNT = 5
 const SIDE_COUNT = Math.floor((CARD_COUNT - 1) / 2)
 /** How far the pointer must travel (as fraction of scrubber width) to step one card. */
 const STEP_THRESHOLD = 1 / TICK_COUNT
+const TRANSITION_MS = 320
 
 /** Left → right phone screens matching Figma Group 3 order */
 const PHONES = [
@@ -66,52 +74,84 @@ function cardStyle(offset: number): CSSProperties {
 }
 
 export default function ExploreHealth() {
-  /** Discrete active card index (unbounded for wrap direction; display uses mod). */
+  /** Discrete active card index only — never fractional mid poses. */
   const [active, setActive] = useState(2)
   const scrubRef = useRef<HTMLDivElement>(null)
   const lastX = useRef<number | null>(null)
   const pending = useRef(0)
+  const animating = useRef(false)
+  const queueTimer = useRef<number | null>(null)
 
-  /**
-   * Accumulate pointer delta; only step ±1 card when enough distance is traveled.
-   * mouse left → images push left (active ↑); mouse right → push right (active ↓).
-   */
-  const scrubByClientX = useCallback((clientX: number) => {
-    const el = scrubRef.current
-    if (!el) return
-    const width = el.getBoundingClientRect().width
-    if (width <= 0) return
+  useEffect(
+    () => () => {
+      if (queueTimer.current != null) window.clearTimeout(queueTimer.current)
+    },
+    [],
+  )
 
-    if (lastX.current == null) {
-      lastX.current = clientX
-      pending.current = 0
-      return
-    }
-
-    const dx = clientX - lastX.current
-    lastX.current = clientX
-    if (dx === 0) return
-
-    pending.current += -dx / width
-
-    while (pending.current >= STEP_THRESHOLD) {
+  const drainQueue = useCallback(() => {
+    if (animating.current) return
+    if (pending.current >= STEP_THRESHOLD) {
       pending.current -= STEP_THRESHOLD
       setActive((a) => a + 1)
-    }
-    while (pending.current <= -STEP_THRESHOLD) {
+      animating.current = true
+      queueTimer.current = window.setTimeout(() => {
+        animating.current = false
+        queueTimer.current = null
+        drainQueue()
+      }, TRANSITION_MS)
+    } else if (pending.current <= -STEP_THRESHOLD) {
       pending.current += STEP_THRESHOLD
       setActive((a) => a - 1)
+      animating.current = true
+      queueTimer.current = window.setTimeout(() => {
+        animating.current = false
+        queueTimer.current = null
+        drainQueue()
+      }, TRANSITION_MS)
     }
   }, [])
 
+  /**
+   * Accumulate pointer delta; step one adjacent card at a time with CSS transition.
+   * mouse left → push left (active ↑); mouse right → push right (active ↓).
+   */
+  const scrubByClientX = useCallback(
+    (clientX: number) => {
+      const el = scrubRef.current
+      if (!el) return
+      const width = el.getBoundingClientRect().width
+      if (width <= 0) return
+
+      if (lastX.current == null) {
+        lastX.current = clientX
+        return
+      }
+
+      const dx = clientX - lastX.current
+      lastX.current = clientX
+      if (dx === 0) return
+
+      pending.current += -dx / width
+      drainQueue()
+    },
+    [drainQueue],
+  )
+
+  const stepOnce = useCallback(
+    (dir: 1 | -1) => {
+      pending.current += dir * STEP_THRESHOLD
+      drainQueue()
+    },
+    [drainQueue],
+  )
+
   const onPointerEnter = (e: PointerEvent<HTMLDivElement>) => {
     lastX.current = e.clientX
-    pending.current = 0
   }
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     lastX.current = e.clientX
-    pending.current = 0
     e.currentTarget.setPointerCapture(e.pointerId)
   }
 
@@ -123,12 +163,11 @@ export default function ExploreHealth() {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId)
     }
-    pending.current = 0
+    lastX.current = null
   }
 
   const onPointerLeave = () => {
     lastX.current = null
-    pending.current = 0
   }
 
   const nearest = mod(active, CARD_COUNT)
@@ -174,7 +213,13 @@ export default function ExploreHealth() {
                   style={cardStyle(offset)}
                   aria-label={phone.label}
                   aria-current={isCenter ? 'true' : undefined}
-                  onClick={() => setActive((a) => a + wrappedOffset(i, a, CARD_COUNT))}
+                  onClick={() => {
+                    const delta = wrappedOffset(i, active, CARD_COUNT)
+                    if (delta === 0 || animating.current) return
+                    /* Queue adjacent steps so multi-card jumps still animate one-by-one */
+                    pending.current += delta * STEP_THRESHOLD
+                    drainQueue()
+                  }}
                 >
                   <img src={phone.src} alt="" draggable={false} />
                 </button>
@@ -203,16 +248,18 @@ export default function ExploreHealth() {
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
               e.preventDefault()
-              setActive((a) => a + 1)
+              stepOnce(1)
             } else if (e.key === 'ArrowRight') {
               e.preventDefault()
-              setActive((a) => a - 1)
+              stepOnce(-1)
             } else if (e.key === 'Home') {
               e.preventDefault()
-              setActive((a) => a + wrappedOffset(0, a, CARD_COUNT))
+              pending.current += wrappedOffset(0, active, CARD_COUNT) * STEP_THRESHOLD
+              drainQueue()
             } else if (e.key === 'End') {
               e.preventDefault()
-              setActive((a) => a + wrappedOffset(CARD_COUNT - 1, a, CARD_COUNT))
+              pending.current += wrappedOffset(CARD_COUNT - 1, active, CARD_COUNT) * STEP_THRESHOLD
+              drainQueue()
             }
           }}
         >
