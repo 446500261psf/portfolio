@@ -110,7 +110,7 @@ body,
   border: 0;
   padding: 0;
   background: #f4f4f4;
-  border-radius: 16px;
+  border-radius: 5pt;
   overflow: hidden;
   transform-origin: center center;
   transform-style: preserve-3d;

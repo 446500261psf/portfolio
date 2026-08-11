@@ -5,6 +5,8 @@ const STAGE_W = 800
 const STAGE_H = 600
 const TICK_COUNT = 26
 const CARD_COUNT = 5
+/** Always show this many cards on each side of center (2+1+2 with 5 phones). */
+const SIDE_COUNT = Math.floor((CARD_COUNT - 1) / 2)
 
 /** Left → right phone screens matching Figma Group 3 order */
 const PHONES = [
@@ -24,6 +26,23 @@ function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n))
 }
 
+/** Shortest signed distance on a circular ring of length `n`. */
+function wrappedOffset(index: number, progress: number, n: number): number {
+  let d = index - progress
+  d -= n * Math.round(d / n)
+  return d
+}
+
+function mod(n: number, m: number) {
+  return ((n % m) + m) % m
+}
+
+/** Jump to `targetIndex` without spinning more than half a loop. */
+function nearestProgress(current: number, targetIndex: number, n: number): number {
+  const offset = wrappedOffset(targetIndex, current, n)
+  return current + offset
+}
+
 function cardStyle(offset: number): CSSProperties {
   const depth = Math.min(Math.abs(offset), MAX_DEPTH)
   const tx = offset * SPREAD
@@ -41,7 +60,7 @@ function cardStyle(offset: number): CSSProperties {
 }
 
 export default function ExploreHealth() {
-  /** Continuous index in [0, CARD_COUNT - 1]; default centers the middle phone */
+  /** Continuous (unbounded) index; display uses circular wrap for symmetry. */
   const [progress, setProgress] = useState((CARD_COUNT - 1) / 2)
   const scrubRef = useRef<HTMLDivElement>(null)
   const lastX = useRef<number | null>(null)
@@ -66,8 +85,8 @@ export default function ExploreHealth() {
     lastX.current = clientX
     if (dx === 0) return
 
-    const deltaProgress = (-dx / width) * (CARD_COUNT - 1) * 1.35
-    setProgress((p) => clamp(p + deltaProgress, 0, CARD_COUNT - 1))
+    const deltaProgress = (-dx / width) * CARD_COUNT * 1.1
+    setProgress((p) => p + deltaProgress)
   }, [])
 
   const onPointerEnter = (e: PointerEvent<HTMLDivElement>) => {
@@ -93,8 +112,9 @@ export default function ExploreHealth() {
     lastX.current = null
   }
 
-  const activeTick = Math.round((progress / (CARD_COUNT - 1)) * (TICK_COUNT - 1))
-  const nearest = clamp(Math.round(progress), 0, CARD_COUNT - 1)
+  const displayProgress = mod(progress, CARD_COUNT)
+  const activeTick = Math.round((displayProgress / CARD_COUNT) * (TICK_COUNT - 1)) % TICK_COUNT
+  const nearest = Math.round(displayProgress) % CARD_COUNT
 
   return (
     <main className="eh-page">
@@ -125,7 +145,9 @@ export default function ExploreHealth() {
         <div className="eh-carousel" aria-live="polite">
           <div className="eh-carousel-track">
             {PHONES.map((phone, i) => {
-              const offset = i - progress
+              const offset = wrappedOffset(i, progress, CARD_COUNT)
+              /* Keep left/right counts equal: only render within ±SIDE_COUNT */
+              if (Math.abs(offset) > SIDE_COUNT + 0.5) return null
               const isCenter = Math.abs(offset) < 0.35
               return (
                 <button
@@ -135,7 +157,7 @@ export default function ExploreHealth() {
                   style={cardStyle(offset)}
                   aria-label={phone.label}
                   aria-current={isCenter ? 'true' : undefined}
-                  onClick={() => setProgress(i)}
+                  onClick={() => setProgress((p) => nearestProgress(p, i, CARD_COUNT))}
                 >
                   <img src={phone.src} alt="" draggable={false} />
                 </button>
@@ -163,22 +185,24 @@ export default function ExploreHealth() {
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
               e.preventDefault()
-              /* Left key = push images left */
-              setProgress((p) => clamp(p + 0.35, 0, CARD_COUNT - 1))
+              setProgress((p) => p + 0.35)
             } else if (e.key === 'ArrowRight') {
               e.preventDefault()
-              setProgress((p) => clamp(p - 0.35, 0, CARD_COUNT - 1))
+              setProgress((p) => p - 0.35)
             } else if (e.key === 'Home') {
               e.preventDefault()
-              setProgress(0)
+              setProgress((p) => nearestProgress(p, 0, CARD_COUNT))
             } else if (e.key === 'End') {
               e.preventDefault()
-              setProgress(CARD_COUNT - 1)
+              setProgress((p) => nearestProgress(p, CARD_COUNT - 1, CARD_COUNT))
             }
           }}
         >
           {Array.from({ length: TICK_COUNT }, (_, i) => {
-            const dist = Math.abs(i - activeTick)
+            const dist = Math.min(
+              Math.abs(i - activeTick),
+              TICK_COUNT - Math.abs(i - activeTick),
+            )
             const cls =
               dist === 0 ? 'eh-tick is-active' : dist <= 2 ? 'eh-tick is-near' : 'eh-tick'
             return <span key={i} className={cls} aria-hidden />
