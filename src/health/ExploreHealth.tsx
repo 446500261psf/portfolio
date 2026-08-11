@@ -164,6 +164,7 @@ export default function ExploreHealth() {
             })}
           </div>
         </div>
+        <div className="eh-edge-fade" aria-hidden />
 
         <div
           ref={scrubRef}
