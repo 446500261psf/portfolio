@@ -22,10 +22,6 @@ const ROTATE_Y = 24
 const DEPTH_Z = 40
 const MAX_DEPTH = 2.2
 
-function clamp(n: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, n))
-}
-
 /** Shortest signed distance on a circular ring of length `n`. */
 function wrappedOffset(index: number, progress: number, n: number): number {
   let d = index - progress
