@@ -97,6 +97,7 @@ export default function ExploreHealth() {
   const scrubRef = useRef<HTMLDivElement>(null)
   const lastTick = useRef<number | null>(null)
   const activeRef = useRef(2)
+  const tickRef = useRef(2)
   /** Queued adjacent steps for slow one-tick moves only. */
   const pendingSteps = useRef(0)
   const animating = useRef(false)
@@ -105,6 +106,10 @@ export default function ExploreHealth() {
   useEffect(() => {
     activeRef.current = active
   }, [active])
+
+  useEffect(() => {
+    tickRef.current = tick
+  }, [tick])
 
   useEffect(
     () => () => {
