@@ -51,11 +51,26 @@ function cardStyle(offset: number): CSSProperties {
   const ty = depth * 4
   const scale = Math.max(0.86, 1 - depth * 0.055)
 
-  return {
+  const style: CSSProperties = {
     zIndex: Math.round(40 - depth * 10),
     opacity: 1,
     transform: `translate(-50%, -50%) translateX(${tx}px) translateY(${ty}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale})`,
   }
+
+  /* Soften the outer vertical edge of the farthest phones */
+  if (offset <= -1.15) {
+    const mask = 'linear-gradient(to right, transparent 0%, transparent 8%, #000 62%)'
+    style.WebkitMaskImage = mask
+    style.maskImage = mask
+    style.boxShadow = 'none'
+  } else if (offset >= 1.15) {
+    const mask = 'linear-gradient(to left, transparent 0%, transparent 8%, #000 62%)'
+    style.WebkitMaskImage = mask
+    style.maskImage = mask
+    style.boxShadow = 'none'
+  }
+
+  return style
 }
 
 export default function ExploreHealth() {
