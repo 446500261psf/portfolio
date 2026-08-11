@@ -201,9 +201,30 @@ body,
   justify-content: space-between;
   gap: 0;
   padding: 4px 0;
-  cursor: ew-resize;
+  cursor: none;
   touch-action: none;
   user-select: none;
+}
+
+.eh-cursor-dot {
+  position: absolute;
+  top: 22px;
+  width: 9px;
+  height: 9px;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.eh-scrubber.is-hot .eh-cursor-dot {
+  opacity: 1;
 }
 
 .eh-tick {
@@ -220,7 +241,7 @@ body,
   transform-origin: center bottom;
   transition:
     opacity 120ms ease,
-    transform 120ms ease,
+    transform 160ms var(--eh-ease),
     background 120ms ease;
   pointer-events: none;
 }
@@ -231,7 +252,8 @@ body,
 
 .eh-tick.is-active {
   opacity: 1;
-  transform: scaleY(1.12);
+  /* Lift the bright tail slightly when the cursor snaps onto this tick */
+  transform: translateY(-6px);
   background: linear-gradient(
     to bottom,
     rgba(255, 169, 96, 0.15) 0%,
@@ -239,15 +261,18 @@ body,
   );
 }
 
-.eh-scrubber:hover .eh-tick {
+.eh-scrubber:hover .eh-tick,
+.eh-scrubber.is-hot .eh-tick {
   opacity: 0.38;
 }
 
-.eh-scrubber:hover .eh-tick.is-near {
+.eh-scrubber:hover .eh-tick.is-near,
+.eh-scrubber.is-hot .eh-tick.is-near {
   opacity: 0.7;
 }
 
-.eh-scrubber:hover .eh-tick.is-active {
+.eh-scrubber:hover .eh-tick.is-active,
+.eh-scrubber.is-hot .eh-tick.is-active {
   opacity: 1;
 }
 

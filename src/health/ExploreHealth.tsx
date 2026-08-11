@@ -94,6 +94,7 @@ export default function ExploreHealth() {
    */
   const [active, setActive] = useState(2)
   const [tick, setTick] = useState(2)
+  const [scrubHot, setScrubHot] = useState(false)
   const scrubRef = useRef<HTMLDivElement>(null)
   const lastTick = useRef<number | null>(null)
   const activeRef = useRef(2)
@@ -210,12 +211,14 @@ export default function ExploreHealth() {
   const onPointerEnter = (e: PointerEvent<HTMLDivElement>) => {
     const el = scrubRef.current
     if (!el) return
+    setScrubHot(true)
     applyTick(tickFromClientX(e.clientX, el), false)
   }
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     const el = scrubRef.current
     if (!el) return
+    setScrubHot(true)
     e.currentTarget.setPointerCapture(e.pointerId)
     applyTick(tickFromClientX(e.clientX, el), true)
   }
@@ -223,6 +226,7 @@ export default function ExploreHealth() {
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const el = scrubRef.current
     if (!el) return
+    setScrubHot(true)
     applyTick(tickFromClientX(e.clientX, el), true)
   }
 
@@ -234,8 +238,11 @@ export default function ExploreHealth() {
   }
 
   const onPointerLeave = () => {
+    setScrubHot(false)
     stopScrub()
   }
+
+  const dotLeftPct = TICK_COUNT <= 1 ? 0 : (tick / (TICK_COUNT - 1)) * 100
 
   return (
     <main className="eh-page">
@@ -305,7 +312,7 @@ export default function ExploreHealth() {
 
         <div
           ref={scrubRef}
-          className="eh-scrubber"
+          className={`eh-scrubber${scrubHot ? ' is-hot' : ''}`}
           role="slider"
           aria-label="Browse Health+ screens"
           aria-valuemin={0}
@@ -335,6 +342,11 @@ export default function ExploreHealth() {
             }
           }}
         >
+          <span
+            className="eh-cursor-dot"
+            style={{ left: `${dotLeftPct}%` }}
+            aria-hidden
+          />
           {Array.from({ length: TICK_COUNT }, (_, i) => {
             const dist = Math.abs(i - tick)
             const cls =
