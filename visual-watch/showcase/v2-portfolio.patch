@@ -1,0 +1,39 @@
+diff --git a/src/components/PlaygroundCard.tsx b/src/components/PlaygroundCard.tsx
+index 65600e1..c5b4a75 100644
+--- a/src/components/PlaygroundCard.tsx
++++ b/src/components/PlaygroundCard.tsx
+@@ -1,5 +1,6 @@
+ import { useMemo, useState, type CSSProperties } from 'react'
+ import type { PlaygroundItem } from '../data/playground'
++import { publicUrl } from '../publicUrl'
+ import { ClaimMedalDemo } from './playground/ClaimMedalDemo'
+ 
+ type Props = {
+@@ -51,7 +52,8 @@ export function PlaygroundCard({ item }: Props) {
+     )
+   }
+ 
+-  const cover = item.cover!.startsWith('/') ? item.cover : `/${item.cover}`
++  // 必须走 publicUrl：Pages 部署在 /sifan.pan.v2/ 子路径下，写死的 /portfolio/… 会 404
++  const cover = publicUrl(item.cover!)
+ 
+   const tile = (
+     <article
+diff --git a/src/data/playground.ts b/src/data/playground.ts
+index 4a9299c..667b636 100644
+--- a/src/data/playground.ts
++++ b/src/data/playground.ts
+@@ -12,6 +12,13 @@ export type PlaygroundItem = {
+ 
+ /** 按展示顺序排列；封面条目尺寸由 cover 宽高比自动推导 */
+ export const playgroundItems: PlaygroundItem[] = [
++  {
++    id: 'cove-watch',
++    title: 'Cove Watch — Comfort Field',
++    cover: 'portfolio/cove-watch/cover.png',
++    // 可交互整机模拟器：外形工作室 / 3D 白膜 / 正视预览 / 整机交互
++    href: 'https://446500261psf.github.io/portfolio/simulator/',
++  },
+   {
+     id: 'claim-medal',
+     title: 'Claim Medal',
