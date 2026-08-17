@@ -20,6 +20,11 @@ Demo：`Lose 3 kg in 15 days` → `3 days / week · Home only` → `Yes, generat
 
 Marker: `meet-v23` — transcript order: plan → mood chip → Today reply
 
+Portfolio（合并到 `main` 后上线）：
+
+- 案例页：https://446500261psf.github.io/portfolio/coach.html
+- 全屏原型：https://446500261psf.github.io/portfolio/coach/
+
 Optional 4-tab shell: append `?shell=1` or open `/shell`.
 
 ## Run

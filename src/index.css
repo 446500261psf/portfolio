@@ -12,6 +12,7 @@
 :root {
   --canvas-w: 1440px;
   --canvas-bg: #ffffff;
+  --frame8-h: 17735px; /* original 16063 + Plan Coach chapter/case */
 }
 
 * {
@@ -49,7 +50,7 @@ body {
   background: var(--canvas-bg);
 }
 
-/* The Figma canvas: native 1440 × 16063.
+/* The Figma canvas: native 1440 × var(--frame8-h).
  *
  * Replaced `zoom: <ratio>` with a sized wrapper + `transform: scale()` on
  * the inner canvas. Rationale:
@@ -69,7 +70,7 @@ body {
   position: relative;
   width: 100%;
   margin: 0 auto;
-  height: 16063px; /* default: viewport >= 1440, no scaling */
+  height: var(--frame8-h); /* default: viewport >= 1440, no scaling */
 }
 
 .frame8 {
@@ -77,7 +78,7 @@ body {
   top: 0;
   left: 0;
   width: 1440px;
-  height: 16063px;
+  height: var(--frame8-h);
   background: var(--canvas-bg);
   transform-origin: top left;
 }
@@ -92,7 +93,7 @@ body {
 /* Viewport < 1440 → scale down, wrap height shrinks proportionally */
 @media (max-width: 1439.98px) {
   .frame8-wrap {
-    height: calc(16063px * (100vw / 1440px));
+    height: calc(var(--frame8-h) * (100vw / 1440px));
   }
   .frame8 {
     transform: scale(calc(100vw / 1440px));
@@ -149,4 +150,127 @@ body {
 .overlay {
   position: absolute;
   z-index: 2;
+}
+
+.pc-projects-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #000;
+}
+
+.pc-projects-link__title {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.pc-projects-link__sub {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #7c7c7c;
+  line-height: 1.3;
+}
+
+.pc-projects-link:hover .pc-projects-link__title {
+  color: #ea621d;
+}
+
+.pc-chapter {
+  background: #000;
+  color: #ffd9c3;
+}
+
+.pc-chapter p {
+  margin: 56px 0 0 228px;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.pc-case {
+  background: #fff;
+}
+
+.pc-case__inner {
+  max-width: 920px;
+  padding: 88px 228px 0;
+}
+
+.pc-case__kicker {
+  margin: 0 0 12px;
+  color: #ea621d;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pc-case__headline {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.pc-case__lede {
+  max-width: 720px;
+  margin: 18px 0 0;
+  color: #7c7c7c;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.pc-case__dl {
+  display: grid;
+  gap: 22px;
+  margin: 40px 0 0;
+}
+
+.pc-case__dl dt {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7c7c7c;
+}
+
+.pc-case__dl dd {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #111;
+}
+
+.pc-case__cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 36px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pc-case__cta:hover {
+  background: #ea621d;
+}
+
+.pc-case__path {
+  max-width: 720px;
+  margin: 16px 0 0;
+  color: #7c7c7c;
+  font-size: 14px;
+  line-height: 1.45;
 }

@@ -1,11 +1,11 @@
 {
-    "name": "health_shell",
-    "short_name": "health_shell",
+    "name": "Plan Coach",
+    "short_name": "Plan Coach",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Conversational planning prototype from Sifan Pan’s portfolio.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

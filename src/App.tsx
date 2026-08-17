@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import BlackFridayStack from './components/BlackFridayStack'
 import DayCycleToggle from './components/DayCycleToggle'
 import PhoneImageCarousel from './components/PhoneImageCarousel'
+import {
+  PlanCoachChapter,
+  PlanCoachProjectsLink,
+} from './components/PlanCoachOnPortfolio'
 import { publicUrl } from './publicUrl'
 
 /* ============================================================================
@@ -126,6 +130,10 @@ export default function App() {
           >
             <PhoneImageCarousel />
           </div>
+
+          {/* 04 / Plan Coach — list row on Projects + closing chapter */}
+          <PlanCoachProjectsLink />
+          <PlanCoachChapter />
         </div>
       </div>
     </main>

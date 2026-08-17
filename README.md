@@ -19,6 +19,13 @@ git push -u origin main
 
 `https://你的用户名.github.io/仓库名/`
 
+- 作品集首页：`https://446500261psf.github.io/portfolio/`
+- Plan Coach 案例 + 在线原型：`https://446500261psf.github.io/portfolio/coach.html`
+- Plan Coach 全屏原型：`https://446500261psf.github.io/portfolio/coach/`
+- Material 3 Demo：`https://446500261psf.github.io/portfolio/demo.html`
+
+首页 **Projects** 列表新增 `04 / Plan Coach`，滚到最底部也有对应章节。合并到 `main` 后，GitHub Actions 会同时构建 Flutter Web 并发布。
+
 5. 若你后来**改了仓库名**，重跑一次 workflow 即可（`BASE_PATH` 来仓库名，无需改代码）。
 
 ---
