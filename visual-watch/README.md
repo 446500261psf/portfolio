@@ -38,10 +38,15 @@ visual-watch/
 
 ## 快速体验 · 潭面模拟器
 
+模拟器跑在 **5174**，作品集仍用 **5173**，两个页面可同时开。
+
 ```bash
-cd visual-watch/apps/simulator
-npm install
+# 终端 1 — 作品集 http://localhost:5173
 npm run dev
+
+# 终端 2 — 模拟器 http://localhost:5174
+npm run dev:simulator
+# 或：cd visual-watch/apps/simulator && npm install && npm run dev
 ```
 
 - 超椭圆 n=4.5 鹅软石 2.5D 表体（SVG 精确路径）

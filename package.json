@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:simulator": "npm --prefix visual-watch/apps/simulator run dev",
+    "preview:simulator": "npm --prefix visual-watch/apps/simulator run preview",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
