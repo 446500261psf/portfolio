@@ -22,7 +22,13 @@ export default defineConfig({
     headers: {
       'Cache-Control': 'no-store',
     },
-    // 若 5173 已被「别的项目」占用，Vite 会报错；请先结束占用该端口的进程再启动
+    // 作品集固定 5173；Cove 模拟器在 visual-watch/apps/simulator 使用 5174
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+  },
+  preview: {
+    host: '0.0.0.0',
     port: 5173,
     strictPort: true,
   },

@@ -2,6 +2,17 @@
 
 基于 React、TypeScript 与 Vite 的作品集站点（长卷轴 + 局部交互）。
 
+## 本地开发（双端口）
+
+作品集与 Cove 模拟器是两个 Vite 应用，可同时开：
+
+| 页面 | 命令 | 地址 |
+|------|------|------|
+| 作品集 / demo 等 | `npm run dev` | http://localhost:5173 |
+| Cove 模拟器（正视预览） | `npm run dev:simulator` | http://localhost:5174 |
+
+模拟器首次需先安装依赖：`cd visual-watch/apps/simulator && npm install`。
+
 ## 发布到 GitHub（GitHub Pages）
 
 1. 在 GitHub 上**新建空仓库**（可命名为 `coo-portfolio` 或任意名；`BASE_PATH` 会与仓库名自动对齐）。

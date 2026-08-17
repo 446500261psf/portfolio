@@ -40,6 +40,16 @@ jobs:
           npm ci
           npm run build
 
+      # Cove Watch 模拟器是独立 Vite 应用，发布到 <site>/simulator/。
+      # 它的 vite base 是 './'，相对路径在任意子目录都成立，无需注入 BASE_PATH。
+      - name: Build Cove Watch simulator
+        run: |
+          cd visual-watch/apps/simulator
+          npm ci
+          npm run build
+          mkdir -p "$GITHUB_WORKSPACE/dist/simulator"
+          cp -r dist/. "$GITHUB_WORKSPACE/dist/simulator/"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
