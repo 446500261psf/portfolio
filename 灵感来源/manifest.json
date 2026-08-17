@@ -1,0 +1,24 @@
+{
+  "description": "Motion design 与 UX 灵感截图库。每条灵感对应一张截图 + 一份 analysis/ 下的 Markdown 分析文档。",
+  "workflow": {
+    "inbox": "inbox/",
+    "inboxUsage": "将录屏 (.mp4/.mov) 或 GIF 丢进 inbox/，在聊天里告知文件名即可；Agent 会自动抽帧、分类并写 analysis 文档。",
+    "screenshots": {
+      "motion-design": "motion-design/",
+      "ux": "ux/"
+    },
+    "analysisDocs": "analysis/",
+    "naming": "analysis/NNN-简短英文-slug.md"
+  },
+  "items": [
+    {
+      "id": "001",
+      "title": "SwiftUI 3D Card Flip",
+      "source": "SUCODEE / 社交媒体",
+      "category": "motion-design",
+      "analysis": "analysis/001-swiftui-3d-card-flip.md",
+      "implementation": "src/components/FlipCard.tsx",
+      "status": "implemented"
+    }
+  ]
+}
