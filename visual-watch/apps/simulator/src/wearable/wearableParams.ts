@@ -36,9 +36,15 @@ export const DEFAULT_WEARABLE: WearableParams = {
   showWrist: true,
 }
 
-/** 手腕椭圆中心：贴在表壳背面之下，留一层佩戴间隙 */
+/**
+ * 表壳压入软组织的比例 — 佩戴时表壳不是悬在皮肤上方，
+ * 背面会陷进手腕一点，表带才拉得住。
+ */
+const PRESS_INTO_SKIN = 0.45
+
+/** 手腕横截面中心的 Z 位置 */
 export function wristCenterZ(caseParams: CaseParams, wear: WearableParams): number {
-  return -(caseParams.c * 0.55 + wear.wristHalfZ)
+  return -(caseParams.c * (1 - PRESS_INTO_SKIN) + wear.wristHalfZ)
 }
 
 /** 表带离手腕表面的偏移（表带自身厚度的一半 + 贴合间隙） */

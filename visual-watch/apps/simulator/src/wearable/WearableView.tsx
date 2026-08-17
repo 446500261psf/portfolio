@@ -33,11 +33,16 @@ export type WearableGesture = '抬腕' | '落腕' | '轻触' | '长按' | '指�
 
 export type WearableView3 = 'whole' | 'front' | 'back'
 
-/** 三个取景预设：整机四分之三、正视、背面（看连接结构） */
+/**
+ * 三个取景预设。
+ *
+ * 背面不能正对着看：表带正贴在表壳背面绕行，正后方视角会被表带糊满。
+ * 改从侧下后方 45° 看，接口块、表带出口与传感器窗同时可读。
+ */
 const VIEW_PRESETS: Record<WearableView3, { dir: [number, number, number]; zoom: number }> = {
   whole: { dir: [0.52, 0.36, 0.77], zoom: 1 },
   front: { dir: [0.05, 0.1, 1], zoom: 0.72 },
-  back: { dir: [0.12, -0.34, -0.94], zoom: 0.82 },
+  back: { dir: [0.66, -0.5, -0.56], zoom: 0.78 },
 }
 
 interface SceneRefs {
@@ -100,7 +105,7 @@ function WearableScene({
   const groupRef = useRef<THREE.Group>(null)
   const crownRef = useRef<THREE.Mesh>(null)
   const controlsRef = useRef<React.ComponentRef<typeof OrbitControls>>(null)
-  const pressRef = useRef<{ t: number; x: number; y: number } | null>(null)
+  const pressRef = useRef<{ x: number; y: number } | null>(null)
   const longPressTimer = useRef(0)
 
   const caseGeo = useMemo(
@@ -186,7 +191,7 @@ function WearableScene({
   })
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
-    pressRef.current = { t: performance.now(), x: e.clientX, y: e.clientY }
+    pressRef.current = { x: e.clientX, y: e.clientY }
     window.clearTimeout(longPressTimer.current)
     longPressTimer.current = window.setTimeout(() => {
       if (pressRef.current) {
@@ -241,7 +246,7 @@ function WearableScene({
         {/* 手腕只是佩戴参考体：刻意压暗退到背景，且背面视角下让位给连接结构 */}
         {wear.showWrist && view !== 'back' && (
           <mesh geometry={wristGeo} onUpdate={alsoMatteLayer}>
-            <meshStandardMaterial color="#4a4c51" roughness={0.98} metalness={0} />
+            <meshStandardMaterial color="#6b6e75" roughness={0.98} metalness={0} />
           </mesh>
         )}
 
@@ -419,13 +424,24 @@ export function WearableView({ params, wear, dialId, lights, onDialChange }: Wea
     [dialId, note, onDialChange],
   )
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
+  // React 的 onWheel 是 passive 监听，preventDefault 无效；
+  // 指拨要吃掉页面滚动，所以自己挂非 passive 监听并按节奏节流
+  const wheelHostRef = useRef<HTMLDivElement>(null)
+  const lastWheelRef = useRef(0)
+
+  useEffect(() => {
+    const host = wheelHostRef.current
+    if (!host) return
+    const onWheel = (e: WheelEvent) => {
       e.preventDefault()
+      const now = performance.now()
+      if (now - lastWheelRef.current < 260) return
+      lastWheelRef.current = now
       step(e.deltaY > 0 ? 1 : -1)
-    },
-    [step],
-  )
+    }
+    host.addEventListener('wheel', onWheel, { passive: false })
+    return () => host.removeEventListener('wheel', onWheel)
+  }, [step])
 
   useEffect(() => {
     if (!demo) return
@@ -451,7 +467,7 @@ export function WearableView({ params, wear, dialId, lights, onDialChange }: Wea
 
   return (
     <div className="wearable-studio">
-      <div className="wearable-canvas-wrap" onWheel={handleWheel}>
+      <div className="wearable-canvas-wrap" ref={wheelHostRef}>
         <Canvas dpr={[1, 2]} gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}>
           <Suspense fallback={null}>
             <WearableScene
