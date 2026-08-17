@@ -200,6 +200,114 @@ body {
   height: 100% !important;
 }
 
+.wearable-studio {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.wearable-canvas-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: min(70vh, 600px);
+  background: #08080a;
+  border: 1px solid var(--braun-border);
+  border-radius: 2px;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.wearable-canvas-wrap canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: grab;
+}
+
+.wearable-canvas-wrap canvas:active {
+  cursor: grabbing;
+}
+
+.wearable-hud {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--braun-muted);
+  pointer-events: none;
+}
+
+.wearable-hud__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #333;
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+.wearable-hud__dot.is-awake {
+  background: var(--braun-accent);
+  box-shadow: 0 0 8px rgba(255, 107, 26, 0.6);
+}
+
+.wearable-hud__state {
+  color: var(--braun-text);
+  text-transform: uppercase;
+}
+
+.wearable-hud__gesture {
+  flex: 1 1 100%;
+  color: var(--braun-muted);
+  opacity: 0.8;
+}
+
+.wearable-hud__gesture strong {
+  color: var(--braun-accent);
+  font-weight: 500;
+  margin-right: 0.45rem;
+}
+
+.wearable-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.wearable-actions button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--braun-border);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--braun-muted);
+  font: inherit;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.wearable-actions button:hover {
+  color: var(--braun-text);
+  border-color: var(--braun-muted);
+}
+
+.wearable-actions button.active {
+  background: var(--braun-panel);
+  border-color: var(--braun-accent);
+  color: var(--braun-text);
+}
+
 .dial-state-list {
   display: flex;
   flex-direction: column;

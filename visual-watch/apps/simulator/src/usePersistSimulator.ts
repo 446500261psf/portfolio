@@ -8,6 +8,7 @@ import {
 import type { FigmaDialId } from './dial/figmaDialStates'
 import type { ShapeSliderState } from './shape/ShapeControls'
 import type { StudioLightingState } from './shape/studioLighting'
+import type { WearableParams } from './wearable/wearableParams'
 import type { SurfaceMaterial, OrbitCameraState } from './simulatorStorage'
 
 export function usePersistSimulator(
@@ -17,6 +18,7 @@ export function usePersistSimulator(
   dialId: FigmaDialId,
   surfaceMaterial: SurfaceMaterial,
   orbitCamera: OrbitCameraState | null,
+  wearable: WearableParams,
 ): void {
   useEffect(() => {
     const snapshot: PersistedSimulatorState = {
@@ -27,10 +29,11 @@ export function usePersistSimulator(
       dialId,
       surfaceMaterial,
       orbitCamera,
+      wearable,
     }
     const t = window.setTimeout(() => savePersistedState(snapshot), 120)
     return () => window.clearTimeout(t)
-  }, [mode, sliders, lights, dialId, surfaceMaterial, orbitCamera])
+  }, [mode, sliders, lights, dialId, surfaceMaterial, orbitCamera, wearable])
 }
 
 export { getInitialSimulatorState }

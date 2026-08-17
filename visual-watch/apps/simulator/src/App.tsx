@@ -10,6 +10,8 @@ import { DialControls } from './shape/DialControls'
 import type { StudioLightingState } from './shape/studioLighting'
 import type { FigmaDialId } from './dial/figmaDialStates'
 import type { AppMode, OrbitCameraState, SurfaceMaterial } from './simulatorStorage'
+import { WearableControls } from './wearable/WearableControls'
+import type { WearableParams } from './wearable/wearableParams'
 import { getInitialSimulatorState } from './usePersistSimulator'
 import { usePersistSimulator } from './usePersistSimulator'
 
@@ -21,6 +23,10 @@ const FrontViewPreview = lazy(() =>
   import('./shape/FrontViewPreview').then((m) => ({ default: m.FrontViewPreview })),
 )
 
+const WearableView = lazy(() =>
+  import('./wearable/WearableView').then((m) => ({ default: m.WearableView })),
+)
+
 const initial = getInitialSimulatorState()
 
 export default function App() {
@@ -30,13 +36,18 @@ export default function App() {
   const [dialId, setDialId] = useState<FigmaDialId>(initial.dialId)
   const [surfaceMaterial, setSurfaceMaterial] = useState<SurfaceMaterial>(initial.surfaceMaterial)
   const [orbitCamera, setOrbitCamera] = useState<OrbitCameraState | null>(initial.orbitCamera)
+  const [wear, setWear] = useState<WearableParams>(initial.wearable)
 
   const caseParams = useMemo(() => caseFromSliders(sliders), [sliders])
 
-  usePersistSimulator(mode, sliders, lights, dialId, surfaceMaterial, orbitCamera)
+  usePersistSimulator(mode, sliders, lights, dialId, surfaceMaterial, orbitCamera, wear)
 
   const handleSliderChange = (next: Partial<ShapeSliderState>) => {
     setSliders((s) => ({ ...s, ...next }))
+  }
+
+  const handleWearChange = (next: Partial<WearableParams>) => {
+    setWear((w) => ({ ...w, ...next }))
   }
 
   const handleLightChange = (next: Partial<StudioLightingState>) => {
@@ -69,6 +80,13 @@ export default function App() {
           onClick={() => setMode('frontview')}
         >
           正视预览
+        </button>
+        <button
+          type="button"
+          className={mode === 'wearable' ? 'active' : ''}
+          onClick={() => setMode('wearable')}
+        >
+          整机交互
         </button>
         <button
           type="button"
@@ -120,6 +138,23 @@ export default function App() {
             </Suspense>
           </main>
           <DialControls dialId={dialId} onChange={setDialId} />
+        </>
+      )}
+
+      {mode === 'wearable' && (
+        <>
+          <main className="shape-panel shape-panel--3d">
+            <Suspense fallback={<p className="white-model-loading">加载整机场景…</p>}>
+              <WearableView
+                params={caseParams}
+                wear={wear}
+                dialId={dialId}
+                lights={lights}
+                onDialChange={setDialId}
+              />
+            </Suspense>
+          </main>
+          <WearableControls wear={wear} onChange={handleWearChange} />
         </>
       )}
     </div>

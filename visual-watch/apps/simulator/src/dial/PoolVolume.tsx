@@ -13,7 +13,7 @@ import type { DialTextureMap } from './useDialKeyframes'
 /** 发光壳层相对玻璃壳的缩放 — 略大于 1，浮在镜面玻璃表面之上 */
 const SHELL_SCALE = 1.003
 /** 光场 xy 分布相对表壳的内缩（与 Figma 关键帧潭口对齐） */
-const FIELD_INSET = 0.94
+export const FIELD_INSET = 0.94
 
 const vertexShader = /* glsl */ `
 varying vec3 vWorldPos;
@@ -42,10 +42,24 @@ uniform float uWOld;       // 渡越权重（旧）
 uniform float uWNew;       // 渡越权重（新）
 uniform float uBreathOld;  // 呼吸亮度（旧）
 uniform float uBreathNew;  // 呼吸亮度（新）
+uniform float uWake;       // 唤醒亮度：0 休眠 → 1 完全点亮
+uniform vec3 uRipple;      // 触点涟漪：xy = 触点 uv，z = 年龄（秒），<0 表示无
+uniform sampler2D uAnswerTex;
+uniform float uAnswerOpacity; // 精确答案文字层不透明度
 
 // 轻微裁掉 PNG 最外层抗锯齿像素
 vec2 cropFigmaUv(vec2 uv) {
   return 0.5 + (uv - 0.5) * 0.985;
+}
+
+// 触摸涟漪：单环外扩 + 双重衰减，表达「场被扰动」而非按钮反馈
+float rippleAt(vec2 uv) {
+  if (uRipple.z < 0.0) return 0.0;
+  float age = uRipple.z;
+  float d = length(uv - uRipple.xy);
+  float ring = exp(-pow((d - age * 0.5) / 0.08, 2.0));
+  float decay = max(0.0, 1.0 - age / 1.5);
+  return ring * decay * decay;
 }
 
 // 新旧状态 × 各两帧关键帧的混合采样；uv 越界处返回 0（防止 clamp 拉丝）
@@ -71,9 +85,17 @@ void main() {
 
   // —— UI 显示层：直接演示在镜面玻璃正面 ——
   vec2 uv = 0.5 + vWorldPos.xy / (2.0 * uUvHalf);
-  vec3 ui = blendedField(uv) * pow(frontness, 1.25) * 1.35;
+  vec3 ui = blendedField(uv) * pow(frontness, 1.25) * 1.35 * uWake;
 
-  vec3 col = ui;
+  // 触摸涟漪：与场同源的中性冷白光扰动
+  float rip = rippleAt(uv) * uWake * pow(frontness, 1.4);
+
+  // 精确答案层：仅在明确指令后短暂出现（PRD 的无文字例外）
+  vec4 answer = texture2D(uAnswerTex, uv);
+  vec3 answerLight =
+    answer.rgb * answer.a * uAnswerOpacity * uWake * pow(frontness, 1.3);
+
+  vec3 col = ui + vec3(0.5, 0.58, 0.7) * rip * 0.85 + answerLight;
   // 软压缩防高光带过曝
   col = col / (1.0 + col * 0.3);
 
@@ -83,11 +105,25 @@ void main() {
 }
 `
 
+/** 触点涟漪：表盘 uv 坐标 + 触发时刻（performance.now） */
+export interface PoolRipple {
+  u: number
+  v: number
+  startedAt: number
+}
+
 interface PoolVolumeProps {
   params: CaseParams
   dialId: FigmaDialId
   textures: DialTextureMap
   renderOrder?: number
+  /** 唤醒亮度 0–1；整机模式由抬腕/落腕驱动，缺省恒为 1 */
+  wakeRef?: { current: number }
+  /** 最近一次触摸；由 ref 传入以免每帧触发 React 重渲染 */
+  rippleRef?: { current: PoolRipple | null }
+  /** 精确答案文字层（CanvasTexture）与其不透明度 */
+  answerTexture?: THREE.Texture | null
+  answerOpacityRef?: { current: number }
 }
 
 /**
@@ -98,7 +134,16 @@ interface PoolVolumeProps {
  * 镜面与 UI 演示效果」。只在正面显示 Figma 光场 UI；侧缘不发光，
  * 避免形成白色轮廓线。
  */
-export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolVolumeProps) {
+export function PoolVolume({
+  params,
+  dialId,
+  textures,
+  renderOrder = 10,
+  wakeRef,
+  rippleRef,
+  answerTexture,
+  answerOpacityRef,
+}: PoolVolumeProps) {
   const geometry = useMemo(
     () =>
       createWatchCaseGeometry(
@@ -148,6 +193,10 @@ export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolV
         uWNew: { value: 1 },
         uBreathOld: { value: 1 },
         uBreathNew: { value: 1 },
+        uWake: { value: 1 },
+        uRipple: { value: new THREE.Vector3(0.5, 0.5, -1) },
+        uAnswerTex: { value: placeholder },
+        uAnswerOpacity: { value: 0 },
       },
       transparent: true,
       blending: THREE.AdditiveBlending,
@@ -194,6 +243,23 @@ export function PoolVolume({ params, dialId, textures, renderOrder = 10 }: PoolV
       u.uWOld.value = 0
     }
 
+    u.uWake.value = wakeRef ? wakeRef.current : 1
+
+    const ripple = rippleRef?.current
+    if (ripple) {
+      const age = (performance.now() - ripple.startedAt) / 1000
+      if (age > 1.5) {
+        rippleRef.current = null
+        u.uRipple.value.set(0.5, 0.5, -1)
+      } else {
+        u.uRipple.value.set(ripple.u, ripple.v, age)
+      }
+    } else {
+      u.uRipple.value.set(0.5, 0.5, -1)
+    }
+
+    if (answerTexture) u.uAnswerTex.value = answerTexture
+    u.uAnswerOpacity.value = answerOpacityRef ? answerOpacityRef.current : 0
   })
 
   return <mesh geometry={geometry} material={material} renderOrder={renderOrder} />

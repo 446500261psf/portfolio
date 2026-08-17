@@ -1,12 +1,13 @@
 import { DEFAULT_FIGMA_DIAL, type FigmaDialId, FIGMA_DIAL_STATES } from './dial/figmaDialStates'
 import { DEFAULT_SLIDERS, type ShapeSliderState } from './shape/ShapeControls'
 import { DEFAULT_STUDIO_LIGHTS, type StudioLightingState } from './shape/studioLighting'
+import { DEFAULT_WEARABLE, type WearableParams } from './wearable/wearableParams'
 
 const STORAGE_KEY = 'cove-simulator-state-v1'
 
 export type SurfaceMaterial = 'clay' | 'glass'
 
-export type AppMode = 'shape' | 'white3d' | 'frontview' | 'field'
+export type AppMode = 'shape' | 'white3d' | 'frontview' | 'wearable' | 'field'
 
 /** OrbitControls 球坐标：水平角、俯仰角、相机距目标距离（缩放） */
 export interface OrbitCameraState {
@@ -23,9 +24,10 @@ export interface PersistedSimulatorState {
   dialId: FigmaDialId
   surfaceMaterial: SurfaceMaterial
   orbitCamera: OrbitCameraState | null
+  wearable: WearableParams
 }
 
-const VALID_MODES: AppMode[] = ['shape', 'white3d', 'frontview', 'field']
+const VALID_MODES: AppMode[] = ['shape', 'white3d', 'frontview', 'wearable', 'field']
 const VALID_DIALS = new Set(FIGMA_DIAL_STATES.map((s) => s.id))
 const VALID_MATERIALS: SurfaceMaterial[] = ['clay', 'glass']
 
@@ -72,6 +74,22 @@ function parseLights(raw: unknown): StudioLightingState {
   }
 }
 
+function parseWearable(raw: unknown): WearableParams {
+  const d = DEFAULT_WEARABLE
+  if (!raw || typeof raw !== 'object') return d
+  const o = raw as Record<string, unknown>
+  return {
+    wristHalfY: clamp(Number(o.wristHalfY) || d.wristHalfY, 22, 32),
+    wristHalfZ: clamp(Number(o.wristHalfZ) || d.wristHalfZ, 14, 24),
+    wristN: clamp(Number(o.wristN) || d.wristN, 2, 3.6),
+    strapWidth: clamp(Number(o.strapWidth) || d.strapWidth, 14, 26),
+    strapThickness: clamp(Number(o.strapThickness) || d.strapThickness, 1.6, 4.2),
+    lugFlare: clamp(Number(o.lugFlare) || d.lugFlare, 1, 1.7),
+    interfaceLength: clamp(Number(o.interfaceLength) || d.interfaceLength, 2, 5.5),
+    showWrist: typeof o.showWrist === 'boolean' ? o.showWrist : d.showWrist,
+  }
+}
+
 function parseOrbitCamera(raw: unknown): OrbitCameraState | null {
   if (!raw || typeof raw !== 'object') return null
   const o = raw as Record<string, unknown>
@@ -102,6 +120,7 @@ export function loadPersistedState(): PersistedSimulatorState {
     dialId: DEFAULT_FIGMA_DIAL,
     surfaceMaterial: 'glass',
     orbitCamera: null,
+    wearable: DEFAULT_WEARABLE,
   }
 
   try {
@@ -131,6 +150,7 @@ export function loadPersistedState(): PersistedSimulatorState {
       dialId,
       surfaceMaterial,
       orbitCamera: parseOrbitCamera(parsed.orbitCamera),
+      wearable: parseWearable(parsed.wearable),
     }
   } catch {
     return fallback
