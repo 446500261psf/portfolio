@@ -239,7 +239,8 @@ export function createSensorWindowGeometry(params: CaseParams): THREE.BufferGeom
 export function createWristGeometry(
   params: CaseParams,
   wear: WearableParams,
-  length = 118,
+  // 比取景范围长，两端封口落在画面外，不会读成「一截切断的管子」
+  length = 210,
   radialSegments = 72,
 ): THREE.BufferGeometry {
   const oz = wristCenterZ(params, wear)

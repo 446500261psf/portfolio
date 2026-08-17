@@ -29,7 +29,16 @@ const SLEEP_TILT = -0.62
 const DEMO_SEQUENCE: FigmaDialId[] = ['steady', 'lift', 'gather', 'drift', 'grounded', 'low']
 const DEMO_STEP_MS = 4200
 
-export type WearableGesture = '抬腕' | '落腕' | '轻触' | '长按' | '指拨' | '演播'
+export type WearableGesture = '抬腕' | '落腕' | '轻触' | '长按' | '指拨' | '演播' | '视角'
+
+export type WearableView3 = 'whole' | 'front' | 'back'
+
+/** 三个取景预设：整机四分之三、正视、背面（看连接结构） */
+const VIEW_PRESETS: Record<WearableView3, { dir: [number, number, number]; zoom: number }> = {
+  whole: { dir: [0.52, 0.36, 0.77], zoom: 1 },
+  front: { dir: [0.05, 0.1, 1], zoom: 0.72 },
+  back: { dir: [0.12, -0.34, -0.94], zoom: 0.82 },
+}
 
 interface SceneRefs {
   awakeRef: { current: boolean }
@@ -38,6 +47,22 @@ interface SceneRefs {
   answerUntilRef: { current: number }
   answerOpacityRef: { current: number }
   crownTargetRef: { current: number }
+}
+
+/** 相机取景 — 整机需要同时容纳表壳、绕腕表带与接口 */
+function framingDistance(params: CaseParams, wear: WearableParams): number {
+  return wearableSpan(params, wear) * 5.8
+}
+
+/** 哑光件专用光照层：补光只照亮它，不抬高镜面表壳的黑场 */
+const MATTE_LAYER = 1
+
+function onlyMatteLayer(obj: THREE.Object3D) {
+  obj.layers.set(MATTE_LAYER)
+}
+
+function alsoMatteLayer(obj: THREE.Object3D) {
+  obj.layers.enable(MATTE_LAYER)
 }
 
 interface WearableViewProps {
@@ -55,6 +80,8 @@ function WearableScene({
   lights,
   refs,
   answerTexture,
+  view,
+  viewToken,
   onTouch,
   onLongPress,
 }: {
@@ -64,12 +91,15 @@ function WearableScene({
   lights: StudioLightingState
   refs: SceneRefs
   answerTexture: THREE.Texture | null
+  view: WearableView3
+  viewToken: number
   onTouch: (u: number, v: number) => void
   onLongPress: () => void
 }) {
   const textures = useDialKeyframes()
   const groupRef = useRef<THREE.Group>(null)
   const crownRef = useRef<THREE.Mesh>(null)
+  const controlsRef = useRef<React.ComponentRef<typeof OrbitControls>>(null)
   const pressRef = useRef<{ t: number; x: number; y: number } | null>(null)
   const longPressTimer = useRef(0)
 
@@ -96,7 +126,17 @@ function WearableScene({
     [lights.key.intensity, lights.fill.intensity],
   )
 
-  const dist = wearableSpan(params, wear) * 3.5
+  const dist = framingDistance(params, wear)
+
+  useEffect(() => {
+    const controls = controlsRef.current
+    if (!controls) return
+    const preset = VIEW_PRESETS[view]
+    const d = dist * preset.zoom
+    controls.target.set(0, 0, 0)
+    controls.object.position.set(preset.dir[0] * d, preset.dir[1] * d, preset.dir[2] * d)
+    controls.update()
+  }, [view, viewToken, dist])
 
   useFrame((state, dt) => {
     const d = Math.min(dt, 0.05)
@@ -179,38 +219,52 @@ function WearableScene({
         fov={28}
         near={0.5}
         far={2000}
-        position={[dist * 0.4, dist * 0.3, dist * 0.86]}
+        position={[
+          VIEW_PRESETS.whole.dir[0] * dist,
+          VIEW_PRESETS.whole.dir[1] * dist,
+          VIEW_PRESETS.whole.dir[2] * dist,
+        ]}
       />
 
       <StudioLights keyLight={lights.key} fillLight={lights.fill} glassMode />
-      {/* 玻璃模式只有柔光板环境；表带与手腕是哑光体，需要一点直射与环境补光 */}
-      <ambientLight intensity={0.16} />
-      <directionalLight position={[70, 90, 60]} intensity={0.5} />
-      <directionalLight position={[-60, 20, -40]} intensity={0.16} />
+
+      {/*
+        哑光件（表带/手腕/表冠）需要直射补光才能读出形体，但同样的光打在
+        镜面表壳上会抬高黑场、压掉 Pool 的对比。补光与哑光件同放 layer 1，
+        表壳只留 layer 0 的柔光板环境反射，两者互不干扰。
+      */}
+      <ambientLight intensity={0.3} onUpdate={onlyMatteLayer} />
+      <directionalLight position={[70, 90, 60]} intensity={1.15} onUpdate={onlyMatteLayer} />
+      <directionalLight position={[-60, 20, -40]} intensity={0.4} onUpdate={onlyMatteLayer} />
 
       <group ref={groupRef}>
-        {wear.showWrist && (
-          <mesh geometry={wristGeo}>
-            <meshStandardMaterial color="#7e8188" roughness={0.97} metalness={0} />
+        {/* 手腕只是佩戴参考体：刻意压暗退到背景，且背面视角下让位给连接结构 */}
+        {wear.showWrist && view !== 'back' && (
+          <mesh geometry={wristGeo} onUpdate={alsoMatteLayer}>
+            <meshStandardMaterial color="#4a4c51" roughness={0.98} metalness={0} />
           </mesh>
         )}
 
         {/* 表带 + 一体化连接结构（同一条挤出曲面，无拼接缝） */}
-        <mesh geometry={strapGeo}>
+        <mesh geometry={strapGeo} onUpdate={alsoMatteLayer}>
           <meshPhysicalMaterial
-            color="#191a1d"
-            roughness={0.56}
+            color="#26282c"
+            roughness={0.54}
             metalness={0}
-            clearcoat={0.34}
-            clearcoatRoughness={0.52}
+            clearcoat={0.36}
+            clearcoatRoughness={0.5}
             envMapIntensity={envStrength * 0.5}
           />
         </mesh>
 
         {/* 背面传感器窗 */}
-        <mesh geometry={sensorGeo} position={[0, 0, -params.c + 0.18]}>
+        <mesh
+          geometry={sensorGeo}
+          position={[0, 0, -params.c + 0.18]}
+          onUpdate={alsoMatteLayer}
+        >
           <meshPhysicalMaterial
-            color="#07080a"
+            color="#0b0c0f"
             roughness={0.14}
             metalness={0}
             clearcoat={1}
@@ -224,6 +278,7 @@ function WearableScene({
           ref={crownRef}
           position={[params.a - 0.5, params.b * 0.2, 0]}
           rotation={[0, 0, Math.PI / 2]}
+          onUpdate={alsoMatteLayer}
         >
           <cylinderGeometry args={[2.25, 2.25, 1.9, 40]} />
           <meshStandardMaterial color="#9b9da2" roughness={0.3} metalness={0.88} />
@@ -268,8 +323,9 @@ function WearableScene({
       </group>
 
       <OrbitControls
+        ref={controlsRef}
         enablePan={false}
-        minDistance={dist * 0.42}
+        minDistance={dist * 0.3}
         maxDistance={dist * 2.2}
         enableDamping
         dampingFactor={0.07}
@@ -282,6 +338,8 @@ function WearableScene({
 export function WearableView({ params, wear, dialId, lights, onDialChange }: WearableViewProps) {
   const [awake, setAwake] = useState(true)
   const [demo, setDemo] = useState(false)
+  const [view, setView] = useState<WearableView3>('whole')
+  const [viewToken, setViewToken] = useState(0)
   const [gesture, setGesture] = useState<{ kind: WearableGesture; note: string } | null>(null)
 
   const awakeRef = useRef(true)
@@ -305,8 +363,29 @@ export function WearableView({ params, wear, dialId, lights, onDialChange }: Wea
   const wake = useCallback(
     (next: boolean) => {
       setAwake(next)
-      if (!next) answerUntilRef.current = 0
-      note(next ? '抬腕' : '落腕', next ? 'Pool 渐亮 · 无点亮动画硬切' : 'Pool 渐暗 · 不留残光')
+      if (!next) {
+        // 落腕即收回答案：腕不在视线里就不该继续显示结论
+        answerUntilRef.current = 0
+        answerOpacityRef.current = 0
+        rippleRef.current = null
+      }
+      note(next ? '抬腕' : '落腕', next ? 'Pool 渐亮 · 无点亮硬切' : 'Pool 渐暗 · 答案同时收回')
+    },
+    [note],
+  )
+
+  const setPreset = useCallback(
+    (next: WearableView3) => {
+      setView(next)
+      setViewToken((t) => t + 1)
+      note(
+        '视角',
+        next === 'whole'
+          ? '整机四分之三 — 表壳 + 绕腕表带'
+          : next === 'front'
+            ? '正视 — 表盘 Pool'
+            : '背面 — 连接结构与传感器窗',
+      )
     },
     [note],
   )
@@ -382,6 +461,8 @@ export function WearableView({ params, wear, dialId, lights, onDialChange }: Wea
               lights={lights}
               refs={refs}
               answerTexture={answerTexture}
+              view={view}
+              viewToken={viewToken}
               onTouch={handleTouch}
               onLongPress={handleLongPress}
             />
@@ -414,6 +495,30 @@ export function WearableView({ params, wear, dialId, lights, onDialChange }: Wea
         </button>
         <button type="button" className={demo ? 'active' : ''} onClick={() => setDemo((d) => !d)}>
           {demo ? '停止演播' : '一天演播'}
+        </button>
+      </div>
+
+      <div className="wearable-actions wearable-actions--views">
+        <button
+          type="button"
+          className={view === 'whole' ? 'active' : ''}
+          onClick={() => setPreset('whole')}
+        >
+          整机
+        </button>
+        <button
+          type="button"
+          className={view === 'front' ? 'active' : ''}
+          onClick={() => setPreset('front')}
+        >
+          正视
+        </button>
+        <button
+          type="button"
+          className={view === 'back' ? 'active' : ''}
+          onClick={() => setPreset('back')}
+        >
+          背面结构
         </button>
       </div>
 
