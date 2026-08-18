@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "baoyu-article-illustrator": {
+      "source": "JimLiu/baoyu-skills",
+      "sourceType": "github",
+      "skillPath": "skills/baoyu-article-illustrator/SKILL.md",
+      "computedHash": "eb75713fa4ba1d1f3cd7b5462dc869848ded250eb406b6618fd65aaeaaaf7b5e"
+    },
+    "naive-design": {
+      "source": "AgentsORG/naive-design",
+      "sourceType": "github",
+      "skillPath": "skills/naive-design/SKILL.md",
+      "computedHash": "e1833024047997f81ff4657d8052fce1824b8a2ae0ed965eb2887a402a44e33a"
+    }
+  }
+}
